@@ -1,8 +1,15 @@
 <policies>
     <inbound>
         <base />
-        <azure-openai-token-limit tokens-per-minute="{{openai-token-limit-per-minute}}" counter-key="@(context.Subscription.Id)" estimate-prompt-tokens="true" tokens-consumed-header-name="consumed-tokens" remaining-tokens-header-name="remaining-tokens" />
         <include-fragment fragment-id="openai-cosmos-logging" />
+        <!-- <azure-openai-emit-token-metric
+            namespace="AzureOpenAI">   
+            <dimension name="User ID" />
+            <dimension name="Client IP" value="@(context.Request.IpAddress)" />
+            <dimension name="API ID" />
+            <dimension name="Subscription ID" />
+        </azure-openai-emit-token-metric> 
+        <azure-openai-token-limit tokens-per-minute="{{openai-token-limit-per-minute}}" counter-key="@(context.Subscription.Id)" estimate-prompt-tokens="true" tokens-consumed-header-name="consumed-tokens" remaining-tokens-header-name="remaining-tokens" /> -->
         <set-backend-service backend-id="openai-backend" />
     </inbound>
     <backend>

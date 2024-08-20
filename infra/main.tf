@@ -195,6 +195,7 @@ module "cosmosdb" {
   subnet_id                        = module.virtual_network.private_endpoint_subnet_id
   user_assigned_identity_object_id = module.managed_identity.user_assigned_identity_object_id
   subscription_id                  = data.azurerm_client_config.current.subscription_id
+  principal_id                     = var.principal_id
 }
 
 # ------------------------------------------------------------------------------------------------------
@@ -215,7 +216,8 @@ module "api_management" {
   application_insights_id                  = module.application_insights.application_insights_id
   openai_endpoint                          = module.openai.azure_cognitive_services_endpoint
   key_vault_id                             = module.key_vault.key_vault_id
-  cosmosdb_endpoint                        = module.cosmosdb.cosmosdb_account_endpoint
+  cosmosdb_scope                           = "https://${module.cosmosdb.cosmosdb_account_name}.documents.azure.com/"
+  cosmosdb_document_endpoint               = "${module.cosmosdb.cosmosdb_account_endpoint}dbs/${module.cosmosdb.cosmosdb_sql_database_name}/colls/${module.cosmosdb.cosmosdb_sql_container_name}/docs"
   application_insights_instrumentation_key = module.application_insights.application_insights_instrumentation_key
   openai_key_keyvault_secret_id            = "https://${module.key_vault.key_vault_name}.vault.azure.net/secrets/${local.azure_openai_secret_name}"
   openai_openapi_specification_url         = var.openai_openapi_specification_url

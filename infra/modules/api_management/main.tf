@@ -91,6 +91,33 @@ resource "azurerm_api_management_named_value" "openai_key" {
   }
 }
 
+resource "azurerm_api_management_named_value" "cosmosdb_scope" {
+  api_management_name = azurerm_api_management.api_management.name
+  name                = "cosmosdb-scope"
+  resource_group_name = var.resource_group_name
+  display_name        = "cosmosdb-scope"
+  value               = var.cosmosdb_scope
+  secret              = false
+}
+
+resource "azurerm_api_management_named_value" "cosmosdb_document_endpoint" {
+  api_management_name = azurerm_api_management.api_management.name
+  name                = "cosmosdb-document-endpoint"
+  resource_group_name = var.resource_group_name
+  display_name        = "cosmosdb-document-endpoint"
+  value               = var.cosmosdb_document_endpoint
+  secret              = false
+}
+
+resource "azurerm_api_management_named_value" "user_assigned_identity_client_id" {
+  api_management_name = azurerm_api_management.api_management.name
+  name                = "user-assigned-identity-client-id"
+  resource_group_name = var.resource_group_name
+  display_name        = "user-assigned-identity-client-id"
+  value               = var.user_assigned_identity_client_id
+  secret              = false
+}
+
 resource "azurerm_api_management_backend" "openai_backend" {
   api_management_name = azurerm_api_management.api_management.name
   resource_group_name = var.resource_group_name

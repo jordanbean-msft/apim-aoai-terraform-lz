@@ -59,8 +59,13 @@ variable "openai_key_keyvault_secret_id" {
   sensitive   = true
 }
 
-variable "cosmosdb_endpoint" {
-  description = "The CosmosDB endpoint to use for the API Management service"
+variable "cosmosdb_scope" {
+  description = "The CosmosDB scope to use for the API Management service to authenticate using a managed identity"
+  type        = string
+}
+
+variable "cosmosdb_document_endpoint" {
+  description = "The CosmosDB document endpoint to use for the API Management service"
   type        = string
 }
 

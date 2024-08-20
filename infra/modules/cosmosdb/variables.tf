@@ -32,3 +32,8 @@ variable "subscription_id" {
   description = "The subscription id of the CosmosDB account"
   type        = string
 }
+
+variable "principal_id" {
+  description = "The Id of the service principal to add to CosmosDB access policies"
+  type        = string
+}
