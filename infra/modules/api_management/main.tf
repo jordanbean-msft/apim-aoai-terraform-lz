@@ -117,11 +117,22 @@ resource "azurerm_api_management_logger" "application_insights_logging" {
   }
 }
 
+resource "azurerm_api_management_api_diagnostic" "openai_api_diagnostic" {
+  api_management_name      = azurerm_api_management.api_management.name
+  resource_group_name      = var.resource_group_name
+  api_name                 = azurerm_api_management_api.openai_api.name
+  api_management_logger_id = azurerm_api_management_logger.application_insights_logging.id
+  identifier               = "applicationinsights"
+  always_log_errors        = true
+}
+
 resource "azurerm_api_management_product" "openai_product" {
   api_management_name = azurerm_api_management.api_management.name
   resource_group_name = var.resource_group_name
-  approval_required = true
-  display_name = "Azure OpenAI Product"
-  product_id = "openai-product"
-  published = true
+  approval_required   = true
+  display_name        = "Azure OpenAI Product"
+  product_id          = "openai-product"
+  published           = true
+  subscription_required = true
+  subscriptions_limit = 1000
 }
