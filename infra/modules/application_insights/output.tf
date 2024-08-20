@@ -12,3 +12,8 @@ output "application_insights_instrumentation_key" {
   value     = azurerm_application_insights.applicationinsights.instrumentation_key
   sensitive = true
 }
+
+output "application_insights_id" {
+  value     = azurerm_application_insights.applicationinsights.id
+  sensitive = false
+}

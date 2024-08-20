@@ -50,17 +50,3 @@ variable "request_message" {
   type        = string
   default     = null
 }
-
-variable "private_dns_zone_group_name" {
-  description = "(Required) Specifies the Name of the Private DNS Zone Group. Changing this forces a new private_dns_zone_group resource to be created."
-  type        = string
-}
-
-variable "private_dns_zone_group_ids" {
-  description = "(Required) Specifies the list of Private DNS Zones to include within the private_dns_zone_group."
-  type        = list(string)
-}
-
-variable "private_dns" {
-  default = {}
-}

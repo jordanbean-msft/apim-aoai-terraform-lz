@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     azurerm = {
-      version = "~>3.105.0"
+      version = "~>3.116.0"
       source  = "hashicorp/azurerm"
     }
     azurecaf = {
@@ -27,7 +27,7 @@ resource "azurerm_cognitive_account" "cognitive_account" {
   kind                          = "OpenAI"
   sku_name                      = "S0"
   custom_subdomain_name         = azurecaf_name.cognitiveservices_name.result
-  public_network_access_enabled = var.public_network_access_enabled
+  public_network_access_enabled = false
 }
 
 resource "azurerm_cognitive_deployment" "chat" {
@@ -41,7 +41,7 @@ resource "azurerm_cognitive_deployment" "chat" {
 
   scale {
     type     = "Standard"
-    capacity = 150
+    capacity = 50
   }
 }
 
@@ -70,6 +70,4 @@ module "private_endpoint" {
   subnet_id                      = var.subnet_id
   subresource_name               = "account"
   is_manual_connection           = false
-  private_dns_zone_group_name    = "default"
-  private_dns_zone_group_ids     = var.private_dns_zone_group_ids
 }

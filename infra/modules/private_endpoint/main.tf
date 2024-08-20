@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     azurerm = {
-      version = "~>3.105.0"
+      version = "~>3.116.0"
       source  = "hashicorp/azurerm"
     }
     azurecaf = {
@@ -35,14 +35,10 @@ resource "azurerm_private_endpoint" "private_endpoint" {
     request_message                = try(var.request_message, null)
   }
 
-  private_dns_zone_group {
-    name                 = var.private_dns_zone_group_name
-    private_dns_zone_ids = var.private_dns_zone_group_ids
-  }
-
   lifecycle {
     ignore_changes = [
-      tags
+      tags,
+      private_dns_zone_group
     ]
   }
 }

@@ -7,3 +7,8 @@ output "key_vault_id" {
   value     = azurerm_key_vault.kv.id
   sensitive = false
 }
+
+output "key_vault_name" {
+  value     = azurerm_key_vault.kv.name
+  sensitive = false
+}

@@ -17,3 +17,8 @@ variable "tags" {
   description = "A list of tags used for deployed services."
   type        = map(string)
 }
+
+variable "subnet_id" {
+  description = "The subnet id to deploy the private endpoint into."
+  type        = string
+}

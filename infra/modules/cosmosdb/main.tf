@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     azurerm = {
-      version = "~>3.105.0"
+      version = "~>3.116.0"
       source  = "hashicorp/azurerm"
     }
     azurecaf = {
@@ -28,15 +28,58 @@ resource "azurerm_cosmosdb_account" "cosmosdb_account" {
   public_network_access_enabled         = false
   network_acl_bypass_for_azure_services = true
   local_authentication_disabled         = true
+  kind                                  = "GlobalDocumentDB"
   consistency_policy {
-    consistency_level = "Session"
+    consistency_level       = "Session"
+    max_interval_in_seconds = 5
+    max_staleness_prefix    = 100
   }
   geo_location {
     location          = var.location
     failover_priority = 0
   }
   offer_type = "Standard"
-  capabilities {
-    name = "DeleteAllItemsByPartitionKey"
+}
+
+resource "azurerm_cosmosdb_sql_database" "cosmosdb_sql_database" {
+  name                = "chat-log-db"
+  resource_group_name = var.resource_group_name
+  account_name        = azurerm_cosmosdb_account.cosmosdb_account.name
+}
+
+resource "azurerm_cosmosdb_sql_container" "cosmosdb_sql_container" {
+  name                = "chat-log-container"
+  resource_group_name = var.resource_group_name
+  account_name        = azurerm_cosmosdb_account.cosmosdb_account.name
+  database_name       = azurerm_cosmosdb_sql_database.cosmosdb_sql_database.name
+  partition_key_paths = [
+    "/chatId"
+  ]
+  partition_key_version = 1
+  conflict_resolution_policy {
+    mode                     = "LastWriterWins"
+    conflict_resolution_path = "/_ts"
   }
+  indexing_policy {
+    indexing_mode = "consistent"
+    included_path {
+      path = "/*"
+    }
+    excluded_path {
+      path = "/\"_etag\"/?"
+    }
+  }
+}
+
+module "private_endpoint" {
+  source                         = "../private_endpoint"
+  name                           = azurerm_cosmosdb_account.cosmosdb_account.name
+  resource_group_name            = var.resource_group_name
+  tags                           = var.tags
+  resource_token                 = var.resource_token
+  private_connection_resource_id = azurerm_cosmosdb_account.cosmosdb_account.id
+  location                       = var.location
+  subnet_id                      = var.subnet_id
+  subresource_name               = "Sql"
+  is_manual_connection           = false
 }

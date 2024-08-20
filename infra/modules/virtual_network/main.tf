@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     azurerm = {
-      version = "~>3.105.0"
+      version = "~>3.116.0"
       source  = "hashicorp/azurerm"
     }
     azurecaf = {
@@ -21,7 +21,7 @@ resource "azurerm_subnet" "subnet" {
 
   name                 = each.key
   resource_group_name  = var.resource_group_name
-  virtual_network_name = azurerm_virtual_network.vnet.name
+  virtual_network_name = data.azurerm_virtual_network.vnet.name
   address_prefixes     = each.value.address_prefixes
 
   dynamic "delegation" {

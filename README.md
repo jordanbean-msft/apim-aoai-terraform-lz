@@ -13,4 +13,24 @@
 
 ## Deployment
 
+1. Update the `infra/provider.conf.json` file with where you intend to store the Terraform state file.
+1. Update the `infra/main.tfvars.json` file with specifics of your environment.
+1. Run the following command to initialize Terraform
+
+    ```shell
+    terraform init -backend-config ./provider.conf.json
+    ```
+
+1. Run the following command to plan your Terraform deployment
+
+    ```shell
+    terraform plan -var-file="./main.tfvars.json"
+    ```
+
+1. Run the following command to apply your Terraform deployment
+
+    ```shell
+    terraform apply -var-file "./main.tfvars.json"
+    ```
+
 ## Links

@@ -44,14 +44,3 @@ variable "subnet_id" {
   description = "The resource id of the subnet to deploy the private endpoint into"
   type        = string
 }
-
-variable "private_dns_zone_group_ids" {
-  description = "A list of private dns zone ids to be added to the private dns zone group"
-  type        = list(string)
-  sensitive   = true
-}
-
-variable "public_network_access_enabled" {
-  description = "Whether or not public network access is enabled"
-  type        = bool
-}

@@ -1,0 +1,17 @@
+<policies>
+    <inbound>
+        <base />
+        <azure-openai-token-limit tokens-per-minute="{{openai-token-limit-per-minute}}" counter-key="@(context.Subscription.Id)" estimate-prompt-tokens="true" tokens-consumed-header-name="consumed-tokens" remaining-tokens-header-name="remaining-tokens" />
+        <include-fragment fragment-id="openai-cosmos-logging" />
+        <set-backend-service backend-id="openai-backend" />
+    </inbound>
+    <backend>
+        <forward-request timeout="120" fail-on-error-status-code="true" buffer-response="false" />
+    </backend>
+    <outbound>
+        <base />
+    </outbound>
+    <on-error>
+        <base />
+    </on-error>
+</policies>

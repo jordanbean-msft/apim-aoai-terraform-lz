@@ -8,11 +8,6 @@ variable "resource_group_name" {
   type        = string
 }
 
-variable "environment_name" {
-  description = "The name of the environment to be deployed"
-  type        = string
-}
-
 variable "workspace_id" {
   description = "The name of the Azure log analytics workspace"
   type        = string

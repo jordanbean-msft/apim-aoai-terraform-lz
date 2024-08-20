@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     azurerm = {
-      version = "~>3.105.0"
+      version = "~>3.116.0"
       source  = "hashicorp/azurerm"
     }
     azurecaf = {
@@ -23,14 +23,20 @@ resource "azurecaf_name" "kv_name" {
 }
 
 resource "azurerm_key_vault" "kv" {
-  name                          = azurecaf_name.kv_name.result
-  location                      = var.location
-  resource_group_name           = var.resource_group_name
-  tenant_id                     = data.azurerm_client_config.current.tenant_id
-  purge_protection_enabled      = false
-  sku_name                      = "standard"
-  tags                          = var.tags
-  public_network_access_enabled = var.public_network_access_enabled
+  name                            = azurecaf_name.kv_name.result
+  location                        = var.location
+  resource_group_name             = var.resource_group_name
+  tenant_id                       = data.azurerm_client_config.current.tenant_id
+  purge_protection_enabled        = false
+  sku_name                        = "standard"
+  tags                            = var.tags
+  public_network_access_enabled   = false
+  enabled_for_deployment          = true
+  enabled_for_template_deployment = true
+  network_acls {
+    bypass         = "AzureServices"
+    default_action = "Deny"
+  }
 }
 
 resource "azurerm_key_vault_access_policy" "app" {
@@ -82,6 +88,4 @@ module "private_endpoint" {
   subnet_id                      = var.subnet_id
   subresource_name               = "vault"
   is_manual_connection           = false
-  private_dns_zone_group_name    = "default"
-  private_dns_zone_group_ids     = var.private_dns_zone_group_ids
 }

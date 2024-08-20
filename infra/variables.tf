@@ -3,11 +3,6 @@ variable "location" {
   type        = string
 }
 
-variable "environment_name" {
-  description = "The name of the azd environment to be deployed"
-  type        = string
-}
-
 variable "principal_id" {
   description = "The Id of the azd service principal to add to deployed keyvault access policies"
   type        = string
@@ -34,8 +29,27 @@ variable "private_endpoint_subnet_address_prefixes" {
   type        = list(string)
 }
 
-variable "public_network_access_enabled" {
-  description = "Whether or not public network access is enabled"
-  type        = bool
-  default     = false
+variable "publisher_email" {
+  description = "The email address of the publisher"
+  type        = string
+}
+
+variable "publisher_name" {
+  description = "The name of the publisher"
+  type        = string
+}
+
+variable "api_management_sku_name" {
+  description = "The SKU of the API Management instance"
+  type        = string
+}
+
+variable "openai_openapi_specification_url" {
+  description = "The OpenAI specification URL (OpenAPI spec, Swagger document)"
+  type        = string
+}
+
+variable "openai_token_limit_per_minute" {
+  description = "The OpenAI token limit per minute to use for the API Management service"
+  type        = number
 }
