@@ -33,37 +33,11 @@ resource "azurerm_key_vault" "kv" {
   public_network_access_enabled   = false
   enabled_for_deployment          = true
   enabled_for_template_deployment = true
+  enable_rbac_authorization       = true
   network_acls {
     bypass         = "AzureServices"
     default_action = "Deny"
   }
-}
-
-resource "azurerm_key_vault_access_policy" "app" {
-  count        = length(var.access_policy_object_ids)
-  key_vault_id = azurerm_key_vault.kv.id
-  tenant_id    = data.azurerm_client_config.current.tenant_id
-  object_id    = var.access_policy_object_ids[count.index]
-
-  secret_permissions = [
-    "Get",
-    "List",
-  ]
-}
-
-resource "azurerm_key_vault_access_policy" "user" {
-  count        = var.principal_id == "" ? 0 : 1
-  key_vault_id = azurerm_key_vault.kv.id
-  tenant_id    = data.azurerm_client_config.current.tenant_id
-  object_id    = var.principal_id
-
-  secret_permissions = [
-    "Get",
-    "Set",
-    "List",
-    "Delete",
-    "Purge"
-  ]
 }
 
 resource "azurerm_key_vault_secret" "secrets" {
@@ -72,8 +46,7 @@ resource "azurerm_key_vault_secret" "secrets" {
   value        = var.secrets[count.index].value
   key_vault_id = azurerm_key_vault.kv.id
   depends_on = [
-    azurerm_key_vault_access_policy.user,
-    azurerm_key_vault_access_policy.app
+    azurerm_role_assignment.key_vault_secrets_officer_role_assignment
   ]
 }
 
@@ -88,4 +61,17 @@ module "private_endpoint" {
   subnet_id                      = var.subnet_id
   subresource_name               = "vault"
   is_manual_connection           = false
+}
+
+resource "azurerm_role_assignment" "key_vault_secrets_user_role_assignment" {
+  count                = length(var.access_policy_object_ids)
+  scope                = azurerm_key_vault.kv.id
+  role_definition_name = "Key Vault Secrets User"
+  principal_id         = var.access_policy_object_ids[count.index]
+}
+
+resource "azurerm_role_assignment" "key_vault_secrets_officer_role_assignment" {
+  scope                = azurerm_key_vault.kv.id
+  role_definition_name = "Key Vault Secrets Officer"
+  principal_id         = var.principal_id
 }

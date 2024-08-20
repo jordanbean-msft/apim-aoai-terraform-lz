@@ -22,3 +22,13 @@ variable "subnet_id" {
   description = "The subnet id to deploy the private endpoint into."
   type        = string
 }
+
+variable "user_assigned_identity_object_id" {
+  description = "The object id of the user assigned identity"
+  type        = string
+}
+
+variable "subscription_id" {
+  description = "The subscription id of the CosmosDB account"
+  type        = string
+}

@@ -71,3 +71,9 @@ module "private_endpoint" {
   subresource_name               = "account"
   is_manual_connection           = false
 }
+
+resource "azurerm_role_assignment" "cognitive_services_openai_contributor_role_assignment" {
+  scope                = azurerm_cognitive_account.cognitive_account.id
+  role_definition_name = "Cognitive Services OpenAI Contributor"
+  principal_id         = var.user_assigned_identity_object_id
+}

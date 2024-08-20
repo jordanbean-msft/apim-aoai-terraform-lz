@@ -174,24 +174,27 @@ module "key_vault" {
 # Deploy OpenAI
 # ------------------------------------------------------------------------------------------------------
 module "openai" {
-  source              = "./modules/open_ai"
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  resource_token      = local.resource_token
-  tags                = local.tags
-  subnet_id           = module.virtual_network.private_endpoint_subnet_id
+  source                           = "./modules/open_ai"
+  location                         = var.location
+  resource_group_name              = var.resource_group_name
+  resource_token                   = local.resource_token
+  tags                             = local.tags
+  subnet_id                        = module.virtual_network.private_endpoint_subnet_id
+  user_assigned_identity_object_id = module.managed_identity.user_assigned_identity_object_id
 }
 
 # ------------------------------------------------------------------------------------------------------
 # Deploy CosmosDB
 # ------------------------------------------------------------------------------------------------------
 module "cosmosdb" {
-  source              = "./modules/cosmosdb"
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  resource_token      = local.resource_token
-  tags                = local.tags
-  subnet_id           = module.virtual_network.private_endpoint_subnet_id
+  source                           = "./modules/cosmosdb"
+  location                         = var.location
+  resource_group_name              = var.resource_group_name
+  resource_token                   = local.resource_token
+  tags                             = local.tags
+  subnet_id                        = module.virtual_network.private_endpoint_subnet_id
+  user_assigned_identity_object_id = module.managed_identity.user_assigned_identity_object_id
+  subscription_id                  = data.azurerm_client_config.current.subscription_id
 }
 
 # ------------------------------------------------------------------------------------------------------

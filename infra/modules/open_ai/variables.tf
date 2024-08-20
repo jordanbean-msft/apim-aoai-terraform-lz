@@ -22,3 +22,8 @@ variable "subnet_id" {
   description = "The resource id of the subnet to deploy the private endpoint into"
   type        = string
 }
+
+variable "user_assigned_identity_object_id" {
+  description = "The object id of the user assigned identity"
+  type        = string
+}

@@ -83,3 +83,17 @@ module "private_endpoint" {
   subresource_name               = "Sql"
   is_manual_connection           = false
 }
+
+data "azurerm_cosmosdb_sql_role_definition" "cosmosdb_built_in_data_contributor" {
+  resource_group_name = var.resource_group_name
+  account_name        = azurerm_cosmosdb_account.cosmosdb_account.name
+  role_definition_id  = "00000000-0000-0000-0000-000000000002" #https://learn.microsoft.com/en-us/azure/cosmos-db/how-to-setup-rbac#built-in-role-definitions
+}
+
+resource "azurerm_cosmosdb_sql_role_assignment" "cosmosdb_built_in_data_contributor_role_assignment" {
+  resource_group_name = var.resource_group_name
+  account_name        = azurerm_cosmosdb_account.cosmosdb_account.name
+  role_definition_id  = data.azurerm_cosmosdb_sql_role_definition.cosmosdb_built_in_data_contributor.id
+  principal_id        = var.user_assigned_identity_object_id
+  scope               = azurerm_cosmosdb_account.cosmosdb_account.id
+}
