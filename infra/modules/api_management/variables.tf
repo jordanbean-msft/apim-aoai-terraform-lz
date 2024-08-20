@@ -19,26 +19,26 @@ variable "tags" {
 }
 
 variable "publisher_email" {
-    description = "The API Management publisher email"
-    type = string
+  description = "The API Management publisher email"
+  type        = string
 }
 
 variable "publisher_name" {
-    description = "The API Management publisher name"
-    type = string
+  description = "The API Management publisher name"
+  type        = string
 }
 
 variable "sku_name" {
-    description = "The API Management SKU"
-    type = string
+  description = "The API Management SKU"
+  type        = string
 }
 
 variable "user_assigned_identity_id" {
   description = "The User Assigned Managed Identity to assign to the API Management portal"
-  type = string
+  type        = string
 }
 
 variable "api_management_subnet_id" {
   description = "The subnet ID to associate to the API Management portal"
-  type = string
+  type        = string
 }
