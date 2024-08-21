@@ -216,7 +216,7 @@ module "api_management" {
   application_insights_id                  = module.application_insights.application_insights_id
   openai_endpoint                          = module.openai.azure_cognitive_services_endpoint
   key_vault_id                             = module.key_vault.key_vault_id
-  cosmosdb_scope                           = "https://${module.cosmosdb.cosmosdb_account_name}.documents.azure.com/"
+  cosmosdb_scope                           = "https://${module.cosmosdb.cosmosdb_account_name}.documents.azure.com"
   cosmosdb_document_endpoint               = "${module.cosmosdb.cosmosdb_account_endpoint}dbs/${module.cosmosdb.cosmosdb_sql_database_name}/colls/${module.cosmosdb.cosmosdb_sql_container_name}/docs"
   application_insights_instrumentation_key = module.application_insights.application_insights_instrumentation_key
   openai_key_keyvault_secret_id            = "https://${module.key_vault.key_vault_name}.vault.azure.net/secrets/${local.azure_openai_secret_name}"

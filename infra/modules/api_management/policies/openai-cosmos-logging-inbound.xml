@@ -1,22 +1,26 @@
 <fragment>
-    <authentication-managed-identity 
-    resource="{{cosmosdb-scope}}" 
-    output-token-variable-name="msi-access-token" 
-    ignore-error="false"
-    client-id="{{user-assigned-identity-client-id}}" />    
-    <send-one-way-request mode="new">
-        <set-url>{{cosmosdb-document-endpoint}}</set-url>
-        <set-method>POST</set-method>
-        <set-header name="Authorization" exists-action="override">
-            <value>@("type=aad&amp;ver=1.0&amp;sig=" + context.Variables["msi-access-token"])</value>
+	<authentication-managed-identity resource="{{cosmosdb-scope}}" output-token-variable-name="msi-access-token" ignore-error="false" client-id="{{user-assigned-identity-client-id}}" />
+	<send-one-way-request mode="new">
+		<set-url>{{cosmosdb-document-endpoint}}</set-url>
+		<set-method>POST</set-method>
+		<set-header name="Authorization" exists-action="override">
+			<value>@("type=aad&amp;ver=1.0&amp;sig=" + context.Variables["msi-access-token"])</value>
+		</set-header>
+		<set-header name="x-ms-version" exists-action="override">
+			<value>2018-12-31</value>
+		</set-header>
+		<set-header name="x-ms-documentdb-partitionkey" exists-action="override">
+			<value>
+                @{
+                    var result = $"[\"{context.RequestId}\"]";
+                    return result;
+                }
+            </value>
+		</set-header>
+        <set-header name="Content-Type" exists-action="override">
+            <value>application/json</value>
         </set-header>
-        <set-header name="x-ms-version" exists-action="override">
-            <value>2018-12-31</value>
-        </set-header>
-        <set-header name="x-ms-documentdb-partitionkey" exists-action="override">
-           <value>@("[&bdquo;" + context.RequestId + "&bdquo;]")</value>
-        </set-header>
-        <set-body>@{
+		<set-body>@{
             return new JObject(
                 new JProperty("id", context.RequestId),
                 new JProperty("chatId", context.RequestId),
@@ -26,5 +30,5 @@
             ).ToString();
         }
         </set-body>
-    </send-one-way-request>
+	</send-one-way-request>
 </fragment>
