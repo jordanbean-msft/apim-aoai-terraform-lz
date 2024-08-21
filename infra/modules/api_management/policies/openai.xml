@@ -20,7 +20,7 @@
             <dimension name="API ID" />
             <dimension name="Subscription ID" />
         </azure-openai-emit-token-metric> 
-        <azure-openai-token-limit tokens-per-minute="{{openai-token-limit-per-minute}}" counter-key="@(context.Subscription.Id)" estimate-prompt-tokens="true" tokens-consumed-header-name="consumed-tokens" remaining-tokens-header-name="remaining-tokens" />
+        <!-- <azure-openai-token-limit tokens-per-minute="{{openai-token-limit-per-minute}}" counter-key="@(context.Subscription.Id)" estimate-prompt-tokens="true" tokens-consumed-header-name="consumed-tokens" remaining-tokens-header-name="remaining-tokens" /> -->
         <set-backend-service backend-id="openai-backend" />
         <include-fragment fragment-id="get-access-token-to-openai" />
     </inbound>

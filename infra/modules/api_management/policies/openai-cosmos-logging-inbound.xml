@@ -10,11 +10,19 @@
         <set-header name="Authorization" exists-action="override">
             <value>@("type=aad&amp;ver=1.0&amp;sig=" + context.Variables["msi-access-token"])</value>
         </set-header>
+        <set-header name="x-ms-version" exists-action="override">
+            <value>2018-12-31</value>
+        </set-header>
+        <set-header name="x-ms-documentdb-partitionkey" exists-action="override">
+           <value>@("[&bdquo;" + context.RequestId + "&bdquo;]")</value>
+        </set-header>
         <set-body>@{
             return new JObject(
                 new JProperty("id", context.RequestId),
-                new JProperty("timestamp", DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")),
-                new JProperty("api-key", context.Subscription.Id)
+                new JProperty("chatId", context.RequestId),
+                new JProperty("timestamp", context.Timestamp),
+                new JProperty("api-key", context.Subscription.Id),
+                new JProperty("body", context.Request.Body.As&lt;string&gt;())
             ).ToString();
         }
         </set-body>
