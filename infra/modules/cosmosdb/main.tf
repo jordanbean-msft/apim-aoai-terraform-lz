@@ -69,6 +69,12 @@ resource "azurerm_cosmosdb_sql_container" "cosmosdb_sql_container" {
       path = "/\"_etag\"/?"
     }
   }
+
+  lifecycle {
+    ignore_changes = [
+      indexing_policy[0].excluded_path[0].path
+    ]
+  }
 }
 
 module "private_endpoint" {

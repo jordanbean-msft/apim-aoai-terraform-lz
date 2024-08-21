@@ -28,6 +28,10 @@ resource "azurerm_cognitive_account" "cognitive_account" {
   sku_name                      = "S0"
   custom_subdomain_name         = azurecaf_name.cognitiveservices_name.result
   public_network_access_enabled = false
+  network_acls {
+    default_action = "Deny"
+    ip_rules = []
+  }
 }
 
 resource "azurerm_cognitive_deployment" "chat" {
