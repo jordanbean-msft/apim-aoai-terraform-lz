@@ -1,0 +1,13 @@
+POST https://.azure-api.net/openai/deployments/chat/chat/completions?api-version=2024-02-15-preview
+Content-Type: application/json
+Ocp-Apim-Subscription-Key: 
+
+{
+    "model":"gpt-4o",
+    "messages":[
+        {
+            "role":"user",
+            "content":"Hello!"
+        }
+    ]
+}

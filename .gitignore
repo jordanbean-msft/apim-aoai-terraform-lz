@@ -354,3 +354,5 @@ MigrationBackup/
 **/main.tfvars.json
 
 **/provider.conf.json
+
+test-openai.http
