@@ -94,3 +94,13 @@ variable "openai_token_limit_per_minute" {
   description = "The OpenAI token limit per minute to use for the API Management service"
   type        = number
 }
+
+variable "tenant_id" {
+  description = "The tenant ID to use for the API Management service"
+  type        = string
+}
+
+variable "openai_service_principal_audience" {
+  description = "The OpenAI service principal audience to use for the API Management service"
+  type        = string
+}

@@ -222,4 +222,6 @@ module "api_management" {
   openai_key_keyvault_secret_id            = "https://${module.key_vault.key_vault_name}.vault.azure.net/secrets/${local.azure_openai_secret_name}"
   openai_openapi_specification_url         = var.openai_openapi_specification_url
   openai_token_limit_per_minute            = var.openai_token_limit_per_minute
+  tenant_id                                = data.azurerm_client_config.current.tenant_id
+  openai_service_principal_audience        = var.openai_service_principal_audience
 }

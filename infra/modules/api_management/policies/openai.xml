@@ -1,6 +1,17 @@
 <policies>
     <inbound>
         <base />
+        <validate-jwt header-name="Authorization" failed-validation-httpcode="401" failed-validation-error-message="Unauthorized. Access token is missing or invalid.">
+            <openid-config url="https://login.microsoftonline.com/{{tenant-id}}/.well-known/openid-configuration" />
+            <audiences>
+                <audience>{{openai-service-principal-audience}}</audience>
+            </audiences>
+            <required-claims>
+                <claim name="scp" match="all">
+                    <value>user_impersonation</value>
+                </claim>
+            </required-claims>
+        </validate-jwt>
         <include-fragment fragment-id="openai-cosmos-logging-inbound" />
         <azure-openai-emit-token-metric
             namespace="AzureOpenAI">   

@@ -30,7 +30,7 @@ resource "azurerm_cognitive_account" "cognitive_account" {
   public_network_access_enabled = false
   network_acls {
     default_action = "Deny"
-    ip_rules = []
+    ip_rules       = []
   }
 }
 
