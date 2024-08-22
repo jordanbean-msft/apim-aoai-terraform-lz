@@ -6,8 +6,24 @@ resource "azurerm_api_management_api_policy" "openai_api_policy" {
   depends_on = [
     azurerm_api_management_policy_fragment.get_access_token_to_openai_policy,
     azurerm_api_management_policy_fragment.openai_cosmos_logging_inbound_policy,
-    azurerm_api_management_policy_fragment.openai_cosmos_logging_outbound_policy
+    azurerm_api_management_policy_fragment.openai_cosmos_logging_outbound_policy,
+    azurerm_api_management_policy_fragment.setup_correlation_id_policy,
+    azurerm_api_management_policy_fragment.generate_partition_key_prefix_policy
   ]
+}
+
+resource "azurerm_api_management_policy_fragment" "generate_partition_key_prefix_policy" {
+  api_management_id = azurerm_api_management.api_management.id
+  name              = "generate-partition-key-prefix"
+  value             = file("${path.module}/policies/generate-partition-key-prefix.xml")
+  format            = "rawxml"
+}
+
+resource "azurerm_api_management_policy_fragment" "setup_correlation_id_policy" {
+  api_management_id = azurerm_api_management.api_management.id
+  name              = "setup-correlation-id"
+  value             = file("${path.module}/policies/setup-correlation-id.xml")
+  format            = "rawxml"
 }
 
 resource "azurerm_api_management_policy_fragment" "openai_cosmos_logging_inbound_policy" {

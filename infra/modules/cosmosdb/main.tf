@@ -53,7 +53,7 @@ resource "azurerm_cosmosdb_sql_container" "cosmosdb_sql_container" {
   account_name        = azurerm_cosmosdb_account.cosmosdb_account.name
   database_name       = azurerm_cosmosdb_sql_database.cosmosdb_sql_database.name
   partition_key_paths = [
-    "/chatId"
+    "/pk"
   ]
   partition_key_version = 1
   conflict_resolution_policy {
