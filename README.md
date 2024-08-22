@@ -1,4 +1,4 @@
-# template-repository
+# apim-aoai-terraform-lz
 
 ![architecture](./.img/architecture.png)
 

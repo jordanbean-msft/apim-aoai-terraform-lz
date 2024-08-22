@@ -24,6 +24,8 @@
             <value>@((string)context.Variables["correlation-id"])</value>
         </set-header>
         <set-body>@{
+            var result = JObject.Parse(context.Response.Body.As&lt;string&gt;(preserveContent: true));
+
             return new JObject(
                 new JProperty("id", context.RequestId),
                 new JProperty("pk", context.Variables["partition-key-prefix"] + "outbound"),
@@ -31,9 +33,13 @@
                 new JProperty("Ocp-Apim-Subscription-Key", context.Subscription.Key),
                 new JProperty("direction", "outbound"),
                 new JProperty("x-correlation-id", context.Variables["correlation-id"]),
-                new JProperty("consumed-tokens", context.Response.Headers.GetValueOrDefault("consumed-tokens", "0")),
-                new JProperty("model", JObject.Parse(context.Response.Body.As&lt;string&gt;(preserveContent: true))["model"].ToString()),
-                new JProperty("body", context.Response.Body.As&lt;string&gt;(preserveContent: true))
+                new JProperty("appid", context.Variables["app-id"]),
+                new JProperty("completion_tokens", result["usage"]["completion_tokens"]),
+                new JProperty("prompt_tokens", result["usage"]["prompt_tokens"]),
+                new JProperty("total_tokens", result["usage"]["total_tokens"]),
+                new JProperty("model", result["model"]),
+                new JProperty("prompt_filter_results", result["prompt_filter_results"]),
+                new JProperty("body", result)
             ).ToString();
         }
         </set-body>
