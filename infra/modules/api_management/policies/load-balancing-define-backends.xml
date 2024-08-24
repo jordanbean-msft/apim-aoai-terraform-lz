@@ -4,6 +4,7 @@
     <!-- If we can't find the variable, initialize it -->
     <choose>
         <when condition="@(context.Variables.ContainsKey("listBackends") == false)">
+            <set-variable name="openai-backends" value="{{openai-load-balancing-backends}}" />
             <set-variable name="listBackends" value="@{
                 // -------------------------------------------------
                 // ------- Explanation of backend properties -------
@@ -16,21 +17,22 @@
                 // "retryAfter":   We use it to know when to mark this endpoint as healthy again after we received a 429 response
 
                 JArray backends = new JArray();
-                backends.Add(new JObject()
-                {
-                    { "backend-id", "openai-backend-0" },
-                    { "priority", 1},
-                    { "isThrottling", false }, 
-                    { "retryAfter", DateTime.MinValue } 
-                });
 
-                backends.Add(new JObject()
+                var contents = (string)context.Variables["myvariable"];
+                var minifiedJson = contents.Replace("\n", "").Replace("\r", "").Replace("\\", "");
+
+                var parsedJson = JArray.Parse(minifiedJson);
+
+                foreach(var backend in parsedJson)
                 {
-                    { "backend-id", "openai-backend-1" },
-                    { "priority", 1},
-                    { "isThrottling", false },
-                    { "retryAfter", DateTime.MinValue }
-                });
+                    backends.Add(new JObject()
+                    {
+                        { "backend-id", backend["backend-id"] },
+                        { "priority", backend["priority"]},
+                        { "isThrottling", false }, 
+                        { "retryAfter", DateTime.MinValue } 
+                    });
+                }
 
                 return backends;   
             }" />

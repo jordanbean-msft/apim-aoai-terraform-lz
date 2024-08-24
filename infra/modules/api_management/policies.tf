@@ -65,7 +65,7 @@ resource "azurerm_api_management_policy_fragment" "load_balancing_select_backend
   name              = "load-balancing-select-backend"
   value             = file("${path.module}/policies/load-balancing-select-backend.xml")
   format            = "rawxml"
-  depends_on        = [
+  depends_on = [
     azurerm_api_management_policy_fragment.load_balancing_define_backends_policy
   ]
 }
@@ -75,6 +75,6 @@ resource "azurerm_api_management_policy_fragment" "load_balancing_define_backend
   name              = "load-balancing-define-backends"
   value             = file("${path.module}/policies/load-balancing-define-backends.xml")
   format            = "rawxml"
-  depends_on        = [
-    azurerm_api_management_named_value.openai_load_balancing_backends]
+  depends_on = [
+  azurerm_api_management_named_value.openai_load_balancing_backends]
 }
