@@ -12,7 +12,7 @@
 		<set-header name="x-ms-documentdb-partitionkey" exists-action="override">
 			<value>
                 @{
-                    var result = $"[\"{context.Variables["partition-key-prefix"] + "inbound"}\"]";
+                    var result = $"[\"{context.Variables["partition-key"]}\"]";
                     return result;
                 }
             </value>
@@ -24,16 +24,19 @@
             <value>@((string)context.Variables["correlation-id"])</value>
         </set-header>
         <set-body>@{
+            var result = JObject.Parse(context.Request.Body.As&lt;string&gt;(preserveContent: true));
+
             return new JObject(
-                new JProperty("id", context.RequestId),
-                new JProperty("pk", context.Variables["partition-key-prefix"] + "inbound"),
+                new JProperty("id", context.Variables["app-id"] + "|" + context.RequestId + "|inbound"),
+                new JProperty("pk", context.Variables["partition-key"]),
+                new JProperty("request-id", context.RequestId),
                 new JProperty("timestamp", context.Timestamp),
                 new JProperty("Ocp-Apim-Subscription-Key", context.Subscription.Key),
                 new JProperty("direction", "inbound"),
                 new JProperty("x-correlation-id", context.Variables["correlation-id"]),
                 new JProperty("appid", context.Variables["app-id"]),
-                new JProperty("model", JObject.Parse(context.Request.Body.As&lt;string&gt;(preserveContent: true))["model"].ToString()),
-                new JProperty("body", context.Request.Body.As&lt;string&gt;(preserveContent: true))
+                new JProperty("model", result["model"]),
+                new JProperty("body", result)
             ).ToString();
         }
         </set-body>

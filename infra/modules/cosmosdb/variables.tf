@@ -37,3 +37,8 @@ variable "principal_id" {
   description = "The Id of the service principal to add to CosmosDB access policies"
   type        = string
 }
+
+variable "cosmosdb_document_time_to_live" {
+  description = "The time to live for the CosmosDB data"
+  type        = number
+}

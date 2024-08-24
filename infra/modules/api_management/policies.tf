@@ -8,14 +8,14 @@ resource "azurerm_api_management_api_policy" "openai_api_policy" {
     azurerm_api_management_policy_fragment.openai_cosmos_logging_inbound_policy,
     azurerm_api_management_policy_fragment.openai_cosmos_logging_outbound_policy,
     azurerm_api_management_policy_fragment.setup_correlation_id_policy,
-    azurerm_api_management_policy_fragment.generate_partition_key_prefix_policy
+    azurerm_api_management_policy_fragment.generate_partition_key_policy
   ]
 }
 
-resource "azurerm_api_management_policy_fragment" "generate_partition_key_prefix_policy" {
+resource "azurerm_api_management_policy_fragment" "generate_partition_key_policy" {
   api_management_id = azurerm_api_management.api_management.id
-  name              = "generate-partition-key-prefix"
-  value             = file("${path.module}/policies/generate-partition-key-prefix.xml")
+  name              = "generate-partition-key"
+  value             = file("${path.module}/policies/generate-partition-key.xml")
   format            = "rawxml"
 }
 

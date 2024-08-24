@@ -58,3 +58,8 @@ variable "openai_service_principal_audience" {
   description = "The OpenAI service principal audience"
   type        = string
 }
+
+variable "cosmosdb_document_time_to_live" {
+  description = "The time to live for the CosmosDB data"
+  type        = number
+}

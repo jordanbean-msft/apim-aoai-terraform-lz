@@ -12,7 +12,7 @@
 		<set-header name="x-ms-documentdb-partitionkey" exists-action="override">
 			<value>
                 @{
-                    var result = $"[\"{context.Variables["partition-key-prefix"] + "outbound"}\"]";
+                    var result = $"[\"{context.Variables["partition-key"]}\"]";
                     return result;
                 }
             </value>
@@ -27,8 +27,9 @@
             var result = JObject.Parse(context.Response.Body.As&lt;string&gt;(preserveContent: true));
 
             return new JObject(
-                new JProperty("id", context.RequestId),
-                new JProperty("pk", context.Variables["partition-key-prefix"] + "outbound"),
+                new JProperty("id", context.Variables["app-id"] + "|" + context.RequestId + "|outbound"),
+                new JProperty("pk", context.Variables["partition-key"]),
+                new JProperty("request-id", context.RequestId),
                 new JProperty("timestamp", context.Timestamp),
                 new JProperty("Ocp-Apim-Subscription-Key", context.Subscription.Key),
                 new JProperty("direction", "outbound"),
@@ -38,7 +39,6 @@
                 new JProperty("prompt_tokens", result["usage"]["prompt_tokens"]),
                 new JProperty("total_tokens", result["usage"]["total_tokens"]),
                 new JProperty("model", result["model"]),
-                new JProperty("prompt_filter_results", result["prompt_filter_results"]),
                 new JProperty("body", result)
             ).ToString();
         }

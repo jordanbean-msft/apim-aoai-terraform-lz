@@ -196,6 +196,7 @@ module "cosmosdb" {
   user_assigned_identity_object_id = module.managed_identity.user_assigned_identity_object_id
   subscription_id                  = data.azurerm_client_config.current.subscription_id
   principal_id                     = var.principal_id
+  cosmosdb_document_time_to_live    = var.cosmosdb_document_time_to_live
 }
 
 # ------------------------------------------------------------------------------------------------------
