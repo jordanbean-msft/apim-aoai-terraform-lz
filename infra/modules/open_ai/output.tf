@@ -1,16 +1,16 @@
-output "azure_cognitive_services_endpoint" {
-  value = azurerm_cognitive_account.cognitive_account.endpoint
+output "azure_cognitive_services_endpoints" {
+  value = [
+    for deployment in var.openai_model_deployments : {
+      key      = deployment.name_suffix
+      name     = azurecaf_name.cognitiveservices_name[deployment.name_suffix].result
+      endpoint = azurerm_cognitive_account.cognitive_account[deployment.name_suffix].endpoint,
+      priority = deployment.priority
+    }
+  ]
 }
 
-output "azure_cognitive_services_key" {
-  value     = azurerm_cognitive_account.cognitive_account.primary_access_key
-  sensitive = true
-}
-
-output "azure_cognitive_services_chat_deployment_name" {
-  value = azurerm_cognitive_deployment.chat.name
-}
-
-output "azure_cognitive_services_embedding_deployment_name" {
-  value = azurerm_cognitive_deployment.embedding.name
+output "azure_cognitive_services_deployment_names" {
+  value = toset([
+    for deployment in azurerm_cognitive_deployment.cognitive_deployment : deployment.name
+  ])
 }

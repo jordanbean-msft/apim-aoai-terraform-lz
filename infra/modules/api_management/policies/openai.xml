@@ -1,12 +1,16 @@
 <policies>
     <inbound>
         <base />
+        <include-fragment fragment-id="load-balancing-define-backends" />
         <include-fragment fragment-id="setup-correlation-id" />
         <validate-jwt header-name="Authorization" failed-validation-httpcode="401" failed-validation-error-message="Unauthorized. Access token is missing or invalid.">
             <openid-config url="https://login.microsoftonline.com/{{tenant-id}}/.well-known/openid-configuration" />
             <audiences>
                 <audience>{{openai-service-principal-audience}}</audience>
             </audiences>
+            <issuers>
+                <issuer>https://sts.windows.net/{{tenant-id}}/</issuer>
+            </issuers>
             <required-claims>
                 <claim name="scp" match="all">
                     <value>user_impersonation</value>
@@ -23,11 +27,14 @@
         <azure-openai-token-limit tokens-per-minute="{{openai-token-limit-per-minute}}" counter-key="@(context.Subscription.Id)" estimate-prompt-tokens="true" tokens-consumed-header-name="consumed-tokens" remaining-tokens-header-name="remaining-tokens" />
         <include-fragment fragment-id="generate-partition-key" />
         <include-fragment fragment-id="openai-cosmos-logging-inbound" />
-        <set-backend-service backend-id="openai-backend" />
+        <!-- <set-backend-service backend-id="openai-backend" /> -->         
         <include-fragment fragment-id="get-access-token-to-openai" />
+        <set-variable name="backendIndex" value="-1" />
+        <set-variable name="remainingBackends" value="1" />        
     </inbound>
     <backend>
-        <forward-request timeout="120" fail-on-error-status-code="true" buffer-response="false" />
+        <!-- <forward-request timeout="120" fail-on-error-status-code="true" buffer-response="false" /> -->
+        <include-fragment fragment-id="load-balancing-select-backend"/>
     </backend>
     <outbound>
         <base />

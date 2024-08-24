@@ -8,7 +8,9 @@ resource "azurerm_api_management_api_policy" "openai_api_policy" {
     azurerm_api_management_policy_fragment.openai_cosmos_logging_inbound_policy,
     azurerm_api_management_policy_fragment.openai_cosmos_logging_outbound_policy,
     azurerm_api_management_policy_fragment.setup_correlation_id_policy,
-    azurerm_api_management_policy_fragment.generate_partition_key_policy
+    azurerm_api_management_policy_fragment.generate_partition_key_policy,
+    azurerm_api_management_policy_fragment.load_balancing_select_backend_policy,
+    azurerm_api_management_policy_fragment.load_balancing_define_backends_policy
   ]
 }
 
@@ -56,4 +58,23 @@ resource "azurerm_api_management_policy_fragment" "get_access_token_to_openai_po
   value             = file("${path.module}/policies/get-access-token-to-openai.xml")
   format            = "rawxml"
   depends_on        = [azurerm_api_management_named_value.user_assigned_identity_client_id]
+}
+
+resource "azurerm_api_management_policy_fragment" "load_balancing_select_backend_policy" {
+  api_management_id = azurerm_api_management.api_management.id
+  name              = "load-balancing-select-backend"
+  value             = file("${path.module}/policies/load-balancing-select-backend.xml")
+  format            = "rawxml"
+  depends_on        = [
+    azurerm_api_management_policy_fragment.load_balancing_define_backends_policy
+  ]
+}
+
+resource "azurerm_api_management_policy_fragment" "load_balancing_define_backends_policy" {
+  api_management_id = azurerm_api_management.api_management.id
+  name              = "load-balancing-define-backends"
+  value             = file("${path.module}/policies/load-balancing-define-backends.xml")
+  format            = "rawxml"
+  depends_on        = [
+    azurerm_api_management_named_value.openai_load_balancing_backends]
 }

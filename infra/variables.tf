@@ -19,13 +19,23 @@ variable "virtual_network_name" {
   type        = string
 }
 
-variable "api_management_subnet_address_prefixes" {
+variable "integration_subnet_name" {
+  description = "The name of the integration subnet"
+  type        = string
+}
+
+variable "integration_subnet_address_prefixes" {
   description = "The address space of the API Management subnet"
   type        = list(string)
 }
 
-variable "private_endpoint_subnet_address_prefixes" {
-  description = "The address space of the private endpoint subnet"
+variable "application_subnet_name" {
+  description = "The name of the application subnet"
+  type        = string
+}
+
+variable "application_subnet_address_prefixes" {
+  description = "The address space of the application subnet"
   type        = list(string)
 }
 
@@ -62,4 +72,27 @@ variable "openai_service_principal_audience" {
 variable "cosmosdb_document_time_to_live" {
   description = "The time to live for the CosmosDB data"
   type        = number
+}
+
+variable "openai_model_deployments" {
+  description = "The OpenAI model deployments"
+  type = list(object({
+    name_suffix = string,
+    kind        = string,
+    sku_name    = string,
+    location    = string,
+    priority    = number,
+    deployments = list(object({
+      model = object({
+        format  = string
+        name    = string
+        version = string
+      }),
+      scale = object({
+        type     = string
+        capacity = optional(number)
+      })
+    }))
+    })
+  )
 }

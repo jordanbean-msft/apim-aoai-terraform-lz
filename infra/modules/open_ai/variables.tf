@@ -27,3 +27,26 @@ variable "user_assigned_identity_object_id" {
   description = "The object id of the user assigned identity"
   type        = string
 }
+
+variable "openai_model_deployments" {
+  description = "The OpenAI model deployments"
+  type = list(object({
+    name_suffix = string,
+    kind        = string,
+    sku_name    = string,
+    location    = string,
+    priority    = number,
+    deployments = list(object({
+      model = object({
+        format  = string
+        name    = string
+        version = string
+      }),
+      scale = object({
+        type     = string
+        capacity = optional(number)
+      })
+    }))
+    })
+  )
+}

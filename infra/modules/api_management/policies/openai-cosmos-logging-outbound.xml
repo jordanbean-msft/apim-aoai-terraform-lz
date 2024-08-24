@@ -39,6 +39,7 @@
                 new JProperty("prompt_tokens", result["usage"]["prompt_tokens"]),
                 new JProperty("total_tokens", result["usage"]["total_tokens"]),
                 new JProperty("model", result["model"]),
+                new JProperty("backend-id", context.Variables["backend-id"]),
                 new JProperty("body", result)
             ).ToString();
         }

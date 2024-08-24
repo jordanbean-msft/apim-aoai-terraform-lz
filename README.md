@@ -10,6 +10,25 @@
 
 - [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
 - Azure subscription & resource group
+- Terraform [https://developer.hashicorp.com/terraform/install?product_intent=terraform#windows]
+- `Owner` level permissions on the resource group you wish to apply the Terraform to (since it uses RBAC to set up access to Cosmos, OpenAI, Key Vault, etc)
+
+### Azure
+
+A virtual network of at least a `/25` and 2 subnets (each at least `/27` ) to associate with API Management & the private endpoints.
+
+### Entra ID
+
+2 service principals, one to represent OpenAI at the API Management level and one to represent your application.
+
+#### OpenAI Service Principal
+
+- Does not need a `redirect-uri` specified since it will not be retrieving tokens itself, only validating them.
+- Expose a scope called `user_impersonation` and specify an `Application ID URI`. This permission should require admin consent.
+
+#### Application Service Principal
+
+- Needs to have the `Application ID URI/user-impersonation` API permission to the OpenAI Service Principal configured above. You will need to get admin consent for this scope before use.
 
 ## Deployment
 

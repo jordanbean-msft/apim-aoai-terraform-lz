@@ -54,3 +54,8 @@ variable "private_endpoint_subnet_name" {
   description = "Specifies resource name of the subnet hosting the private endpoints."
   type        = string
 }
+
+variable "subscription_id" {
+  description = "The subscription id of the vNet"
+  type        = string
+}

@@ -4,10 +4,8 @@ locals {
   resource_token                                 = substr(replace(lower(local.sha), "[^A-Za-z0-9_]", ""), 0, 13)
   azure_openai_secret_name                       = "azure-openai-key"
   cosmosdb_account_connection_string_secret_name = "cosmosdb-account-connection-string"
-  api_management_subnet_name                     = "api-management-subnet"
-  api_management_subnet_nsg_name                 = "nsg-api-management-subnet"
-  private_endpoint_subnet_name                   = "private-endpoint-subnet"
-  private_endpoint_subnet_nsg_name               = "nsg-private-endpoint-subnet"
+  api_management_subnet_nsg_name                 = "nsg-${var.integration_subnet_name}-subnet"
+  private_endpoint_subnet_nsg_name               = "nsg-${var.application_subnet_name}-subnet"
 }
 
 # ------------------------------------------------------------------------------------------------------
@@ -23,8 +21,8 @@ module "virtual_network" {
   virtual_network_name = var.virtual_network_name
   subnets = [
     {
-      name               = local.api_management_subnet_name
-      address_prefixes   = var.api_management_subnet_address_prefixes
+      name               = var.integration_subnet_name
+      address_prefixes   = var.integration_subnet_address_prefixes
       service_delegation = false
       delegation_name    = ""
       actions            = [""]
@@ -98,16 +96,17 @@ module "virtual_network" {
       ]
     },
     {
-      name                   = local.private_endpoint_subnet_name
-      address_prefixes       = var.private_endpoint_subnet_address_prefixes
+      name                   = var.application_subnet_name
+      address_prefixes       = var.application_subnet_address_prefixes
       service_delegation     = false
       delegation_name        = ""
       actions                = []
       network_security_rules = []
     }
   ]
-  api_management_subnet_name   = local.api_management_subnet_name
-  private_endpoint_subnet_name = local.private_endpoint_subnet_name
+  api_management_subnet_name   = var.integration_subnet_name
+  private_endpoint_subnet_name = var.application_subnet_name
+  subscription_id              = data.azurerm_client_config.current.subscription_id
 }
 
 # ------------------------------------------------------------------------------------------------------
@@ -158,14 +157,6 @@ module "key_vault" {
     module.managed_identity.user_assigned_identity_object_id
   ]
   secrets = [
-    {
-      name  = local.azure_openai_secret_name
-      value = module.openai.azure_cognitive_services_key
-    },
-    {
-      name  = local.cosmosdb_account_connection_string_secret_name
-      value = module.cosmosdb.cosmosdb_account_connection_string
-    }
   ]
   subnet_id = module.virtual_network.private_endpoint_subnet_id
 }
@@ -181,6 +172,7 @@ module "openai" {
   tags                             = local.tags
   subnet_id                        = module.virtual_network.private_endpoint_subnet_id
   user_assigned_identity_object_id = module.managed_identity.user_assigned_identity_object_id
+  openai_model_deployments         = var.openai_model_deployments
 }
 
 # ------------------------------------------------------------------------------------------------------
@@ -196,7 +188,7 @@ module "cosmosdb" {
   user_assigned_identity_object_id = module.managed_identity.user_assigned_identity_object_id
   subscription_id                  = data.azurerm_client_config.current.subscription_id
   principal_id                     = var.principal_id
-  cosmosdb_document_time_to_live    = var.cosmosdb_document_time_to_live
+  cosmosdb_document_time_to_live   = var.cosmosdb_document_time_to_live
 }
 
 # ------------------------------------------------------------------------------------------------------
@@ -215,12 +207,11 @@ module "api_management" {
   publisher_email                          = var.publisher_email
   sku_name                                 = var.api_management_sku_name
   application_insights_id                  = module.application_insights.application_insights_id
-  openai_endpoint                          = module.openai.azure_cognitive_services_endpoint
+  openai_endpoints                         = module.openai.azure_cognitive_services_endpoints
   key_vault_id                             = module.key_vault.key_vault_id
   cosmosdb_scope                           = "https://${module.cosmosdb.cosmosdb_account_name}.documents.azure.com"
   cosmosdb_document_endpoint               = "${module.cosmosdb.cosmosdb_account_endpoint}dbs/${module.cosmosdb.cosmosdb_sql_database_name}/colls/${module.cosmosdb.cosmosdb_sql_container_name}/docs"
   application_insights_instrumentation_key = module.application_insights.application_insights_instrumentation_key
-  openai_key_keyvault_secret_id            = "https://${module.key_vault.key_vault_name}.vault.azure.net/secrets/${local.azure_openai_secret_name}"
   openai_openapi_specification_url         = var.openai_openapi_specification_url
   openai_token_limit_per_minute            = var.openai_token_limit_per_minute
   tenant_id                                = data.azurerm_client_config.current.tenant_id

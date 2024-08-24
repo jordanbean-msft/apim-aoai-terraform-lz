@@ -1,11 +1,12 @@
-resource "azurerm_api_management_named_value" "openai_backend" {
-  api_management_name = azurerm_api_management.api_management.name
-  name                = "openai-backend"
-  resource_group_name = var.resource_group_name
-  display_name        = "openai-backend"
-  value               = "${var.openai_endpoint}openai/"
-  secret              = false
-}
+# resource "azurerm_api_management_named_value" "openai_backend" {
+#   for_each            = { for endpoint in var.openai_endpoints : endpoint.key => endpoint }
+#   api_management_name = azurerm_api_management.api_management.name
+#   name                = "openai-backend-${each.name}"
+#   resource_group_name = var.resource_group_name
+#   display_name        = "openai-backend-${each.name}"
+#   value               = "${each.value.endpoint}openai/"
+#   secret              = false
+# }
 
 resource "azurerm_api_management_named_value" "openai_token_limit_per_minute" {
   api_management_name = azurerm_api_management.api_management.name
@@ -14,18 +15,6 @@ resource "azurerm_api_management_named_value" "openai_token_limit_per_minute" {
   display_name        = "openai-token-limit-per-minute"
   value               = var.openai_token_limit_per_minute
   secret              = false
-}
-
-resource "azurerm_api_management_named_value" "openai_key" {
-  api_management_name = azurerm_api_management.api_management.name
-  name                = "openai-key"
-  resource_group_name = var.resource_group_name
-  display_name        = "openai-key"
-  secret              = true
-  value_from_key_vault {
-    identity_client_id = var.user_assigned_identity_client_id
-    secret_id          = var.openai_key_keyvault_secret_id
-  }
 }
 
 resource "azurerm_api_management_named_value" "cosmosdb_scope" {
@@ -71,4 +60,18 @@ resource "azurerm_api_management_named_value" "openai_service_principal_audience
   display_name        = "openai-service-principal-audience"
   value               = var.openai_service_principal_audience
   secret              = false
+}
+
+resource "azurerm_api_management_named_value" "openai_load_balancing_backends" {
+  api_management_name = azurerm_api_management.api_management.name
+  name                = "openai-load-balancing-backends"
+  resource_group_name = var.resource_group_name
+  display_name        = "openai-load-balancing-backends"
+  value = jsonencode([for endpoint in var.openai_endpoints : {
+    backend-id   = endpoint.name
+    priority     = endpoint.priority
+    isThrottling = false
+    retryAfter   = "1/1/0001 12:00:00 AM"
+  }])
+  secret = false
 }

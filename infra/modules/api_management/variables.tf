@@ -48,15 +48,14 @@ variable "api_management_subnet_id" {
   type        = string
 }
 
-variable "openai_endpoint" {
-  description = "The OpenAI endpoint to use for the API Management service"
-  type        = string
-}
-
-variable "openai_key_keyvault_secret_id" {
-  description = "The OpenAI key Key Vault secret id to use for the API Management service"
-  type        = string
-  sensitive   = true
+variable "openai_endpoints" {
+  description = "The OpenAI endpoints to use for the API Management service"
+  type = list(object({
+    key      = string
+    name     = string
+    endpoint = string
+    priority = number
+  }))
 }
 
 variable "cosmosdb_scope" {

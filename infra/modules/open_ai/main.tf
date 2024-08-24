@@ -14,19 +14,21 @@ terraform {
 # Deploy cognitive services
 # ------------------------------------------------------------------------------------------------------
 resource "azurecaf_name" "cognitiveservices_name" {
-  name          = "openai-${var.resource_token}"
+  for_each      = { for deployment in var.openai_model_deployments : deployment.name_suffix => deployment }
+  name          = "openai-${var.resource_token}-${each.key}"
   resource_type = "azurerm_cognitive_account"
   random_length = 0
   clean_input   = true
 }
 
 resource "azurerm_cognitive_account" "cognitive_account" {
-  name                          = azurecaf_name.cognitiveservices_name.result
-  location                      = var.location
+  for_each                      = { for deployment in var.openai_model_deployments : deployment.name_suffix => deployment }
+  name                          = azurecaf_name.cognitiveservices_name[each.key].result
+  location                      = each.value.location
   resource_group_name           = var.resource_group_name
-  kind                          = "OpenAI"
-  sku_name                      = "S0"
-  custom_subdomain_name         = azurecaf_name.cognitiveservices_name.result
+  kind                          = each.value.kind
+  sku_name                      = each.value.sku_name
+  custom_subdomain_name         = azurecaf_name.cognitiveservices_name[each.key].result
   public_network_access_enabled = false
   network_acls {
     default_action = "Deny"
@@ -34,50 +36,52 @@ resource "azurerm_cognitive_account" "cognitive_account" {
   }
 }
 
-resource "azurerm_cognitive_deployment" "chat" {
-  name                 = "chat"
-  cognitive_account_id = azurerm_cognitive_account.cognitive_account.id
+resource "azurerm_cognitive_deployment" "cognitive_deployment" {
+  for_each = {
+    for combination in flatten([
+      for deployment in var.openai_model_deployments : [
+        for model in deployment.deployments : {
+          name_suffix    = deployment.name_suffix
+          model_format   = model.model.format
+          model_name     = model.model.name
+          model_version  = model.model.version
+          scale_type     = model.scale.type
+          scale_capacity = model.scale.capacity
+        }
+      ]
+    ]) : "${combination.model_name}-${combination.name_suffix}" => combination
+  }
+  name                 = "${each.value.model_name}-${each.value.model_version}"
+  cognitive_account_id = azurerm_cognitive_account.cognitive_account[each.value.name_suffix].id
   model {
-    format  = "OpenAI"
-    name    = "gpt-4o"
-    version = "2024-05-13"
+    format  = each.value.model_format
+    name    = each.value.model_name
+    version = each.value.model_version
   }
 
   scale {
-    type     = "Standard"
-    capacity = 50
-  }
-}
-
-resource "azurerm_cognitive_deployment" "embedding" {
-  name                 = "embedding"
-  cognitive_account_id = azurerm_cognitive_account.cognitive_account.id
-  model {
-    format  = "OpenAI"
-    name    = "text-embedding-ada-002"
-    version = "2"
-  }
-
-  scale {
-    type = "Standard"
+    type     = each.value.scale_type
+    capacity = each.value.scale_capacity
   }
 }
 
 module "private_endpoint" {
+  for_each                       = { for deployment in var.openai_model_deployments : deployment.name_suffix => deployment }
   source                         = "../private_endpoint"
-  name                           = azurerm_cognitive_account.cognitive_account.name
+  name                           = azurerm_cognitive_account.cognitive_account[each.key].name
   resource_group_name            = var.resource_group_name
   tags                           = var.tags
   resource_token                 = var.resource_token
-  private_connection_resource_id = azurerm_cognitive_account.cognitive_account.id
-  location                       = var.location
+  private_connection_resource_id = azurerm_cognitive_account.cognitive_account[each.key].id
+  location                       = each.value.location
   subnet_id                      = var.subnet_id
   subresource_name               = "account"
   is_manual_connection           = false
 }
 
 resource "azurerm_role_assignment" "cognitive_services_openai_contributor_role_assignment" {
-  scope                = azurerm_cognitive_account.cognitive_account.id
+  for_each             = { for deployment in var.openai_model_deployments : deployment.name_suffix => deployment }
+  scope                = azurerm_cognitive_account.cognitive_account[each.key].id
   role_definition_name = "Cognitive Services OpenAI Contributor"
   principal_id         = var.user_assigned_identity_object_id
 }
