@@ -4,7 +4,7 @@
     <!-- If we can't find the variable, initialize it -->
     <choose>
         <when condition="@(context.Variables.ContainsKey("listBackends") == false)">
-            <set-variable name="openai-backends" value="{{openai-load-balancing-backends}}" />
+            <set-variable name="openai-load-balancing-backends" value="{{openai-load-balancing-backends}}" />
             <set-variable name="listBackends" value="@{
                 // -------------------------------------------------
                 // ------- Explanation of backend properties -------
@@ -18,7 +18,7 @@
 
                 JArray backends = new JArray();
 
-                var contents = (string)context.Variables["myvariable"];
+                var contents = (string)context.Variables["openai-load-balancing-backends"];
                 var minifiedJson = contents.Replace("\n", "").Replace("\r", "").Replace("\\", "");
 
                 var parsedJson = JArray.Parse(minifiedJson);

@@ -1,7 +1,7 @@
 <fragment>
 	<authentication-managed-identity resource="{{cosmosdb-scope}}" output-token-variable-name="msi-access-token" ignore-error="false" client-id="{{user-assigned-identity-client-id}}" />
 	<send-one-way-request mode="new">
-        <set-url>{{cosmosdb-document-endpoint}}</set-url>
+		<set-url>{{cosmosdb-document-endpoint}}</set-url>
 		<set-method>POST</set-method>
 		<set-header name="Authorization" exists-action="override">
 			<value>@("type=aad&amp;ver=1.0&amp;sig=" + context.Variables["msi-access-token"])</value>
@@ -17,16 +17,16 @@
                 }
             </value>
 		</set-header>
-        <set-header name="Content-Type" exists-action="override">
-            <value>application/json</value>
-        </set-header>
-        <set-header name="x-correlation-id" exists-action="override">
-            <value>@((string)context.Variables["correlation-id"])</value>
-        </set-header>
-        <set-body>@{
+		<set-header name="Content-Type" exists-action="override">
+			<value>application/json</value>
+		</set-header>
+		<set-header name="x-correlation-id" exists-action="override">
+			<value>@((string)context.Variables["correlation-id"])</value>
+		</set-header>
+		<set-body>@{
             var result = JObject.Parse(context.Response.Body.As&lt;string&gt;(preserveContent: true));
 
-            return new JObject(
+            var returnObject = new JObject(
                 new JProperty("id", context.Variables["app-id"] + "|" + context.RequestId + "|outbound"),
                 new JProperty("pk", context.Variables["partition-key"]),
                 new JProperty("request-id", context.RequestId),
@@ -34,14 +34,19 @@
                 new JProperty("Ocp-Apim-Subscription-Key", context.Subscription.Key),
                 new JProperty("direction", "outbound"),
                 new JProperty("x-correlation-id", context.Variables["correlation-id"]),
-                new JProperty("appid", context.Variables["app-id"]),
-                new JProperty("completion_tokens", result["usage"]["completion_tokens"]),
-                new JProperty("prompt_tokens", result["usage"]["prompt_tokens"]),
-                new JProperty("total_tokens", result["usage"]["total_tokens"]),
-                new JProperty("model", result["model"]),
+                new JProperty("app-id", context.Variables["app-id"]),
                 new JProperty("backend-id", context.Variables["backend-id"]),
                 new JProperty("body", result)
-            ).ToString();
+            );
+
+            if(context.Response.StatusCode < 400) {
+                returnObject.Add(new JProperty("completion_tokens", result["usage"]["completion_tokens"]));
+                returnObject.Add(new JProperty("prompt_tokens", result["usage"]["prompt_tokens"]));
+                returnObject.Add(new JProperty("total_tokens", result["usage"]["total_tokens"]));
+                returnObject.Add(new JProperty("model", result["model"]));
+            }
+
+            return returnObject.ToString();
         }
         </set-body>
 	</send-one-way-request>
