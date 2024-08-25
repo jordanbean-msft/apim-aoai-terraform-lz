@@ -6,6 +6,7 @@
 @openaiClientId=
 @resourceGroupName=
 @chatDeploymentName=gpt-4o-2024-05-13
+@embeddingDeploymentName=text-embedding-3-large-1
 
 # @name initiate_oauth_auth_code_flow
 GET https://login.microsoftonline.com/{{aadV2TenantId}}/oauth2/v2.0/authorize
@@ -68,7 +69,7 @@ Authorization: Bearer {{token}}
 }
 
 ###
-@openai_request_with_trace_trace_id = {{openai_request_with_trace.response.headers.apim-trace-id}}
+@openai_request_with_trace_trace_id = {{openai_chat_request_with_trace.response.headers.apim-trace-id}}
 ###
 
 # @name openai_request_with_trace_get_trace
