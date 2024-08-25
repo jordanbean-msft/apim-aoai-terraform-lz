@@ -34,12 +34,21 @@
                 new JProperty("xCorrelationId", context.Variables["correlation-id"]),
                 new JProperty("appId", context.Variables["app-id"]),
                 new JProperty("backendId", context.Variables["backend-id"]),
-                new JProperty("isStreaming", (bool)context.Variables["isStreaming"])              
+                new JProperty("isStreaming", (bool)context.Variables["isStreaming"])
             );
 
             if(!(bool)context.Variables["isStreaming"]) {
                 var result = JObject.Parse(context.Response.Body.As&lt;string&gt;(preserveContent: true));
-                returnObject.Add(new JProperty("body", result));            
+                
+                //remove the actual embedding from the logged message
+                if(context.Request.OriginalUrl.Path.EndsWith("/embeddings")) {
+                    foreach(var data in result["data"]) {
+                        data["embedding"]?.Parent?.Remove();
+                    }
+                }
+
+                returnObject.Add(new JProperty("body", result));
+                returnObject.Add(new JProperty("model", result["model"]));
 
                 if(context.Response.StatusCode &lt; 400) {
                     returnObject.Add(new JProperty("promptTokens", result["usage"]["prompt_tokens"]));
@@ -48,7 +57,6 @@
                     //embeddings won't contain these properties
                     if(context.Request.OriginalUrl.Path.EndsWith("/completions")) {
                         returnObject.Add(new JProperty("completionTokens", result["usage"]["completion_tokens"]));
-                        returnObject.Add(new JProperty("model", result["model"]));
                     }
                 }
             }

@@ -34,7 +34,7 @@
 		<set-body>@{
             var result = (JObject)context.Variables["requestBody"];
 
-            return new JObject(
+            var returnObject = new JObject(
                 new JProperty("id", context.Variables["app-id"] + "|" + context.RequestId + "|inbound"),
                 new JProperty("pk", context.Variables["partition-key"]),
                 new JProperty("requestId", context.RequestId),
@@ -42,10 +42,20 @@
                 new JProperty("ocpApimSubscriptionKey", context.Subscription.Key),
                 new JProperty("direction", "inbound"),
                 new JProperty("xCorrelationId", context.Variables["correlation-id"]),
-                new JProperty("appId", context.Variables["app-id"]),
-                new JProperty("model", result["model"]),
+                new JProperty("appId", context.Variables["app-id"]),                
                 new JProperty("body", result)
-            ).ToString();
+            );
+
+            if(context.Request.OriginalUrl.Path.EndsWith("/completions")) {
+                returnObject.Add(new JProperty("model", result["model"]));
+            } else {
+                string pattern = @"deployments\/([^\/]+)\/embeddings";
+                Match match = Regex.Match(context.Request.OriginalUrl.Path, pattern);
+
+                returnObject.Add(new JProperty("model", match.Groups[1].Value));
+            }
+
+            return returnObject.ToString();
         }
         </set-body>
 	</send-one-way-request>
