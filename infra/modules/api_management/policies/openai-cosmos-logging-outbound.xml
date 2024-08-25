@@ -40,10 +40,14 @@
             );
 
             if(context.Response.StatusCode &lt; 400) {
-                returnObject.Add(new JProperty("completionTokens", result["usage"]["completion_tokens"]));
                 returnObject.Add(new JProperty("promptTokens", result["usage"]["prompt_tokens"]));
                 returnObject.Add(new JProperty("totalTokens", result["usage"]["total_tokens"]));
-                returnObject.Add(new JProperty("model", result["model"]));
+
+                //embeddings won't contain these properties
+                if(context.Request.OriginalUrl.Path.EndsWith("chat/completions")) {
+                    returnObject.Add(new JProperty("completionTokens", result["usage"]["completion_tokens"]));
+                    returnObject.Add(new JProperty("model", result["model"]));
+                }
             }
 
             return returnObject.ToString();
