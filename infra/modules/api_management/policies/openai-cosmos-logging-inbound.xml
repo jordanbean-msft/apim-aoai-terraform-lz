@@ -1,7 +1,15 @@
 <fragment>
 	<authentication-managed-identity resource="{{cosmosdb-scope}}" output-token-variable-name="msi-access-token" ignore-error="false" client-id="{{user-assigned-identity-client-id}}" />
+	<set-variable name="requestBody" value="@{
+        var result = JObject.Parse(context.Request.Body.As&lt;string&gt;(preserveContent: true));
+        return result;
+    }" />
+	<set-variable name="isStreaming" value="@{
+        var result = (JObject)context.Variables["requestBody"];
+        return result.ContainsKey("stream") && result["stream"].Value<bool>();
+    }" />
 	<send-one-way-request mode="new">
-        <set-url>{{cosmosdb-document-endpoint}}</set-url>
+		<set-url>{{cosmosdb-document-endpoint}}</set-url>
 		<set-method>POST</set-method>
 		<set-header name="Authorization" exists-action="override">
 			<value>@("type=aad&amp;ver=1.0&amp;sig=" + context.Variables["msi-access-token"])</value>
@@ -17,14 +25,14 @@
                 }
             </value>
 		</set-header>
-        <set-header name="Content-Type" exists-action="override">
-            <value>application/json</value>
-        </set-header>
-        <set-header name="x-correlation-id" exists-action="override">
-            <value>@((string)context.Variables["correlation-id"])</value>
-        </set-header>
-        <set-body>@{
-            var result = JObject.Parse(context.Request.Body.As&lt;string&gt;(preserveContent: true));
+		<set-header name="Content-Type" exists-action="override">
+			<value>application/json</value>
+		</set-header>
+		<set-header name="x-correlation-id" exists-action="override">
+			<value>@((string)context.Variables["correlation-id"])</value>
+		</set-header>
+		<set-body>@{
+            var result = (JObject)context.Variables["requestBody"];
 
             return new JObject(
                 new JProperty("id", context.Variables["app-id"] + "|" + context.RequestId + "|inbound"),

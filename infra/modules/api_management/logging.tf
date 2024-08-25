@@ -16,5 +16,5 @@ resource "azurerm_api_management_api_diagnostic" "openai_api_diagnostic" {
   identifier                = "applicationinsights"
   always_log_errors         = true
   http_correlation_protocol = "W3C"
-
+  verbosity                 = "information"
 }

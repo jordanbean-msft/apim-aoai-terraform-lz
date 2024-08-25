@@ -24,8 +24,6 @@
 			<value>@((string)context.Variables["correlation-id"])</value>
 		</set-header>
 		<set-body>@{
-            var result = JObject.Parse(context.Response.Body.As&lt;string&gt;(preserveContent: true));
-
             var returnObject = new JObject(
                 new JProperty("id", context.Variables["app-id"] + "|" + context.RequestId + "|outbound"),
                 new JProperty("pk", context.Variables["partition-key"]),
@@ -36,17 +34,22 @@
                 new JProperty("xCorrelationId", context.Variables["correlation-id"]),
                 new JProperty("appId", context.Variables["app-id"]),
                 new JProperty("backendId", context.Variables["backend-id"]),
-                new JProperty("body", result)
+                new JProperty("isStreaming", (bool)context.Variables["isStreaming"])              
             );
 
-            if(context.Response.StatusCode &lt; 400) {
-                returnObject.Add(new JProperty("promptTokens", result["usage"]["prompt_tokens"]));
-                returnObject.Add(new JProperty("totalTokens", result["usage"]["total_tokens"]));
+            if(!(bool)context.Variables["isStreaming"]) {
+                var result = JObject.Parse(context.Response.Body.As&lt;string&gt;(preserveContent: true));
+                returnObject.Add(new JProperty("body", result));            
 
-                //embeddings won't contain these properties
-                if(context.Request.OriginalUrl.Path.EndsWith("chat/completions")) {
-                    returnObject.Add(new JProperty("completionTokens", result["usage"]["completion_tokens"]));
-                    returnObject.Add(new JProperty("model", result["model"]));
+                if(context.Response.StatusCode &lt; 400) {
+                    returnObject.Add(new JProperty("promptTokens", result["usage"]["prompt_tokens"]));
+                    returnObject.Add(new JProperty("totalTokens", result["usage"]["total_tokens"]));
+
+                    //embeddings won't contain these properties
+                    if(context.Request.OriginalUrl.Path.EndsWith("/completions")) {
+                        returnObject.Add(new JProperty("completionTokens", result["usage"]["completion_tokens"]));
+                        returnObject.Add(new JProperty("model", result["model"]));
+                    }
                 }
             }
 
