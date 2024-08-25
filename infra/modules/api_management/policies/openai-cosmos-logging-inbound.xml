@@ -29,12 +29,12 @@
             return new JObject(
                 new JProperty("id", context.Variables["app-id"] + "|" + context.RequestId + "|inbound"),
                 new JProperty("pk", context.Variables["partition-key"]),
-                new JProperty("request-id", context.RequestId),
+                new JProperty("requestId", context.RequestId),
                 new JProperty("timestamp", context.Timestamp),
-                new JProperty("Ocp-Apim-Subscription-Key", context.Subscription.Key),
+                new JProperty("ocpApimSubscriptionKey", context.Subscription.Key),
                 new JProperty("direction", "inbound"),
-                new JProperty("x-correlation-id", context.Variables["correlation-id"]),
-                new JProperty("appid", context.Variables["app-id"]),
+                new JProperty("xCorrelationId", context.Variables["correlation-id"]),
+                new JProperty("appId", context.Variables["app-id"]),
                 new JProperty("model", result["model"]),
                 new JProperty("body", result)
             ).ToString();

@@ -1,3 +1,12 @@
+###
+@aadV2TenantId=
+@subscriptionId=
+@aadV2ClientId=
+@apiManagementName=
+@openaiClientId=
+@resourceGroupName=
+@chatDeploymentName=gpt-4o-2024-05-13
+
 # @name initiate_oauth_auth_code_flow
 GET https://login.microsoftonline.com/{{aadV2TenantId}}/oauth2/v2.0/authorize
 ?client_id={{aadV2ClientId}}
@@ -24,7 +33,7 @@ client_id={{aadV2ClientId}}
 ###
 
 # @name openai_request
-POST https://{{apiManagementName}}.azure-api.net/openai/deployments/chat/chat/completions?api-version=2024-02-15-preview
+POST https://{{apiManagementName}}.azure-api.net/openai/deployments/{{chatDeploymentName}}/chat/completions?api-version=2024-02-15-preview
 Content-Type: application/json
 Ocp-Apim-Subscription-Key: {{subscriptionKey}}
 Authorization: Bearer {{token}}
@@ -42,7 +51,7 @@ Authorization: Bearer {{token}}
 ###
 
 # @name openai_request_with_trace
-POST https://{{apiManagementName}}.azure-api.net/openai/deployments/chat/chat/completions?api-version=2024-02-15-preview
+POST https://{{apiManagementName}}.azure-api.net/openai/deployments/{{chatDeploymentName}}/chat/completions?api-version=2024-02-15-preview
 Content-Type: application/json
 Ocp-Apim-Subscription-Key: {{subscriptionKey}}
 Apim-Debug-Authorization: {{apimDebugAuthorization}}

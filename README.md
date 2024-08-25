@@ -52,4 +52,8 @@ A virtual network of at least a `/25` and 2 subnets (each at least `/27` ) to as
     terraform apply -var-file "./main.tfvars.json"
     ```
 
+## Test
+
+Use the included `sample-openai.http` file to test the endpoints after deployment. These assume you have the [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) VS Code extension.
+
 ## Links

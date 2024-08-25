@@ -29,20 +29,20 @@
             var returnObject = new JObject(
                 new JProperty("id", context.Variables["app-id"] + "|" + context.RequestId + "|outbound"),
                 new JProperty("pk", context.Variables["partition-key"]),
-                new JProperty("request-id", context.RequestId),
+                new JProperty("requestId", context.RequestId),
                 new JProperty("timestamp", context.Timestamp),
-                new JProperty("Ocp-Apim-Subscription-Key", context.Subscription.Key),
+                new JProperty("ocpApimSubscriptionKey", context.Subscription.Key),
                 new JProperty("direction", "outbound"),
-                new JProperty("x-correlation-id", context.Variables["correlation-id"]),
-                new JProperty("app-id", context.Variables["app-id"]),
-                new JProperty("backend-id", context.Variables["backend-id"]),
+                new JProperty("xCorrelationId", context.Variables["correlation-id"]),
+                new JProperty("appId", context.Variables["app-id"]),
+                new JProperty("backendId", context.Variables["backend-id"]),
                 new JProperty("body", result)
             );
 
-            if(context.Response.StatusCode < 400) {
-                returnObject.Add(new JProperty("completion_tokens", result["usage"]["completion_tokens"]));
-                returnObject.Add(new JProperty("prompt_tokens", result["usage"]["prompt_tokens"]));
-                returnObject.Add(new JProperty("total_tokens", result["usage"]["total_tokens"]));
+            if(context.Response.StatusCode &lt; 400) {
+                returnObject.Add(new JProperty("completionTokens", result["usage"]["completion_tokens"]));
+                returnObject.Add(new JProperty("promptTokens", result["usage"]["prompt_tokens"]));
+                returnObject.Add(new JProperty("totalTokens", result["usage"]["total_tokens"]));
                 returnObject.Add(new JProperty("model", result["model"]));
             }
 
