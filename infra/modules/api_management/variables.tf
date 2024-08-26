@@ -103,3 +103,28 @@ variable "openai_service_principal_audience" {
   description = "The OpenAI service principal audience to use for the API Management service"
   type        = string
 }
+
+variable "redis_cache_id" {
+  description = "The id of the Redis cache"
+  type        = string
+}
+
+variable "redis_cache_name" {
+  description = "The name of the Redis cache"
+  type        = string
+}
+
+variable "redis_cache_connection_string" {
+  description = "The connection string of the Redis cache"
+  type        = string
+}
+
+variable "openai_semantic_cache_lookup_score_threshold" {
+  description = "The OpenAI semantic cache lookup score threshold"
+  type        = number
+}
+
+variable "openai_semantic_cache_store_duration" {
+  description = "The OpenAI semantic cache store duration"
+  type        = number
+}

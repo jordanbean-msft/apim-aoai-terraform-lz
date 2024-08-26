@@ -356,3 +356,6 @@ MigrationBackup/
 **/provider.conf.json
 
 test-openai.http
+test-openai.ipynb
+
+.vscode/

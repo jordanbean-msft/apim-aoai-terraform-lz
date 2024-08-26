@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     azurerm = {
-      version = "~>3.116.0"
+      version = "~>4.0.1"
       source  = "hashicorp/azurerm"
     }
     azurecaf = {
@@ -41,12 +41,12 @@ resource "azurerm_cognitive_deployment" "cognitive_deployment" {
     for combination in flatten([
       for deployment in var.openai_model_deployments : [
         for model in deployment.deployments : {
-          name_suffix    = deployment.name_suffix
-          model_format   = model.model.format
-          model_name     = model.model.name
-          model_version  = model.model.version
-          scale_type     = model.scale.type
-          scale_capacity = model.scale.capacity
+          name_suffix   = deployment.name_suffix
+          model_format  = model.model.format
+          model_name    = model.model.name
+          model_version = model.model.version
+          sku_name      = model.sku.name
+          sku_capacity  = model.sku.capacity
         }
       ]
     ]) : "${combination.model_name}-${combination.name_suffix}" => combination
@@ -59,9 +59,9 @@ resource "azurerm_cognitive_deployment" "cognitive_deployment" {
     version = each.value.model_version
   }
 
-  scale {
-    type     = each.value.scale_type
-    capacity = each.value.scale_capacity
+  sku {
+    name     = each.value.sku_name
+    capacity = each.value.sku_capacity
   }
 }
 

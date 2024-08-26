@@ -23,30 +23,27 @@ variable "subnet_id" {
   type        = string
 }
 
+variable "user_assigned_identity_name" {
+  description = "The name of the user assigned identity"
+  type        = string
+}
+
 variable "user_assigned_identity_object_id" {
   description = "The object id of the user assigned identity"
   type        = string
 }
 
-variable "openai_model_deployments" {
-  description = "The OpenAI model deployments"
-  type = list(object({
-    name_suffix = string,
-    kind        = string,
-    sku_name    = string,
-    location    = string,
-    priority    = number,
-    deployments = list(object({
-      model = object({
-        format  = string
-        name    = string
-        version = string
-      }),
-      sku = object({
-        name     = string,
-        capacity = optional(number)
-      })
-    }))
-    })
-  )
+variable "capacity" {
+  description = "The size of the Redis cache to deploy"
+  type        = number
+}
+
+variable "family" {
+  description = "The family of the Redis cache to deploy"
+  type        = string
+}
+
+variable "sku_name" {
+  description = "The SKU of the Redis cache to deploy"
+  type        = string
 }

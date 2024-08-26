@@ -10,8 +10,9 @@
 
 - [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
 - Azure subscription & resource group
-- Terraform [https://developer.hashicorp.com/terraform/install?product_intent=terraform#windows]
+- [Terraform](https://developer.hashicorp.com/terraform/install?product_intent=terraform#windows)
 - `Owner` level permissions on the resource group you wish to apply the Terraform to (since it uses RBAC to set up access to Cosmos, OpenAI, Key Vault, etc)
+- [REST Client for VS Code](https://marketplace.visualstudio.com/items?itemName=humao.rest-client)
 
 ### Azure
 
@@ -34,6 +35,7 @@ A virtual network of at least a `/25` and 2 subnets (each at least `/27` ) to as
 
 1. Update the `infra/provider.conf.json` file with where you intend to store the Terraform state file.
 1. Update the `infra/main.tfvars.json` file with specifics of your environment.
+1. **Optional**: Set the `ARM_SUBSCRIPITON_ID` environment variable if using the Azure CLI for authentication.
 1. Run the following command to initialize Terraform
 
     ```shell
@@ -54,6 +56,7 @@ A virtual network of at least a `/25` and 2 subnets (each at least `/27` ) to as
 
 ## Test
 
-Use the included `sample-openai.http` file to test the endpoints after deployment. These assume you have the [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) VS Code extension.
+- Use the included `sample-openai.http` file
+- Use the Python notebook `sample-openai.ipynb` file
 
 ## Links

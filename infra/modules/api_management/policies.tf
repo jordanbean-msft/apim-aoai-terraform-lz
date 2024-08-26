@@ -10,7 +10,8 @@ resource "azurerm_api_management_api_policy" "openai_api_policy" {
     azurerm_api_management_policy_fragment.setup_correlation_id_policy,
     azurerm_api_management_policy_fragment.generate_partition_key_policy,
     azurerm_api_management_policy_fragment.load_balancing_select_backend_policy,
-    azurerm_api_management_policy_fragment.load_balancing_define_backends_policy
+    azurerm_api_management_policy_fragment.load_balancing_define_backends_policy,
+    azurerm_api_management_named_value.openai_semantic_cache_store_duration
   ]
 }
 
@@ -66,7 +67,8 @@ resource "azurerm_api_management_policy_fragment" "load_balancing_select_backend
   value             = file("${path.module}/policies/load-balancing-select-backend.xml")
   format            = "rawxml"
   depends_on = [
-    azurerm_api_management_policy_fragment.load_balancing_define_backends_policy
+    azurerm_api_management_policy_fragment.load_balancing_define_backends_policy,
+    azurerm_api_management_named_value.openai_semantic_cache_lookup_score_threshold
   ]
 }
 

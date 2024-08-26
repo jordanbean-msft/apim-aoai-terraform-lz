@@ -75,3 +75,21 @@ resource "azurerm_api_management_named_value" "openai_load_balancing_backends" {
   }])
   secret = false
 }
+
+resource "azurerm_api_management_named_value" "openai_semantic_cache_lookup_score_threshold" {
+  api_management_name = azurerm_api_management.api_management.name
+  name                = "openai-semantic-cache-lookup-score-threshold"
+  resource_group_name = var.resource_group_name
+  display_name        = "openai-semantic-cache-lookup-score-threshold"
+  value               = var.openai_semantic_cache_lookup_score_threshold
+  secret              = false
+}
+
+resource "azurerm_api_management_named_value" "openai_semantic_cache_store_duration" {
+  api_management_name = azurerm_api_management.api_management.name
+  name                = "openai-semantic-cache-store-duration"
+  resource_group_name = var.resource_group_name
+  display_name        = "openai-semantic-cache-store-duration"
+  value               = var.openai_semantic_cache_store_duration
+  secret              = false
+}

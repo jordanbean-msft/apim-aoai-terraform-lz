@@ -88,11 +88,36 @@ variable "openai_model_deployments" {
         name    = string
         version = string
       }),
-      scale = object({
-        type     = string
+      sku = object({
+        name     = string
         capacity = optional(number)
       })
     }))
     })
   )
+}
+
+variable "openai_semantic_cache_lookup_score_threshold" {
+  description = "The OpenAI semantic cache lookup score threshold"
+  type        = number
+}
+
+variable "openai_semantic_cache_store_duration" {
+  description = "The OpenAI semantic cache store duration"
+  type        = number
+}
+
+variable "redis_capacity" {
+  description = "The size of the Redis cache to deploy"
+  type        = number
+}
+
+variable "redis_family" {
+  description = "The family of the Redis cache to deploy"
+  type        = string
+}
+
+variable "redis_sku_name" {
+  description = "The SKU of the Redis cache to deploy"
+  type        = string
 }
