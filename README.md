@@ -24,7 +24,7 @@ A virtual network of at least a `/25` and 2 subnets (each at least `/27` ) to as
 
 #### OpenAI Service Principal
 
-- Does not need a `redirect-uri` specified since it will not be retrieving tokens itself, only validating them.
+- Set the `redirect-uri` in the `Single Page Application` to `https://<name-of-api-management-service>.developer.azure-api.net/signin` (you can do this after setting up API Management). You should also check the box for `Implicit grant and hybrid flows->ID tokens`.
 - Expose a scope called `user_impersonation` and specify an `Application ID URI`. This permission should require admin consent.
 
 #### Application Service Principal
