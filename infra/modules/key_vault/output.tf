@@ -12,3 +12,8 @@ output "key_vault_name" {
   value     = azurerm_key_vault.kv.name
   sensitive = false
 }
+
+output "openai_service_principal_client_secret_name" {
+  value     = var.openai_service_principal_client_secret_name
+  sensitive = false
+}

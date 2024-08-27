@@ -38,11 +38,6 @@ variable "capacity" {
   type        = number
 }
 
-variable "family" {
-  description = "The family of the Redis cache to deploy"
-  type        = string
-}
-
 variable "sku_name" {
   description = "The SKU of the Redis cache to deploy"
   type        = string

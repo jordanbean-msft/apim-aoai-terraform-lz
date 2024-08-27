@@ -128,3 +128,8 @@ variable "openai_semantic_cache_store_duration" {
   description = "The OpenAI semantic cache store duration"
   type        = number
 }
+
+variable "openai_service_principal_client_id" {
+  description = "The OpenAI service principal client ID"
+  type        = string
+}

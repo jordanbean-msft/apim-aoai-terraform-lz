@@ -64,6 +64,11 @@ variable "openai_token_limit_per_minute" {
   type        = number
 }
 
+variable "openai_service_principal_client_id" {
+  description = "The OpenAI service principal client ID"
+  type        = string
+}
+
 variable "openai_service_principal_audience" {
   description = "The OpenAI service principal audience"
   type        = string
@@ -110,11 +115,6 @@ variable "openai_semantic_cache_store_duration" {
 variable "redis_capacity" {
   description = "The size of the Redis cache to deploy"
   type        = number
-}
-
-variable "redis_family" {
-  description = "The family of the Redis cache to deploy"
-  type        = string
 }
 
 variable "redis_sku_name" {

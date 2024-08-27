@@ -28,12 +28,12 @@
         <include-fragment fragment-id="generate-partition-key" />
         <include-fragment fragment-id="openai-cosmos-logging-inbound" />
         <include-fragment fragment-id="get-access-token-to-openai" />
-        <azure-openai-semantic-cache-lookup
+        <!-- <azure-openai-semantic-cache-lookup
             score-threshold="{{openai-semantic-cache-lookup-score-threshold}}"
             embeddings-backend-id ="@((string)context.Variables["backend-id"])"
             embeddings-backend-auth ="system-assigned" >
                 <vary-by>@(context.Subscription.Id)</vary-by>
-        </azure-openai-semantic-cache-lookup>
+        </azure-openai-semantic-cache-lookup> -->
         <set-variable name="backendIndex" value="-1" />
         <set-variable name="remainingBackends" value="1" />        
     </inbound>
@@ -41,7 +41,7 @@
         <include-fragment fragment-id="load-balancing-select-backend"/>
     </backend>
     <outbound>
-        <azure-openai-semantic-cache-store duration="{{openai-semantic-cache-store-duration}}" />
+        <!-- <azure-openai-semantic-cache-store duration="{{openai-semantic-cache-store-duration}}" /> -->
         <base />
         <set-header name="x-correlation-id" exists-action="override">
             <value>@((string)context.Variables["correlation-id"])</value>

@@ -6,6 +6,7 @@ locals {
   cosmosdb_account_connection_string_secret_name = "cosmosdb-account-connection-string"
   api_management_subnet_nsg_name                 = "nsg-${var.integration_subnet_name}-subnet"
   private_endpoint_subnet_nsg_name               = "nsg-${var.application_subnet_name}-subnet"
+  openai_service_principal_client_secret_name    = "openai-service-principal-client-secret"
 }
 
 # ------------------------------------------------------------------------------------------------------
@@ -158,7 +159,8 @@ module "key_vault" {
   ]
   secrets = [
   ]
-  subnet_id = module.virtual_network.private_endpoint_subnet_id
+  subnet_id                                   = module.virtual_network.private_endpoint_subnet_id
+  openai_service_principal_client_secret_name = local.openai_service_principal_client_secret_name
 }
 
 # ------------------------------------------------------------------------------------------------------
@@ -216,26 +218,26 @@ module "api_management" {
   openai_token_limit_per_minute                = var.openai_token_limit_per_minute
   tenant_id                                    = data.azurerm_client_config.current.tenant_id
   openai_service_principal_audience            = var.openai_service_principal_audience
-  redis_cache_connection_string                = module.redis.redis_cache_primary_connection_string
-  redis_cache_name                             = module.redis.redis_cache_name
-  redis_cache_id                               = module.redis.redis_cache_id
+  redis_cache_connection_string                = "" #module.redis.redis_cache_primary_connection_string
+  redis_cache_name                             = "" #module.redis.redis_cache_name
+  redis_cache_id                               = "" #module.redis.redis_cache_id
   openai_semantic_cache_lookup_score_threshold = var.openai_semantic_cache_lookup_score_threshold
   openai_semantic_cache_store_duration         = var.openai_semantic_cache_store_duration
+  openai_service_principal_client_id           = var.openai_service_principal_client_id
 }
 
 # ------------------------------------------------------------------------------------------------------
 # Deploy Redis Cache
 # ------------------------------------------------------------------------------------------------------
-module "redis" {
-  source                           = "./modules/redis"
-  location                         = var.location
-  resource_group_name              = var.resource_group_name
-  tags                             = local.tags
-  resource_token                   = local.resource_token
-  subnet_id                        = module.virtual_network.private_endpoint_subnet_id
-  user_assigned_identity_name      = module.managed_identity.user_assigned_identity_name
-  user_assigned_identity_object_id = module.managed_identity.user_assigned_identity_object_id
-  capacity                         = var.redis_capacity
-  family                           = var.redis_family
-  sku_name                         = var.redis_sku_name
-}
+# module "redis" {
+#   source                           = "./modules/redis"
+#   location                         = var.location
+#   resource_group_name              = var.resource_group_name
+#   tags                             = local.tags
+#   resource_token                   = local.resource_token
+#   subnet_id                        = module.virtual_network.private_endpoint_subnet_id
+#   user_assigned_identity_name      = module.managed_identity.user_assigned_identity_name
+#   user_assigned_identity_object_id = module.managed_identity.user_assigned_identity_object_id
+#   capacity                         = var.redis_capacity
+#   sku_name                         = var.redis_sku_name
+# }

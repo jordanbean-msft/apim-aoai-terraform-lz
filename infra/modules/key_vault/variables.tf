@@ -44,3 +44,8 @@ variable "subnet_id" {
   description = "The resource id of the subnet to deploy the private endpoint into"
   type        = string
 }
+
+variable "openai_service_principal_client_secret_name" {
+  description = "The name of the secret in the keyvault that contains the OpenAI service principal client secret"
+  type        = string
+}
