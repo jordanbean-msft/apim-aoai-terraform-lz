@@ -7,6 +7,7 @@ resource "azurerm_api_management_identity_provider_aad" "identity_provider_aad" 
     var.tenant_id
   ]
   signin_tenant = var.tenant_id
+  client_library = "msal"
 
   lifecycle {
     ignore_changes = [
