@@ -30,6 +30,9 @@ A virtual network of at least a `/25` and 2 subnets (each at least `/27` ) to as
 #### Application Service Principal
 
 - Needs to have the `Application ID URI/user-impersonation` API permission to the OpenAI Service Principal configured above. You will need to get admin consent for this scope before use.
+- Redirect_Uri
+    - For the `sample-openai.http` file (or a regular web application that wants to authenticate an interactive signed-in user), add a `Web->redirect_uri`.
+    - For the `sample-openai.ipynb` file, add a `Mobile and desktop applications->redirect_uri`.
 
 ## Deployment
 
