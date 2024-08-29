@@ -21,12 +21,14 @@ resource "azurecaf_name" "application_insights_name" {
 }
 
 resource "azurerm_application_insights" "applicationinsights" {
-  name                = azurecaf_name.application_insights_name.result
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  application_type    = "other"
-  workspace_id        = var.workspace_id
-  tags                = var.tags
+  name                       = azurecaf_name.application_insights_name.result
+  location                   = var.location
+  resource_group_name        = var.resource_group_name
+  application_type           = "other"
+  workspace_id               = var.workspace_id
+  tags                       = var.tags
+  internet_ingestion_enabled = false
+  internet_query_enabled     = false
 }
 
 data "azurerm_subscription" "current" {}

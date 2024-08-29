@@ -121,3 +121,18 @@ variable "redis_sku_name" {
   description = "The SKU of the Redis cache to deploy"
   type        = string
 }
+
+variable "azure_monitor_private_link_scope_name" {
+  description = "The name of the private link scope for Azure Monitor"
+  type        = string
+}
+
+variable "azure_monitor_private_link_scope_resource_group_name" {
+  description = "The name of the resource group for the private link scope for Azure Monitor"
+  type        = string
+}
+
+variable "azure_monitor_private_link_scope_subscription_id" {
+  description = "The subscription id of the private link scope for Azure Monitor"
+  type        = string
+}

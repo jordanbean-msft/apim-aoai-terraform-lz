@@ -126,11 +126,15 @@ module "application_insights" {
 # Deploy log analytics
 # ------------------------------------------------------------------------------------------------------
 module "log_analytics" {
-  source              = "./modules/log_analytics"
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  tags                = local.tags
-  resource_token      = local.resource_token
+  source                                               = "./modules/log_analytics"
+  location                                             = var.location
+  resource_group_name                                  = var.resource_group_name
+  tags                                                 = local.tags
+  resource_token                                       = local.resource_token
+  azure_monitor_private_link_scope_name                = var.azure_monitor_private_link_scope_name
+  azure_monitor_private_link_scope_resource_group_name = var.azure_monitor_private_link_scope_resource_group_name
+  subnet_id                                            = module.virtual_network.private_endpoint_subnet_id
+  azure_monitor_private_link_scope_subscription_id     = var.azure_monitor_private_link_scope_subscription_id
 }
 
 # ------------------------------------------------------------------------------------------------------
