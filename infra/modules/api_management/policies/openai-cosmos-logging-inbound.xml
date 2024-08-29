@@ -34,17 +34,28 @@
 		<set-body>@{
             var result = (JObject)context.Variables["requestBody"];
 
-            var returnObject = new JObject(
-                new JProperty("id", context.Variables["app-id"] + "|" + context.RequestId + "|inbound"),
-                new JProperty("pk", context.Variables["partition-key"]),
-                new JProperty("requestId", context.RequestId),
-                new JProperty("timestamp", context.Timestamp),
-                new JProperty("ocpApimSubscriptionKey", context.Subscription.Key),
-                new JProperty("direction", "inbound"),
-                new JProperty("xCorrelationId", context.Variables["correlation-id"]),
-                new JProperty("appId", context.Variables["app-id"]),                
-                new JProperty("body", result)
-            );
+            var returnObject = new JObject();
+
+            if(context.Variables.TryGetValue("app-id", out var appId)) {
+                returnObject.Add(new JProperty("id", appId + "|" + context.RequestId + "|outbound"));
+            }
+            
+            if(context.Variables.TryGetValue("partition-key", out var pk)) {
+                returnObject.Add(new JProperty("pk", pk));
+            }
+            
+            returnObject.Add(new JProperty("requestId", context.RequestId));
+            returnObject.Add(new JProperty("timestamp", context.Timestamp));
+            returnObject.Add(new JProperty("ocpApimSubscriptionKey", context.Subscription.Key));
+            returnObject.Add(new JProperty("direction", "outbound"));
+            
+            if(context.Variables.TryGetValue("correlation-id", out var correlationId)) {
+                returnObject.Add(new JProperty("xCorrelationId", correlationId));
+            }
+            
+            returnObject.Add(new JProperty("appId", appId));
+            
+            returnObject.Add(new JProperty("body", result));
 
             if(context.Request.OriginalUrl.Path.EndsWith("/completions")) {
                 returnObject.Add(new JProperty("model", result["model"]));

@@ -34,6 +34,7 @@ resource "azurerm_redis_enterprise_database" "redis_cache_db" {
   module {
     name = "RediSearch"
   }
+  eviction_policy = "NoEviction"
 }
 
 module "private_endpoint" {
@@ -45,14 +46,14 @@ module "private_endpoint" {
   private_connection_resource_id = azurerm_redis_enterprise_cluster.redis_cache.id
   location                       = var.location
   subnet_id                      = var.subnet_id
-  subresource_name               = "redisCache"
+  subresource_name               = "redisEnterprise"
   is_manual_connection           = false
 }
 
-resource "azurerm_redis_cache_access_policy_assignment" "data_contributor" {
-  name               = "data-contributor"
-  redis_cache_id     = azurerm_redis_enterprise_cluster.redis_cache.id
-  access_policy_name = "Data Contributor"
-  object_id          = var.user_assigned_identity_object_id
-  object_id_alias    = var.user_assigned_identity_name
-}
+# resource "azurerm_redis_cache_access_policy_assignment" "data_contributor" {
+#   name               = "data-contributor"
+#   redis_cache_id     = azurerm_redis_enterprise_cluster.redis_cache.id
+#   access_policy_name = "Data Contributor"
+#   object_id          = var.user_assigned_identity_object_id
+#   object_id_alias    = var.user_assigned_identity_name
+# }

@@ -10,6 +10,6 @@ output "redis_cache_name" {
 
 output "redis_cache_primary_connection_string" {
   description = "The primary connection string of the Redis cache"
-  value       = "rediss://:${azurerm_redis_enterprise_database.redis_cache_db.primary_access_key}@${azurerm_redis_enterprise_cluster.redis_cache.hostname}"
+  value       = "${azurerm_redis_enterprise_cluster.redis_cache.hostname}:10000,password=${azurerm_redis_enterprise_database.redis_cache_db.primary_access_key},ssl=True,abortConnect=False"
   sensitive   = true
 }

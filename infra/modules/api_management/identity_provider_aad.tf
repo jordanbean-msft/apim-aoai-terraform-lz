@@ -6,7 +6,7 @@ resource "azurerm_api_management_identity_provider_aad" "identity_provider_aad" 
   allowed_tenants = [
     var.tenant_id
   ]
-  signin_tenant = var.tenant_id
+  signin_tenant  = var.tenant_id
   client_library = "MSAL-2"
 
   lifecycle {
