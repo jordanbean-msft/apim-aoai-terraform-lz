@@ -201,33 +201,36 @@ module "cosmosdb" {
 # Deploy API Management
 # ------------------------------------------------------------------------------------------------------
 module "api_management" {
-  source                                       = "./modules/api_management"
-  location                                     = var.location
-  resource_group_name                          = var.resource_group_name
-  resource_token                               = local.resource_token
-  tags                                         = local.tags
-  api_management_subnet_id                     = module.virtual_network.api_management_subnet_id
-  user_assigned_identity_id                    = module.managed_identity.user_assigned_identity_id
-  user_assigned_identity_client_id             = module.managed_identity.user_assigned_identity_client_id
-  publisher_name                               = var.publisher_name
-  publisher_email                              = var.publisher_email
-  sku_name                                     = var.api_management_sku_name
-  application_insights_id                      = module.application_insights.application_insights_id
-  openai_endpoints                             = module.openai.azure_cognitive_services_endpoints
-  key_vault_id                                 = module.key_vault.key_vault_id
-  cosmosdb_scope                               = "https://${module.cosmosdb.cosmosdb_account_name}.documents.azure.com"
-  cosmosdb_document_endpoint                   = "${module.cosmosdb.cosmosdb_account_endpoint}dbs/${module.cosmosdb.cosmosdb_sql_database_name}/colls/${module.cosmosdb.cosmosdb_sql_container_name}/docs"
-  application_insights_instrumentation_key     = module.application_insights.application_insights_instrumentation_key
-  openai_openapi_specification_url             = var.openai_openapi_specification_url
-  openai_token_limit_per_minute                = var.openai_token_limit_per_minute
-  tenant_id                                    = data.azurerm_client_config.current.tenant_id
-  openai_service_principal_audience            = var.openai_service_principal_audience
-  redis_cache_connection_string                = module.redis.redis_cache_primary_connection_string
-  redis_cache_name                             = module.redis.redis_cache_name
-  redis_cache_id                               = module.redis.redis_cache_id
-  openai_semantic_cache_lookup_score_threshold = var.openai_semantic_cache_lookup_score_threshold
-  openai_semantic_cache_store_duration         = var.openai_semantic_cache_store_duration
-  openai_service_principal_client_id           = var.openai_service_principal_client_id
+  source                                                  = "./modules/api_management"
+  location                                                = var.location
+  resource_group_name                                     = var.resource_group_name
+  resource_token                                          = local.resource_token
+  tags                                                    = local.tags
+  api_management_subnet_id                                = module.virtual_network.api_management_subnet_id
+  user_assigned_identity_id                               = module.managed_identity.user_assigned_identity_id
+  user_assigned_identity_client_id                        = module.managed_identity.user_assigned_identity_client_id
+  publisher_name                                          = var.publisher_name
+  publisher_email                                         = var.publisher_email
+  sku_name                                                = var.api_management_sku_name
+  application_insights_id                                 = module.application_insights.application_insights_id
+  openai_endpoints                                        = module.openai.azure_cognitive_services_endpoints
+  key_vault_id                                            = module.key_vault.key_vault_id
+  cosmosdb_scope                                          = "https://${module.cosmosdb.cosmosdb_account_name}.documents.azure.com"
+  cosmosdb_document_endpoint                              = "${module.cosmosdb.cosmosdb_account_endpoint}dbs/${module.cosmosdb.cosmosdb_sql_database_name}/colls/${module.cosmosdb.cosmosdb_sql_container_name}/docs"
+  application_insights_instrumentation_key                = module.application_insights.application_insights_instrumentation_key
+  openai_openapi_specification_url                        = var.openai_openapi_specification_url
+  openai_token_limit_per_minute                           = var.openai_token_limit_per_minute
+  tenant_id                                               = data.azurerm_client_config.current.tenant_id
+  openai_service_principal_audience                       = var.openai_service_principal_audience
+  redis_cache_connection_string                           = module.redis.redis_cache_primary_connection_string
+  redis_cache_name                                        = module.redis.redis_cache_name
+  redis_cache_id                                          = module.redis.redis_cache_id
+  openai_semantic_cache_lookup_score_threshold            = var.openai_semantic_cache_lookup_score_threshold
+  openai_semantic_cache_store_duration                    = var.openai_semantic_cache_store_duration
+  openai_service_principal_client_id                      = var.openai_service_principal_client_id
+  openai_service_id                                       = module.openai.azure_cognitive_services_ids[0]
+  openai_semantic_cache_embedding_backend_id              = "openai-semantic-cache-embedding-backend-id"
+  openai_semantic_cache_embedding_backend_deployment_name = var.openai_semantic_cache_embedding_backend_deployment_name
 }
 
 # ------------------------------------------------------------------------------------------------------

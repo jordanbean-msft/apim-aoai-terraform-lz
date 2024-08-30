@@ -27,7 +27,7 @@
             var returnObject = new JObject();
 
             if(context.Variables.TryGetValue("app-id", out var appId)) {
-                returnObject.Add(new JProperty("appId", appId + "|" + context.RequestId + "|outbound"));
+                returnObject.Add(new JProperty("id", appId + "|" + context.RequestId + "|outbound"));
             }
 
             if(context.Variables.TryGetValue("partition-key", out var pk)) {

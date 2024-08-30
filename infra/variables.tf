@@ -136,3 +136,8 @@ variable "azure_monitor_private_link_scope_subscription_id" {
   description = "The subscription id of the private link scope for Azure Monitor"
   type        = string
 }
+
+variable "openai_semantic_cache_embedding_backend_deployment_name" {
+  description = "The name of the OpenAI semantic cache embedding backend deployment"
+  type        = string
+}

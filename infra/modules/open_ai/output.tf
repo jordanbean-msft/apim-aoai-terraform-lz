@@ -14,3 +14,9 @@ output "azure_cognitive_services_deployment_names" {
     for deployment in azurerm_cognitive_deployment.cognitive_deployment : deployment.name
   ])
 }
+
+output "azure_cognitive_services_ids" {
+  value = tolist([
+    for cognitive_account in azurerm_cognitive_account.cognitive_account : cognitive_account.id
+  ])
+}

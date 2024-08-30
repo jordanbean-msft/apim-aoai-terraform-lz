@@ -133,3 +133,18 @@ variable "openai_service_principal_client_id" {
   description = "The OpenAI service principal client ID"
   type        = string
 }
+
+variable "openai_service_id" {
+  description = "The OpenAI service ID"
+  type        = string
+}
+
+variable "openai_semantic_cache_embedding_backend_id" {
+  description = "The OpenAI semantic cache embedding backend ID"
+  type        = string
+}
+
+variable "openai_semantic_cache_embedding_backend_deployment_name" {
+  description = "The OpenAI semantic cache embedding backend deployment name"
+  type        = string
+}

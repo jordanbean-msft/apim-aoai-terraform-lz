@@ -29,11 +29,21 @@ resource "azurerm_api_management" "api_management" {
   publisher_name      = var.publisher_name
   sku_name            = var.sku_name
   identity {
-    type         = "UserAssigned"
+    type         = "SystemAssigned, UserAssigned"
     identity_ids = [var.user_assigned_identity_id]
   }
   virtual_network_type = "Internal"
   virtual_network_configuration {
     subnet_id = var.api_management_subnet_id
   }
+}
+
+data "azurerm_resource_group" "resource_group" {
+  name = var.resource_group_name
+}
+
+resource "azurerm_role_assignment" "api_management_system_assigned_managed_identity_cognitive_services_openai_user" {
+  scope                = data.azurerm_resource_group.resource_group.id
+  role_definition_name = "Cognitive Services OpenAI User"
+  principal_id         = azurerm_api_management.api_management.identity.*.principal_id[0]
 }

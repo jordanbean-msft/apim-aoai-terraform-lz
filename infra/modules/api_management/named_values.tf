@@ -1,12 +1,11 @@
-# resource "azurerm_api_management_named_value" "openai_backend" {
-#   for_each            = { for endpoint in var.openai_endpoints : endpoint.key => endpoint }
-#   api_management_name = azurerm_api_management.api_management.name
-#   name                = "openai-backend-${each.name}"
-#   resource_group_name = var.resource_group_name
-#   display_name        = "openai-backend-${each.name}"
-#   value               = "${each.value.endpoint}openai/"
-#   secret              = false
-# }
+resource "azurerm_api_management_named_value" "openai_semantic_cache_embedding_backend_id" {
+  api_management_name = azurerm_api_management.api_management.name
+  name                = "openai-semantic-cache-embedding-backend-id"
+  resource_group_name = var.resource_group_name
+  display_name        = "openai-semantic-cache-embedding-backend-id"
+  value               = var.openai_semantic_cache_embedding_backend_id
+  secret              = false
+}
 
 resource "azurerm_api_management_named_value" "openai_token_limit_per_minute" {
   api_management_name = azurerm_api_management.api_management.name
