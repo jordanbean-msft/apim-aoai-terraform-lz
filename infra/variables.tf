@@ -14,6 +14,11 @@ variable "resource_group_name" {
   type        = string
 }
 
+variable "virtual_network_resource_group_name" {
+  description = "The resource group name of the virtual network"
+  type        = string
+}
+
 variable "virtual_network_name" {
   description = "The virtual network name"
   type        = string
@@ -139,5 +144,20 @@ variable "azure_monitor_private_link_scope_subscription_id" {
 
 variable "openai_semantic_cache_embedding_backend_deployment_name" {
   description = "The name of the OpenAI semantic cache embedding backend deployment"
+  type        = string
+}
+
+variable "storage_account_tier" {
+  description = "The Tier to use for this storage account"
+  type        = string
+}
+
+variable "storage_account_replication_type" {
+  description = "The Replication type to use for this storage account"
+  type        = string
+}
+
+variable "ai_studio_sku_name" {
+  description = "The AI Studio SKU"
   type        = string
 }

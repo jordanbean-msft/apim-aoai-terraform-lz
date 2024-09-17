@@ -39,22 +39,28 @@ A virtual network of at least a `/25` and 2 subnets (each at least `/27` ) to as
 1. Update the `infra/provider.conf.json` file with where you intend to store the Terraform state file.
 1. Update the `infra/main.tfvars.json` file with specifics of your environment.
 1. **Optional**: Set the `ARM_SUBSCRIPITON_ID` environment variable if using the Azure CLI for authentication.
+
+    ```powershell
+    $env:ARM_SUBSCRIPTION_ID="1234-5678-9012-3456"
+    ```
+
 1. Run the following command to initialize Terraform
 
     ```shell
+    cd infra
     terraform init -backend-config ./provider.conf.json
     ```
 
 1. Run the following command to plan your Terraform deployment
 
     ```shell
-    terraform plan -var-file="./main.tfvars.json"
+    terraform plan -var-file="./main.tfvars.json" -out "tfplan"
     ```
 
 1. Run the following command to apply your Terraform deployment
 
     ```shell
-    terraform apply -var-file "./main.tfvars.json"
+    terraform apply "tfplan"
     ```
 
 ## Test

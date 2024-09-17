@@ -16,7 +16,7 @@ locals {
 module "virtual_network" {
   source               = "./modules/virtual_network"
   location             = var.location
-  resource_group_name  = var.resource_group_name
+  resource_group_name  = var.virtual_network_resource_group_name
   tags                 = local.tags
   resource_token       = local.resource_token
   virtual_network_name = var.virtual_network_name
@@ -222,9 +222,9 @@ module "api_management" {
   openai_token_limit_per_minute                           = var.openai_token_limit_per_minute
   tenant_id                                               = data.azurerm_client_config.current.tenant_id
   openai_service_principal_audience                       = var.openai_service_principal_audience
-  redis_cache_connection_string                           = module.redis.redis_cache_primary_connection_string
-  redis_cache_name                                        = module.redis.redis_cache_name
-  redis_cache_id                                          = module.redis.redis_cache_id
+  redis_cache_connection_string                           = "" #module.redis.redis_cache_primary_connection_string
+  redis_cache_name                                        = "" #module.redis.redis_cache_name
+  redis_cache_id                                          = "" #module.redis.redis_cache_id
   openai_semantic_cache_lookup_score_threshold            = var.openai_semantic_cache_lookup_score_threshold
   openai_semantic_cache_store_duration                    = var.openai_semantic_cache_store_duration
   openai_service_principal_client_id                      = var.openai_service_principal_client_id
@@ -236,15 +236,63 @@ module "api_management" {
 # ------------------------------------------------------------------------------------------------------
 # Deploy Redis Cache
 # ------------------------------------------------------------------------------------------------------
-module "redis" {
-  source                           = "./modules/redis"
+# module "redis" {
+#   source                           = "./modules/redis"
+#   location                         = var.location
+#   resource_group_name              = var.resource_group_name
+#   tags                             = local.tags
+#   resource_token                   = local.resource_token
+#   subnet_id                        = module.virtual_network.private_endpoint_subnet_id
+#   user_assigned_identity_name      = module.managed_identity.user_assigned_identity_name
+#   user_assigned_identity_object_id = module.managed_identity.user_assigned_identity_object_id
+#   capacity                         = var.redis_capacity
+#   sku_name                         = var.redis_sku_name
+# }
+
+# ------------------------------------------------------------------------------------------------------
+# Deploy Storage Account
+# ------------------------------------------------------------------------------------------------------
+
+module "storage_account" {
+  source                           = "./modules/storage_account"
   location                         = var.location
   resource_group_name              = var.resource_group_name
   tags                             = local.tags
   resource_token                   = local.resource_token
   subnet_id                        = module.virtual_network.private_endpoint_subnet_id
-  user_assigned_identity_name      = module.managed_identity.user_assigned_identity_name
-  user_assigned_identity_object_id = module.managed_identity.user_assigned_identity_object_id
-  capacity                         = var.redis_capacity
-  sku_name                         = var.redis_sku_name
+  account_tier                     = var.storage_account_tier
+  account_replication_type         = var.storage_account_replication_type
+}
+
+# ------------------------------------------------------------------------------------------------------
+# Deploy Container Registry
+# ------------------------------------------------------------------------------------------------------
+
+module "container_registry" {
+  source                        = "./modules/container_registry"
+  location                      = var.location
+  resource_group_name           = var.resource_group_name
+  tags                          = local.tags
+  resource_token                = local.resource_token
+  subnet_id                     = module.virtual_network.private_endpoint_subnet_id
+  managed_identity_principal_id = module.managed_identity.user_assigned_identity_principal_id
+}
+
+# ------------------------------------------------------------------------------------------------------
+# Deploy AI Studio
+# ------------------------------------------------------------------------------------------------------
+
+module "ai_studio" {
+  source                  = "./modules/ai_studio"
+  location                = var.location
+  resource_group_name     = var.resource_group_name
+  tags                    = local.tags
+  resource_token          = local.resource_token
+  subnet_id               = module.virtual_network.private_endpoint_subnet_id
+  sku                     = var.ai_studio_sku_name
+  application_insights_id = module.application_insights.application_insights_id
+  key_vault_id            = module.key_vault.key_vault_id
+  storage_account_id      = module.storage_account.storage_account_id
+  container_registry_id   = module.container_registry.container_registry_id
+  resource_group_id       = "/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourceGroups/${var.resource_group_name}"
 }

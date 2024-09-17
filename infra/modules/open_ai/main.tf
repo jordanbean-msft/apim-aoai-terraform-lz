@@ -75,7 +75,7 @@ module "private_endpoint" {
   private_connection_resource_id = azurerm_cognitive_account.cognitive_account[each.key].id
   location                       = each.value.location
   subnet_id                      = var.subnet_id
-  subresource_name               = "account"
+  subresource_names              = ["account"]
   is_manual_connection           = false
 }
 

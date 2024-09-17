@@ -11,7 +11,7 @@ terraform {
   }
 }
 # ------------------------------------------------------------------------------------------------------
-# Deploy log analytics workspace
+# Deploy API Management
 # ------------------------------------------------------------------------------------------------------
 resource "azurecaf_name" "api_management_name" {
   name          = var.resource_token
@@ -21,7 +21,7 @@ resource "azurecaf_name" "api_management_name" {
 }
 
 resource "azurerm_api_management" "api_management" {
-  name                = "${azurecaf_name.api_management_name.result}-001"
+  name                = azurecaf_name.api_management_name.result
   location            = var.location
   tags                = var.tags
   resource_group_name = var.resource_group_name

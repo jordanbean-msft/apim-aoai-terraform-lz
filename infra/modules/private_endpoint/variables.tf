@@ -39,9 +39,9 @@ variable "is_manual_connection" {
   default     = false
 }
 
-variable "subresource_name" {
+variable "subresource_names" {
   description = "(Optional) Specifies a subresource name which the Private Endpoint is able to connect to."
-  type        = string
+  type        = list(string)
   default     = null
 }
 

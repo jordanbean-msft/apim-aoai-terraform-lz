@@ -45,8 +45,6 @@ module "network_security_group" {
   resource_token         = var.resource_token
   location               = var.location
   network_security_rules = each.value.network_security_rules
-  #  subnet_id              = azurerm_subnet.subnet[each.key].id
-  subnet_id   = "/subscriptions/${var.subscription_id}/resourceGroups/${var.resource_group_name}/providers/Microsoft.Network/virtualNetworks/${var.virtual_network_name}/subnets/${each.key}"
-  subnet_name = each.key
-  # depends_on             = [azurerm_subnet.subnet]
+  subnet_id              = "/subscriptions/${var.subscription_id}/resourceGroups/${var.resource_group_name}/providers/Microsoft.Network/virtualNetworks/${var.virtual_network_name}/subnets/${each.key}"
+  subnet_name            = each.key
 }

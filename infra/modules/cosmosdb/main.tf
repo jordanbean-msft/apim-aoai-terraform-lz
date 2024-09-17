@@ -81,7 +81,7 @@ module "private_endpoint" {
   private_connection_resource_id = azurerm_cosmosdb_account.cosmosdb_account.id
   location                       = var.location
   subnet_id                      = var.subnet_id
-  subresource_name               = "Sql"
+  subresource_names              = ["Sql"]
   is_manual_connection           = false
 }
 

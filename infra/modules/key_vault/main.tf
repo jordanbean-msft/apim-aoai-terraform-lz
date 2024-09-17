@@ -70,7 +70,7 @@ module "private_endpoint" {
   private_connection_resource_id = azurerm_key_vault.kv.id
   location                       = var.location
   subnet_id                      = var.subnet_id
-  subresource_name               = "vault"
+  subresource_names              = ["vault"]
   is_manual_connection           = false
 }
 

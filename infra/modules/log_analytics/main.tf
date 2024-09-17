@@ -40,6 +40,6 @@ module "private_endpoint" {
   private_connection_resource_id = "/subscriptions/${var.azure_monitor_private_link_scope_subscription_id}/resourceGroups/${var.azure_monitor_private_link_scope_resource_group_name}/providers/Microsoft.Insights/privateLinkScopes/${var.azure_monitor_private_link_scope_name}"
   location                       = var.location
   subnet_id                      = var.subnet_id
-  subresource_name               = "azuremonitor"
+  subresource_names              = ["azuremonitor"]
   is_manual_connection           = false
 }

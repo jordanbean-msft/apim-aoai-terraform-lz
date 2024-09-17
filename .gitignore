@@ -359,3 +359,5 @@ test-openai.http
 test-openai.ipynb
 
 .vscode/
+
+tfplan

@@ -46,8 +46,9 @@ module "private_endpoint" {
   private_connection_resource_id = azurerm_redis_enterprise_cluster.redis_cache.id
   location                       = var.location
   subnet_id                      = var.subnet_id
-  subresource_name               = "redisEnterprise"
-  is_manual_connection           = false
+  subresource_names              = ["redisEnterprise"]
+
+  is_manual_connection = false
 }
 
 # resource "azurerm_redis_cache_access_policy_assignment" "data_contributor" {
