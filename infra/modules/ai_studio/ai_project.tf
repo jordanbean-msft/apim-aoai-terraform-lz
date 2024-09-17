@@ -11,8 +11,8 @@ resource "azapi_resource" "ai_project" {
 
   body = jsonencode({
     properties = {
-      description   = "This is my Azure AI PROJECT"
-      friendlyName  = "My Project"
+      description   = "Central AI Project"
+      friendlyName  = "Central AI Project"
       hubResourceId = azapi_resource.ai_hub.id
     }
     kind = "Project"

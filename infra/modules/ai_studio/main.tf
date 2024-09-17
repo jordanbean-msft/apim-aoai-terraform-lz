@@ -37,12 +37,12 @@ resource "azapi_resource" "ai_services_resource" {
       apiProperties = {
         statisticsEnabled = false
       }
+      publicNetworkAccess = "Disabled"
     }
     kind = "AIServices"
     sku = {
       name = var.sku
     }
-    publicNetworkAccess = "Disabled"
   })
 
   response_export_values = ["*"]

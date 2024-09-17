@@ -11,10 +11,10 @@ resource "azapi_resource" "ai_hub" {
 
   body = jsonencode({
     properties = {
-      description    = "This is my Azure AI hub"
-      friendlyName   = "My Hub"
-      storageAccount = var.storage_account_id
-      keyVault       = var.key_vault_id
+      description         = "Central AI Studio Hub"
+      friendlyName        = "Central AI Studio Hub"
+      storageAccount      = var.storage_account_id
+      keyVault            = var.key_vault_id
       applicationInsights = var.application_insights_id
       containerRegistry   = var.container_registry_id
       managedNetwork = {
