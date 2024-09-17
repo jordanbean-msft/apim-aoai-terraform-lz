@@ -254,14 +254,14 @@ module "api_management" {
 # ------------------------------------------------------------------------------------------------------
 
 module "storage_account" {
-  source                           = "./modules/storage_account"
-  location                         = var.location
-  resource_group_name              = var.resource_group_name
-  tags                             = local.tags
-  resource_token                   = local.resource_token
-  subnet_id                        = module.virtual_network.private_endpoint_subnet_id
-  account_tier                     = var.storage_account_tier
-  account_replication_type         = var.storage_account_replication_type
+  source                   = "./modules/storage_account"
+  location                 = var.location
+  resource_group_name      = var.resource_group_name
+  tags                     = local.tags
+  resource_token           = local.resource_token
+  subnet_id                = module.virtual_network.private_endpoint_subnet_id
+  account_tier             = var.storage_account_tier
+  account_replication_type = var.storage_account_replication_type
 }
 
 # ------------------------------------------------------------------------------------------------------
