@@ -47,28 +47,19 @@ resource "azurerm_linux_function_app" "function_app" {
     identity_ids = [var.managed_identity_id]
   }
   key_vault_reference_identity_id = var.managed_identity_id
-  storage_uses_managed_identity   = true
+  storage_account_access_key      = var.storage_account_access_key
   virtual_network_subnet_id       = var.vnet_integration_subnet_id
   storage_account_name            = var.storage_account_name
-  public_network_access_enabled = false
+  public_network_access_enabled   = false
   site_config {
     application_insights_connection_string = var.application_insights_connection_string
     application_insights_key               = var.application_insights_key
     application_stack {
-      python_version = 3.12
+      python_version = 3.11
     }
     ip_restriction_default_action = "Deny"
   }
-  app_settings = {
-    "EVENT_HUB__fullyQualifiedNamespace" = var.event_hub_namespace_fqdn
-    "EVENT_HUB_NAME"                     = var.event_hub_name
-    "EVENT_HUB__credential"              = "managedIdentity"
-    "EVENT_HUB__clientId"                = var.managed_identity_principal_id
-    "COSMOS_DB__credential"              = "managedIdentity"
-    "COSMOS_DB__clientId"                = var.managed_identity_principal_id
-    "COSMOS_DB_NAME"                     = var.cosmos_db_name
-    "COSMOS_DB_CONTAINER_NAME"           = var.cosmos_db_container_name
-  }
+  app_settings = var.app_settings
 }
 
 module "private_endpoint" {

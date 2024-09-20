@@ -31,6 +31,12 @@ resource "azurerm_storage_account" "storage_account" {
   allow_nested_items_to_be_public = false
 }
 
+resource "azurerm_storage_share" "function_app_share" {
+  name                 = "func-write-to-cosmos"
+  storage_account_name = azurerm_storage_account.storage_account.name
+  quota                = 50
+}
+
 module "private_endpoint_blob" {
   source                         = "../private_endpoint"
   name                           = "${azurerm_storage_account.storage_account.name}-blob"

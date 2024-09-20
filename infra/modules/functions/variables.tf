@@ -43,26 +43,6 @@ variable "storage_account_name" {
   type        = string
 }
 
-variable "event_hub_namespace_fqdn" {
-  description = "The fully qualified domain name of the event hub namespace"
-  type        = string
-}
-
-variable "event_hub_name" {
-  description = "The name of the event hub"
-  type        = string
-}
-
-variable "cosmos_db_name" {
-  description = "The name of the cosmos db"
-  type        = string
-}
-
-variable "cosmos_db_container_name" {
-  description = "The name of the cosmos db container"
-  type        = string
-}
-
 variable "application_insights_connection_string" {
   description = "The connection string of the application insights"
   type        = string
@@ -71,4 +51,15 @@ variable "application_insights_connection_string" {
 variable "application_insights_key" {
   description = "The key of the application insights"
   type        = string
+}
+
+variable "app_settings" {
+  description = "The app settings of the function app"
+  type        = map(string)
+}
+
+variable "storage_account_access_key" {
+  description = "The access key of the storage account"
+  type        = string
+  sensitive   = true
 }

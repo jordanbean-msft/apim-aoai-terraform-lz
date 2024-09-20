@@ -28,11 +28,11 @@ resource "azurerm_eventhub_namespace" "event_hub_namespace" {
   tags                          = var.tags
   public_network_access_enabled = false
   network_rulesets = [{
-    default_action = "Deny"
+    default_action                 = "Deny"
     trusted_service_access_enabled = true
-    public_network_access_enabled = false
-    ip_rule = [  ]
-    virtual_network_rule = [  ]
+    public_network_access_enabled  = false
+    ip_rule                        = []
+    virtual_network_rule           = []
   }]
 }
 

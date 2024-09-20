@@ -14,7 +14,7 @@
             var returnObject = new JObject();
 
             if(context.Variables.TryGetValue("app-id", out var appId)) {
-                returnObject.Add(new JProperty("id", appId + "|" + context.RequestId + "|outbound"));
+                returnObject.Add(new JProperty("id", appId + "|" + context.RequestId + "|inbound"));
             }
             
             if(context.Variables.TryGetValue("partition-key", out var pk)) {
@@ -24,7 +24,7 @@
             returnObject.Add(new JProperty("requestId", context.RequestId));
             returnObject.Add(new JProperty("timestamp", context.Timestamp));
             returnObject.Add(new JProperty("ocpApimSubscriptionKey", context.Subscription.Key));
-            returnObject.Add(new JProperty("direction", "outbound"));
+            returnObject.Add(new JProperty("direction", "inbound"));
             
             if(context.Variables.TryGetValue("correlation-id", out var correlationId)) {
                 returnObject.Add(new JProperty("xCorrelationId", correlationId));
@@ -44,8 +44,6 @@
             }
 
             return returnObject.ToString();
-
-            return result;
         }
     </log-to-eventhub>
 </fragment>

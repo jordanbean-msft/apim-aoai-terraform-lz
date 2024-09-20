@@ -143,7 +143,7 @@ module "log_analytics" {
   resource_token                                       = local.resource_token
   azure_monitor_private_link_scope_name                = var.azure_monitor_private_link_scope_name
   azure_monitor_private_link_scope_resource_group_name = var.azure_monitor_private_link_scope_resource_group_name
-  subnet_id                                            = module.virtual_network.private_endpoint_subnet_id
+  subnet_id                                            = module.virtual_network.ai_studio_subnet_id
   azure_monitor_private_link_scope_subscription_id     = var.azure_monitor_private_link_scope_subscription_id
 }
 
@@ -338,10 +338,20 @@ module "functions" {
   managed_identity_principal_id          = module.managed_identity.user_assigned_identity_principal_id
   managed_identity_id                    = module.managed_identity.user_assigned_identity_id
   storage_account_name                   = module.storage_account.storage_account_name
-  event_hub_namespace_fqdn               = module.event_hub.event_hub_namespace_fqdn
-  event_hub_name                         = module.event_hub.event_hub_name
-  cosmos_db_name                         = module.cosmosdb.cosmosdb_sql_database_name
-  cosmos_db_container_name               = module.cosmosdb.cosmosdb_sql_container_name
   application_insights_connection_string = module.application_insights.application_insights_connection_string
   application_insights_key               = module.application_insights.application_insights_instrumentation_key
+  storage_account_access_key             = module.storage_account.storage_account_access_key
+  app_settings = {
+    "EVENT_HUB__fullyQualifiedNamespace" = module.event_hub.event_hub_namespace_fqdn
+    "EVENT_HUB_NAME"                     = module.event_hub.event_hub_name
+    "EVENT_HUB__credential"              = "managedIdentity"
+    "EVENT_HUB__clientId"                = module.managed_identity.user_assigned_identity_principal_id
+    "COSMOS_DB__credential"              = "managedIdentity"
+    "COSMOS_DB__clientId"                = module.managed_identity.user_assigned_identity_principal_id
+    "COSMOS_DB__endpoint"                = module.cosmosdb.cosmosdb_account_endpoint
+    "COSMOS_DB_NAME"                     = module.cosmosdb.cosmosdb_sql_database_name
+    "COSMOS_DB_CONTAINER_NAME"           = module.cosmosdb.cosmosdb_sql_container_name
+    "WEBSITE_CONTENTOVERVNET"            = 1
+    "WEBSITE_CONTENTSHARE"               = module.storage_account.function_app_share_name
+  }
 }
