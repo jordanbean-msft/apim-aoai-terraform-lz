@@ -321,6 +321,7 @@ module "event_hub" {
   resource_token                = local.resource_token
   subnet_id                     = module.virtual_network.private_endpoint_subnet_id
   managed_identity_principal_id = module.managed_identity.user_assigned_identity_principal_id
+  event_hub_namespace_sku       = var.event_hub_namespace_sku
 }
 
 # ------------------------------------------------------------------------------------------------------

@@ -27,3 +27,8 @@ variable "managed_identity_principal_id" {
   description = "The principal id of the managed identity"
   type        = string
 }
+
+variable "event_hub_namespace_sku" {
+  description = "The SKU of the event hub namespace"
+  type        = string
+}

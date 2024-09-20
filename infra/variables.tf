@@ -186,3 +186,8 @@ variable "ai_studio_sku_name" {
   description = "The AI Studio SKU"
   type        = string
 }
+
+variable "event_hub_namespace_sku" {
+  description = "The SKU of the event hub namespace"
+  type        = string
+}

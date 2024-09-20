@@ -1,6 +1,0 @@
-{
-    "storage_account_name": "saterraformeus2rjb",
-    "container_name": "apim-aoai-terraform-lz",
-    "key": "terraform.tfstate",
-    "resource_group_name": "rg-terraform-eus2-dev"
-}

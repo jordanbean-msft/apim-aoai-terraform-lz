@@ -24,7 +24,7 @@ resource "azurerm_eventhub_namespace" "event_hub_namespace" {
   name                          = azurecaf_name.event_hub_namespace_name.result
   location                      = var.location
   resource_group_name           = var.resource_group_name
-  sku                           = "Standard"
+  sku                           = var.event_hub_namespace_sku
   tags                          = var.tags
   public_network_access_enabled = false
   network_rulesets = [{
@@ -40,8 +40,22 @@ resource "azurerm_eventhub" "event_hub" {
   name                = "central-llm-logging"
   resource_group_name = var.resource_group_name
   namespace_name      = azurerm_eventhub_namespace.event_hub_namespace.name
-  partition_count     = 2
+  partition_count     = 4
   message_retention   = 1
+}
+
+resource "azurerm_eventhub_consumer_group" "write-to-cosmos" {
+  name                = "write-to-cosmos"
+  eventhub_name       = azurerm_eventhub.event_hub.name
+  namespace_name      = azurerm_eventhub_namespace.event_hub_namespace.name
+  resource_group_name = var.resource_group_name
+}
+
+resource "azurerm_eventhub_consumer_group" "siem-logging" {
+  name                = "siem-logging"
+  eventhub_name       = azurerm_eventhub.event_hub.name
+  namespace_name      = azurerm_eventhub_namespace.event_hub_namespace.name
+  resource_group_name = var.resource_group_name
 }
 
 resource "azurerm_role_assignment" "managed_identity_azure_event_hubs_data_sender_role" {
