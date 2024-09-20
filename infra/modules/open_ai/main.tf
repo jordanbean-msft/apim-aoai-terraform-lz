@@ -34,6 +34,7 @@ resource "azurerm_cognitive_account" "cognitive_account" {
     default_action = "Deny"
     ip_rules       = []
   }
+  tags = var.tags
 }
 
 resource "azurerm_cognitive_deployment" "cognitive_deployment" {

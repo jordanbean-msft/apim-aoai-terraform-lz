@@ -18,3 +18,14 @@ resource "azurerm_api_management_api_diagnostic" "openai_api_diagnostic" {
   http_correlation_protocol = "W3C"
   verbosity                 = "information"
 }
+
+resource "azurerm_api_management_logger" "event_hub_logger" {
+  name                = "event-hub-logger"
+  api_management_name = azurerm_api_management.api_management.name
+  resource_group_name = var.resource_group_name
+  eventhub {
+    name                             = var.event_hub_name
+    endpoint_uri                     = var.event_hub_namespace_fqdn
+    user_assigned_identity_client_id = var.user_assigned_identity_client_id
+  }
+}

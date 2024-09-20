@@ -1,0 +1,98 @@
+{
+  "location": "eastus2",
+  "principal_id": "630f67df-3cfc-460c-893c-00684dd28d8b",
+  "resource_group_name": "rg-apimAoaiTerraformLz-eus2-dev",
+  "virtual_network_resource_group_name": "rg-apimAoaiTerraformLz-eus2-vnet",
+  "virtual_network_name": "vnet-apimAoaiTerraformLz-eus2-vnet",
+  "apim_subnet_name": "integration",
+  "apim_subnet_address_prefixes": ["10.1.0.0/27"],
+  "private_endpoint_subnet_name": "application",
+  "private_endpoint_subnet_address_prefixes": ["10.1.32/27"],
+  "function_app_subnet_name": "function",
+  "function_app_subnet_address_prefixes": ["10.1.0.64/27"],
+  "ai_studio_subnet_name": "ai-studio",
+  "ai_studio_subnet_address_prefixes": ["10.1.0.96/27"],
+  "publisher_name": "Azure APIM Management Central LLM",
+  "publisher_email": "jordanbean@microsoft.com",
+  "api_management_sku_name": "Developer_1",
+  "openai_openapi_specification_url": "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/cognitiveservices/data-plane/AzureOpenAI/inference/stable/2024-06-01/inference.json",
+  "openai_token_limit_per_minute": 1000000,
+  "openai_service_principal_client_id": "c512fc8d-181e-4a16-8807-b75be129095e",
+  "openai_service_principal_audience": "api://c512fc8d-181e-4a16-8807-b75be129095e",
+  "cosmosdb_document_time_to_live": 2592000,
+  "openai_model_deployments": [
+    {
+      "name_suffix": "ptu",
+      "kind": "OpenAI",
+      "sku_name": "S0",
+      "location": "eastus2",
+      "priority": 1,
+      "deployments": [
+        {
+          "model": {
+            "format": "OpenAI",
+            "name": "gpt-4o",
+            "version": "2024-05-13"
+          },
+          "sku": {
+            "name": "Standard",
+            "capacity": 50
+          }
+        },
+        {
+          "model": {
+            "format": "OpenAI",
+            "name": "text-embedding-3-large",
+            "version": "1"
+          },
+          "sku": {
+            "name": "Standard",
+            "capacity": 50
+          }
+        }
+      ]
+    },
+    {
+      "name_suffix": "paygo",
+      "kind": "OpenAI",
+      "sku_name": "S0",
+      "location": "eastus2",
+      "priority": 2,
+      "deployments": [
+        {
+          "model": {
+            "format": "OpenAI",
+            "name": "gpt-4o",
+            "version": "2024-05-13"
+          },
+          "sku": {
+            "name": "Standard",
+            "capacity": 50
+          }
+        },
+        {
+          "model": {
+            "format": "OpenAI",
+            "name": "text-embedding-3-large",
+            "version": "1"
+          },
+          "sku": {
+            "name": "Standard",
+            "capacity": 50
+          }
+        }
+      ]
+    }
+  ],
+  "openai_semantic_cache_lookup_score_threshold": 0.8,
+  "openai_semantic_cache_store_duration" : 60,
+  "openai_semantic_cache_embedding_backend_deployment_name": "text-embedding-3-large-1",
+  "redis_capacity": 2,
+  "redis_sku_name": "Enterprise_E5",
+  "azure_monitor_private_link_scope_name": "ampls-central-eastus2-yv4qkefibmvuq",
+  "azure_monitor_private_link_scope_resource_group_name": "rg-central-eastus2-yv4qkefibmvuq",
+  "azure_monitor_private_link_scope_subscription_id": "0ec6c427-01d3-4462-ae56-fd9656157157",
+  "storage_account_tier": "Standard",
+  "storage_account_replication_type": "LRS",
+  "ai_studio_sku_name": "S0"
+}

@@ -14,6 +14,11 @@ variable "resource_group_name" {
   type        = string
 }
 
+variable "environment_name" {
+  description = "The name of the environment"
+  type        = string
+}
+
 variable "virtual_network_resource_group_name" {
   description = "The resource group name of the virtual network"
   type        = string
@@ -24,23 +29,43 @@ variable "virtual_network_name" {
   type        = string
 }
 
-variable "integration_subnet_name" {
-  description = "The name of the integration subnet"
+variable "private_endpoint_subnet_name" {
+  description = "The name of the private_endpoint subnet"
   type        = string
 }
 
-variable "integration_subnet_address_prefixes" {
+variable "private_endpoint_subnet_address_prefixes" {
   description = "The address space of the API Management subnet"
   type        = list(string)
 }
 
-variable "application_subnet_name" {
-  description = "The name of the application subnet"
+variable "apim_subnet_name" {
+  description = "The name of the apim subnet"
   type        = string
 }
 
-variable "application_subnet_address_prefixes" {
-  description = "The address space of the application subnet"
+variable "apim_subnet_address_prefixes" {
+  description = "The address space of the apim subnet"
+  type        = list(string)
+}
+
+variable "ai_studio_subnet_name" {
+  description = "The name of the AI Studio subnet"
+  type        = string
+}
+
+variable "ai_studio_subnet_address_prefixes" {
+  description = "The address space of the AI Studio subnet"
+  type        = list(string)
+}
+
+variable "function_app_subnet_name" {
+  description = "The name of the function app subnet"
+  type        = string
+}
+
+variable "function_app_subnet_address_prefixes" {
+  description = "The address space of the function app subnet"
   type        = list(string)
 }
 

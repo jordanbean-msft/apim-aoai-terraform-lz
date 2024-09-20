@@ -1,11 +1,11 @@
 locals {
-  tags                                           = {}
+  tags                                           = { azd-env-name : var.environment_name }
   sha                                            = base64encode(sha256("${var.location}${data.azurerm_client_config.current.subscription_id}"))
   resource_token                                 = substr(replace(lower(local.sha), "[^A-Za-z0-9_]", ""), 0, 13)
   azure_openai_secret_name                       = "azure-openai-key"
   cosmosdb_account_connection_string_secret_name = "cosmosdb-account-connection-string"
-  api_management_subnet_nsg_name                 = "nsg-${var.integration_subnet_name}-subnet"
-  private_endpoint_subnet_nsg_name               = "nsg-${var.application_subnet_name}-subnet"
+  api_management_subnet_nsg_name                 = "nsg-${var.apim_subnet_name}-subnet"
+  private_endpoint_subnet_nsg_name               = "nsg-${var.private_endpoint_subnet_name}-subnet"
   openai_service_principal_client_secret_name    = "openai-service-principal-client-secret"
 }
 
@@ -22,8 +22,8 @@ module "virtual_network" {
   virtual_network_name = var.virtual_network_name
   subnets = [
     {
-      name               = var.integration_subnet_name
-      address_prefixes   = var.integration_subnet_address_prefixes
+      name               = var.apim_subnet_name
+      address_prefixes   = var.apim_subnet_address_prefixes
       service_delegation = false
       delegation_name    = ""
       actions            = [""]
@@ -97,16 +97,26 @@ module "virtual_network" {
       ]
     },
     {
-      name                   = var.application_subnet_name
-      address_prefixes       = var.application_subnet_address_prefixes
+      name                   = var.private_endpoint_subnet_name
+      address_prefixes       = var.private_endpoint_subnet_address_prefixes
+      service_delegation     = false
+      delegation_name        = ""
+      actions                = []
+      network_security_rules = []
+    },
+    {
+      name                   = var.ai_studio_subnet_name
+      address_prefixes       = var.ai_studio_subnet_address_prefixes
       service_delegation     = false
       delegation_name        = ""
       actions                = []
       network_security_rules = []
     }
   ]
-  api_management_subnet_name   = var.integration_subnet_name
-  private_endpoint_subnet_name = var.application_subnet_name
+  api_management_subnet_name   = var.apim_subnet_name
+  private_endpoint_subnet_name = var.private_endpoint_subnet_name
+  ai_studio_subnet_name        = var.ai_studio_subnet_name
+  function_app_subnet_name     = var.function_app_subnet_name
   subscription_id              = data.azurerm_client_config.current.subscription_id
 }
 
@@ -231,6 +241,8 @@ module "api_management" {
   openai_service_id                                       = module.openai.azure_cognitive_services_ids[0]
   openai_semantic_cache_embedding_backend_id              = "openai-semantic-cache-embedding-backend-id"
   openai_semantic_cache_embedding_backend_deployment_name = var.openai_semantic_cache_embedding_backend_deployment_name
+  event_hub_namespace_fqdn                                = module.event_hub.event_hub_namespace_fqdn
+  event_hub_name                                          = module.event_hub.event_hub_name
 }
 
 # ------------------------------------------------------------------------------------------------------
@@ -282,17 +294,54 @@ module "container_registry" {
 # Deploy AI Studio
 # ------------------------------------------------------------------------------------------------------
 
-module "ai_studio" {
-  source                  = "./modules/ai_studio"
-  location                = var.location
-  resource_group_name     = var.resource_group_name
-  tags                    = local.tags
-  resource_token          = local.resource_token
-  subnet_id               = module.virtual_network.private_endpoint_subnet_id
-  sku                     = var.ai_studio_sku_name
-  application_insights_id = module.application_insights.application_insights_id
-  key_vault_id            = module.key_vault.key_vault_id
-  storage_account_id      = module.storage_account.storage_account_id
-  container_registry_id   = module.container_registry.container_registry_id
-  resource_group_id       = "/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourceGroups/${var.resource_group_name}"
+# module "ai_studio" {
+#   source                  = "./modules/ai_studio"
+#   location                = var.location
+#   resource_group_name     = var.resource_group_name
+#   tags                    = local.tags
+#   resource_token          = local.resource_token
+#   subnet_id               = module.virtual_network.ai_studio_subnet_id
+#   sku                     = var.ai_studio_sku_name
+#   application_insights_id = module.application_insights.application_insights_id
+#   key_vault_id            = module.key_vault.key_vault_id
+#   storage_account_id      = module.storage_account.storage_account_id
+#   container_registry_id   = module.container_registry.container_registry_id
+#   resource_group_id       = "/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourceGroups/${var.resource_group_name}"
+# }
+
+# ------------------------------------------------------------------------------------------------------
+# Deploy Event Hub
+# ------------------------------------------------------------------------------------------------------
+
+module "event_hub" {
+  source                        = "./modules/event_hub"
+  location                      = var.location
+  resource_group_name           = var.resource_group_name
+  tags                          = local.tags
+  resource_token                = local.resource_token
+  subnet_id                     = module.virtual_network.private_endpoint_subnet_id
+  managed_identity_principal_id = module.managed_identity.user_assigned_identity_principal_id
+}
+
+# ------------------------------------------------------------------------------------------------------
+# Deploy Azure Function
+# ------------------------------------------------------------------------------------------------------
+
+module "functions" {
+  source                                 = "./modules/functions"
+  location                               = var.location
+  resource_group_name                    = var.resource_group_name
+  tags                                   = local.tags
+  resource_token                         = local.resource_token
+  private_endpoint_subnet_id             = module.virtual_network.private_endpoint_subnet_id
+  vnet_integration_subnet_id             = module.virtual_network.function_app_subnet_id
+  managed_identity_principal_id          = module.managed_identity.user_assigned_identity_principal_id
+  managed_identity_id                    = module.managed_identity.user_assigned_identity_id
+  storage_account_name                   = module.storage_account.storage_account_name
+  event_hub_namespace_fqdn               = module.event_hub.event_hub_namespace_fqdn
+  event_hub_name                         = module.event_hub.event_hub_name
+  cosmos_db_name                         = module.cosmosdb.cosmosdb_sql_database_name
+  cosmos_db_container_name               = module.cosmosdb.cosmosdb_sql_container_name
+  application_insights_connection_string = module.application_insights.application_insights_connection_string
+  application_insights_key               = module.application_insights.application_insights_instrumentation_key
 }

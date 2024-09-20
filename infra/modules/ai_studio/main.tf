@@ -24,6 +24,7 @@ resource "azapi_resource" "ai_services_resource" {
   name      = "ais-${var.resource_token}"
   location  = var.location
   parent_id = var.resource_group_id
+  tags      = var.tags
 
   identity {
     type = "SystemAssigned"

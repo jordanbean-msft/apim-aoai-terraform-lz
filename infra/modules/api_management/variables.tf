@@ -148,3 +148,13 @@ variable "openai_semantic_cache_embedding_backend_deployment_name" {
   description = "The OpenAI semantic cache embedding backend deployment name"
   type        = string
 }
+
+variable "event_hub_namespace_fqdn" {
+  description = "The fully qualified domain name of the event hub namespace"
+  type        = string
+}
+
+variable "event_hub_name" {
+  description = "The name of the event hub"
+  type        = string
+}
