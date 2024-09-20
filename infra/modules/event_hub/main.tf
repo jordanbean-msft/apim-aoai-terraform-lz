@@ -50,6 +50,12 @@ resource "azurerm_role_assignment" "managed_identity_azure_event_hubs_data_sende
   principal_id         = var.managed_identity_principal_id
 }
 
+resource "azurerm_role_assignment" "managed_identity_azure_event_hubs_data_receiver_role" {
+  scope                = azurerm_eventhub_namespace.event_hub_namespace.id
+  role_definition_name = "Azure Event Hubs Data Receiver"
+  principal_id         = var.managed_identity_principal_id
+}
+
 module "private_endpoint" {
   source                         = "../private_endpoint"
   name                           = azurerm_eventhub_namespace.event_hub_namespace.name
