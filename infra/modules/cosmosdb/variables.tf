@@ -38,7 +38,17 @@ variable "principal_id" {
   type        = string
 }
 
-variable "cosmosdb_document_time_to_live" {
+variable "document_time_to_live" {
   description = "The time to live for the CosmosDB data"
+  type        = number
+}
+
+variable "zone_redundant" {
+  description = "Enable zone redundant CosmosDB account"
+  type        = bool
+}
+
+variable "max_throughput" {
+  description = "The maximum throughput of the CosmosDB account"
   type        = number
 }

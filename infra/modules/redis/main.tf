@@ -26,6 +26,7 @@ resource "azurerm_redis_enterprise_cluster" "redis_cache" {
   location            = var.location
   sku_name            = "${var.sku_name}-${var.capacity}"
   tags                = var.tags
+  zones               = var.zones
 }
 
 resource "azurerm_redis_enterprise_database" "redis_cache_db" {

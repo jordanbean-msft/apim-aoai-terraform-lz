@@ -63,3 +63,13 @@ variable "storage_account_access_key" {
   type        = string
   sensitive   = true
 }
+
+variable "sku_name" {
+  description = "The SKU of the service plan"
+  type        = string
+}
+
+variable "zone_balancing_enabled" {
+  description = "Enable zone balancing for the service plan"
+  type        = bool
+}

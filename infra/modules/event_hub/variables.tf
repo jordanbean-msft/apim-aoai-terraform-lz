@@ -32,3 +32,23 @@ variable "event_hub_namespace_sku" {
   description = "The SKU of the event hub namespace"
   type        = string
 }
+
+variable "capacity" {
+  description = "The capacity of the event hub namespace"
+  type        = number
+}
+
+variable "maximum_throughput_units" {
+  description = "The maximum throughput units of the event hub namespace"
+  type        = number
+}
+
+variable "partition_count" {
+  description = "The partition count of the event hub"
+  type        = number
+}
+
+variable "message_retention" {
+  description = "The message retention of the event hub"
+  type        = number
+}

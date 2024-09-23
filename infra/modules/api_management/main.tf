@@ -36,6 +36,7 @@ resource "azurerm_api_management" "api_management" {
   virtual_network_configuration {
     subnet_id = var.api_management_subnet_id
   }
+  zones = var.zones
 }
 
 data "azurerm_resource_group" "resource_group" {

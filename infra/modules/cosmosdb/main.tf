@@ -37,6 +37,7 @@ resource "azurerm_cosmosdb_account" "cosmosdb_account" {
   geo_location {
     location          = var.location
     failover_priority = 0
+    zone_redundant    = var.zone_redundant
   }
   offer_type = "Standard"
 }
@@ -45,6 +46,9 @@ resource "azurerm_cosmosdb_sql_database" "cosmosdb_sql_database" {
   name                = "chat-log-db"
   resource_group_name = var.resource_group_name
   account_name        = azurerm_cosmosdb_account.cosmosdb_account.name
+  autoscale_settings {
+    max_throughput = var.max_throughput
+  }
 }
 
 resource "azurerm_cosmosdb_sql_container" "cosmosdb_sql_container" {
@@ -69,7 +73,7 @@ resource "azurerm_cosmosdb_sql_container" "cosmosdb_sql_container" {
       path = "/\"_etag\"/?"
     }
   }
-  default_ttl = var.cosmosdb_document_time_to_live
+  default_ttl = var.document_time_to_live
 }
 
 module "private_endpoint" {

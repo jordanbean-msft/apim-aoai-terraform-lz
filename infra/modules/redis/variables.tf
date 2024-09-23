@@ -42,3 +42,8 @@ variable "sku_name" {
   description = "The SKU of the Redis cache to deploy"
   type        = string
 }
+
+variable "zones" {
+  description = "The availability zones to deploy the Redis cache into"
+  type        = list(string)
+}

@@ -21,12 +21,13 @@ resource "azurecaf_name" "service_plan_name" {
 }
 
 resource "azurerm_service_plan" "service_plan" {
-  name                = azurecaf_name.service_plan_name.result
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  os_type             = "Linux"
-  sku_name            = "EP1"
-  tags                = var.tags
+  name                   = azurecaf_name.service_plan_name.result
+  location               = var.location
+  resource_group_name    = var.resource_group_name
+  os_type                = "Linux"
+  sku_name               = var.sku_name
+  tags                   = var.tags
+  zone_balancing_enabled = var.zone_balancing_enabled
 }
 
 resource "azurecaf_name" "function_name" {

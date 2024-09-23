@@ -158,3 +158,8 @@ variable "event_hub_name" {
   description = "The name of the event hub"
   type        = string
 }
+
+variable "zones" {
+  description = "The availability zones to use for the API Management service"
+  type        = list(string)
+}

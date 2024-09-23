@@ -25,6 +25,9 @@ resource "azurerm_eventhub_namespace" "event_hub_namespace" {
   location                      = var.location
   resource_group_name           = var.resource_group_name
   sku                           = var.event_hub_namespace_sku
+  capacity                      = var.capacity
+  auto_inflate_enabled          = true
+  maximum_throughput_units      = var.maximum_throughput_units
   tags                          = var.tags
   public_network_access_enabled = false
   network_rulesets = [{
@@ -40,8 +43,8 @@ resource "azurerm_eventhub" "event_hub" {
   name                = "central-llm-logging"
   resource_group_name = var.resource_group_name
   namespace_name      = azurerm_eventhub_namespace.event_hub_namespace.name
-  partition_count     = 4
-  message_retention   = 1
+  partition_count     = var.partition_count
+  message_retention   = var.message_retention
 }
 
 resource "azurerm_eventhub_consumer_group" "write-to-cosmos" {
