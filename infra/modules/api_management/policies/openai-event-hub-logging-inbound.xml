@@ -43,6 +43,23 @@
                 returnObject.Add(new JProperty("model", match.Groups[1].Value));
             }
 
+            var jwt = context.Request.Headers.GetValueOrDefault("Authorization").AsJwt();
+
+            if(jwt != null) {
+                if(jwt.Claims.TryGetValue("email", out var email)) {
+                    returnObject.Add(new JProperty("email", email));
+                }
+                if(jwt.Claims.TryGetValue("ipaddr", out var ipaddr)) {
+                    returnObject.Add(new JProperty("ipaddr", ipaddr));
+                }
+                if(jwt.Claims.TryGetValue("unique_name", out var uniqueName)) {
+                    returnObject.Add(new JProperty("unique_name", uniqueName));
+                }
+                if(jwt.Claims.TryGetValue("name", out var name)) {
+                    returnObject.Add(new JProperty("name", name));
+                }
+            }
+
             return returnObject.ToString();
         }
     </log-to-eventhub>

@@ -58,7 +58,8 @@ resource "azurerm_linux_function_app" "function_app" {
     application_stack {
       python_version = 3.11
     }
-    ip_restriction_default_action = "Deny"
+    ip_restriction_default_action    = "Deny"
+    runtime_scale_monitoring_enabled = true
   }
   app_settings = var.app_settings
 }

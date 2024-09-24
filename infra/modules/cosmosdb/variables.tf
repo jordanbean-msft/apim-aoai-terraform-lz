@@ -23,8 +23,8 @@ variable "subnet_id" {
   type        = string
 }
 
-variable "user_assigned_identity_object_id" {
-  description = "The object id of the user assigned identity"
+variable "user_assigned_identity_principal_id" {
+  description = "The principal id of the user assigned identity"
   type        = string
 }
 

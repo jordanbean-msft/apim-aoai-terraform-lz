@@ -196,18 +196,18 @@ module "openai" {
 # Deploy CosmosDB
 # ------------------------------------------------------------------------------------------------------
 module "cosmosdb" {
-  source                           = "./modules/cosmosdb"
-  location                         = var.location
-  resource_group_name              = var.resource_group_name
-  resource_token                   = local.resource_token
-  tags                             = local.tags
-  subnet_id                        = module.virtual_network.private_endpoint_subnet_id
-  user_assigned_identity_object_id = module.managed_identity.user_assigned_identity_object_id
-  subscription_id                  = data.azurerm_client_config.current.subscription_id
-  principal_id                     = var.principal_id
-  document_time_to_live            = var.cosmos_db.document_time_to_live
-  max_throughput                   = var.cosmos_db.max_throughput
-  zone_redundant                   = var.cosmos_db.zone_redundant
+  source                              = "./modules/cosmosdb"
+  location                            = var.location
+  resource_group_name                 = var.resource_group_name
+  resource_token                      = local.resource_token
+  tags                                = local.tags
+  subnet_id                           = module.virtual_network.private_endpoint_subnet_id
+  user_assigned_identity_principal_id = module.managed_identity.user_assigned_identity_principal_id
+  subscription_id                     = data.azurerm_client_config.current.subscription_id
+  principal_id                        = var.principal_id
+  document_time_to_live               = var.cosmos_db.document_time_to_live
+  max_throughput                      = var.cosmos_db.max_throughput
+  zone_redundant                      = var.cosmos_db.zone_redundant
 }
 
 # ------------------------------------------------------------------------------------------------------
@@ -245,7 +245,7 @@ module "api_management" {
   openai_semantic_cache_embedding_backend_id              = "openai-semantic-cache-embedding-backend-id"
   openai_semantic_cache_embedding_backend_deployment_name = var.apim.openai_semantic_cache_embedding_backend_deployment_name
   event_hub_namespace_fqdn                                = module.event_hub.event_hub_namespace_fqdn
-  event_hub_name                                          = module.event_hub.event_hub_name
+  event_hub_name                                          = module.event_hub.event_hub_central_name
   zones                                                   = var.apim.zones
 }
 
@@ -271,14 +271,15 @@ module "redis" {
 # ------------------------------------------------------------------------------------------------------
 
 module "storage_account" {
-  source                   = "./modules/storage_account"
-  location                 = var.location
-  resource_group_name      = var.resource_group_name
-  tags                     = local.tags
-  resource_token           = local.resource_token
-  subnet_id                = module.virtual_network.private_endpoint_subnet_id
-  account_tier             = var.storage_account.tier
-  account_replication_type = var.storage_account.replication_type
+  source                        = "./modules/storage_account"
+  location                      = var.location
+  resource_group_name           = var.resource_group_name
+  tags                          = local.tags
+  resource_token                = local.resource_token
+  subnet_id                     = module.virtual_network.private_endpoint_subnet_id
+  account_tier                  = var.storage_account.tier
+  account_replication_type      = var.storage_account.replication_type
+  managed_identity_principal_id = module.managed_identity.user_assigned_identity_principal_id
 }
 
 # ------------------------------------------------------------------------------------------------------
@@ -353,12 +354,13 @@ module "functions" {
   storage_account_access_key             = module.storage_account.storage_account_access_key
   app_settings = {
     "EVENT_HUB__fullyQualifiedNamespace" = module.event_hub.event_hub_namespace_fqdn
-    "EVENT_HUB_NAME"                     = module.event_hub.event_hub_name
-    "EVENT_HUB__credential"              = "managedIdentity"
-    "EVENT_HUB__clientId"                = module.managed_identity.user_assigned_identity_principal_id
-    "COSMOS_DB__credential"              = "managedIdentity"
-    "COSMOS_DB__clientId"                = module.managed_identity.user_assigned_identity_principal_id
-    "COSMOS_DB__endpoint"                = module.cosmosdb.cosmosdb_account_endpoint
+    "EVENT_HUB_CENTRAL_NAME"             = module.event_hub.event_hub_central_name
+    "EVENT_HUB_LLM_LOGGING_NAME"         = module.event_hub.event_hub_llm_logging_name
+    "EVENT_HUB__credential"              = "managedidentity"
+    "EVENT_HUB__clientId"                = module.managed_identity.user_assigned_identity_client_id
+    "COSMOS_DB__credential"              = "managedidentity"
+    "COSMOS_DB__clientId"                = module.managed_identity.user_assigned_identity_client_id
+    "COSMOS_DB__accountEndpoint"         = module.cosmosdb.cosmosdb_account_endpoint
     "COSMOS_DB_NAME"                     = module.cosmosdb.cosmosdb_sql_database_name
     "COSMOS_DB_CONTAINER_NAME"           = module.cosmosdb.cosmosdb_sql_container_name
     "WEBSITE_CONTENTOVERVNET"            = 1

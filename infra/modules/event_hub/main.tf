@@ -39,7 +39,7 @@ resource "azurerm_eventhub_namespace" "event_hub_namespace" {
   }]
 }
 
-resource "azurerm_eventhub" "event_hub" {
+resource "azurerm_eventhub" "event_hub_central" {
   name                = "central-llm-logging"
   resource_group_name = var.resource_group_name
   namespace_name      = azurerm_eventhub_namespace.event_hub_namespace.name
@@ -47,16 +47,46 @@ resource "azurerm_eventhub" "event_hub" {
   message_retention   = var.message_retention
 }
 
-resource "azurerm_eventhub_consumer_group" "write-to-cosmos" {
-  name                = "write-to-cosmos"
-  eventhub_name       = azurerm_eventhub.event_hub.name
+resource "azurerm_eventhub" "event_hub_siem" {
+  name                = "siem-logging"
+  resource_group_name = var.resource_group_name
+  namespace_name      = azurerm_eventhub_namespace.event_hub_namespace.name
+  partition_count     = var.partition_count
+  message_retention   = var.message_retention
+}
+
+resource "azurerm_eventhub" "event_hub_llm_logging" {
+  name                = "llm-logging"
+  resource_group_name = var.resource_group_name
+  namespace_name      = azurerm_eventhub_namespace.event_hub_namespace.name
+  partition_count     = var.partition_count
+  message_retention   = var.message_retention
+}
+
+resource "azurerm_eventhub_consumer_group" "central_llm_replication" {
+  name                = "central-llm-replication"
+  eventhub_name       = azurerm_eventhub.event_hub_central.name
   namespace_name      = azurerm_eventhub_namespace.event_hub_namespace.name
   resource_group_name = var.resource_group_name
 }
 
-resource "azurerm_eventhub_consumer_group" "siem-logging" {
+resource "azurerm_eventhub_consumer_group" "central_siem_replication" {
+  name                = "central-siem-replication"
+  eventhub_name       = azurerm_eventhub.event_hub_central.name
+  namespace_name      = azurerm_eventhub_namespace.event_hub_namespace.name
+  resource_group_name = var.resource_group_name
+}
+
+resource "azurerm_eventhub_consumer_group" "write_to_cosmos" {
+  name                = "write-to-cosmos"
+  eventhub_name       = azurerm_eventhub.event_hub_llm_logging.name
+  namespace_name      = azurerm_eventhub_namespace.event_hub_namespace.name
+  resource_group_name = var.resource_group_name
+}
+
+resource "azurerm_eventhub_consumer_group" "siem_logging" {
   name                = "siem-logging"
-  eventhub_name       = azurerm_eventhub.event_hub.name
+  eventhub_name       = azurerm_eventhub.event_hub_siem.name
   namespace_name      = azurerm_eventhub_namespace.event_hub_namespace.name
   resource_group_name = var.resource_group_name
 }

@@ -37,6 +37,12 @@ resource "azurerm_storage_share" "function_app_share" {
   quota                = 50
 }
 
+resource "azurerm_role_assignment" "managed_identity_storage_blob_data_owner_role" {
+  scope                = azurerm_storage_account.storage_account.id
+  role_definition_name = "Storage Blob Data Owner"
+  principal_id         = var.managed_identity_principal_id
+}
+
 module "private_endpoint_blob" {
   source                         = "../private_endpoint"
   name                           = "${azurerm_storage_account.storage_account.name}-blob"

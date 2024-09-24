@@ -1,5 +1,5 @@
 <fragment>
-    <log-to-eventhub logger-id="event-hub-logger">
+	<log-to-eventhub logger-id="event-hub-logger">
         @{
             var returnObject = new JObject();
 
@@ -28,6 +28,12 @@
 
             if(context.Variables.TryGetValue("isStreaming", out var isStreaming)) {
                 returnObject.Add(new JProperty("isStreaming", isStreaming));
+            }
+
+            if((bool)context.Variables["isStreaming"] &amp;&amp; context.Response.Headers.ContainsKey("ms-azureml-model-error-statuscode")) {
+                //log the body if there is a model error since this breaks the stream anyway
+                var result = JObject.Parse(context.Response.Body.As&lt;string&gt;(preserveContent: true));
+                returnObject.Add(new JProperty("body", result));
             }
 
             if(!(bool)context.Variables["isStreaming"]) {

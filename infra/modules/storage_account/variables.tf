@@ -32,3 +32,8 @@ variable "account_replication_type" {
   description = "The Replication type to use for this storage account"
   type        = string
 }
+
+variable "managed_identity_principal_id" {
+  description = "The principal id of the managed identity"
+  type        = string
+}
