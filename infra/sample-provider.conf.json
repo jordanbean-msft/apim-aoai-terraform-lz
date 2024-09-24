@@ -1,0 +1,6 @@
+{
+    "storage_account_name": "",
+    "container_name": "",
+    "key": "terraform.tfstate",
+    "resource_group_name": ""
+}

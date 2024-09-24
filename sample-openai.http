@@ -1,0 +1,148 @@
+###
+@aadV2TenantId=
+@subscriptionId=
+@aadV2ClientId=
+@apiManagementName=
+@openaiClientId=
+@resourceGroupName=
+@chatDeploymentName=gpt-4o-2024-05-13
+@embeddingDeploymentName=text-embedding-3-large-1
+
+# @name initiate_oauth_auth_code_flow
+GET https://login.microsoftonline.com/{{aadV2TenantId}}/oauth2/v2.0/authorize
+?client_id={{aadV2ClientId}}
+&response_type=code
+&redirect_uri=http://localhost
+&response_mode=query
+&scope=api://{{openaiClientId}}/user_impersonation
+
+###
+
+# @name token_request
+POST https://login.microsoftonline.com/{{aadV2TenantId}}/oauth2/v2.0/token HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+client_id={{aadV2ClientId}}
+&scope=api://{{openaiClientId}}/user_impersonation
+&code={{code}}
+&redirect_uri=http://localhost
+&grant_type=authorization_code
+&client_secret={{aadV2ClientSecret}}
+
+###
+@token = {{token_request.response.body.access_token}}
+###
+
+# @name openai_request
+POST https://{{apiManagementName}}.azure-api.net/openai/deployments/{{chatDeploymentName}}/chat/completions?api-version=2024-06-01
+Content-Type: application/json
+Ocp-Apim-Subscription-Key: {{subscriptionKey}}
+Authorization: Bearer {{token}}
+
+{
+    "model":"gpt-4o",
+    "messages":[
+        {
+            "role":"user",
+            "content":"Hello!"
+        }
+    ]
+}
+
+###
+
+# @name openai_chat_request_with_trace
+POST https://{{apiManagementName}}.azure-api.net/openai/deployments/{{chatDeploymentName}}/chat/completions?api-version=2024-06-01
+Content-Type: application/json
+Ocp-Apim-Subscription-Key: {{subscriptionKey}}
+Apim-Debug-Authorization: {{apimDebugAuthorization}}
+Authorization: Bearer {{token}}
+
+{
+    "model":"gpt-4o",
+    "messages":[
+        {
+            "role":"user",
+            "content":"Hello!"
+        }
+    ]
+}
+
+###
+@openai_request_with_trace_trace_id = {{openai_chat_request_with_trace.response.headers.apim-trace-id}}
+###
+
+# @name openai_request_with_trace_get_trace
+POST https://management.azure.com/subscriptions/{{subscriptionId}}/resourceGroups/{{resourceGroupName}}/providers/Microsoft.ApiManagement/service/{{apiManagementName}}/gateways/managed/listTrace?api-version=2023-05-01-preview
+Content-Type: application/json
+Authorization: Bearer {{traceAccessToken}}
+
+{
+    "traceId": "{{openai_request_with_trace_trace_id}}"
+}
+
+###
+
+# @name openai_embedding_request_with_trace
+POST https://{{apiManagementName}}.azure-api.net/openai/deployments/{{embeddingDeploymentName}}/embeddings?api-version=2024-06-01
+Content-Type: application/json
+Ocp-Apim-Subscription-Key: {{subscriptionKey}}
+Apim-Debug-Authorization: {{apimDebugAuthorization}}
+Authorization: Bearer {{token}}
+
+{
+    "input": [
+        "Hello, world!"
+    ]
+}
+
+###
+
+@openai_embedding_request_with_trace_trace_id = {{openai_embedding_request_with_trace.response.headers.apim-trace-id}}
+
+###
+
+# @name openai_embedding_request_with_trace_get_trace
+POST https://management.azure.com/subscriptions/{{subscriptionId}}/resourceGroups/{{resourceGroupName}}/providers/Microsoft.ApiManagement/service/{{apiManagementName}}/gateways/managed/listTrace?api-version=2023-05-01-preview
+Content-Type: application/json
+Authorization: Bearer {{traceAccessToken}}
+
+{
+    "traceId": "{{openai_embedding_request_with_trace_trace_id}}"
+}
+
+###
+
+
+# @name openai_chat_request_streaming_with_trace
+POST https://{{apiManagementName}}.azure-api.net/openai/deployments/{{chatDeploymentName}}/chat/completions?api-version=2024-06-01
+Content-Type: application/json
+Ocp-Apim-Subscription-Key: {{subscriptionKey}}
+Apim-Debug-Authorization: {{apimDebugAuthorization}}
+Authorization: Bearer {{token}}
+
+{
+    "model":"gpt-4o",
+    "messages":[
+        {
+            "role":"user",
+            "content":"Hello!"
+        }
+    ],
+    "stream": true
+}
+
+###
+
+@openai_chat_request_streaming_with_trace_trace_id = {{openai_chat_request_streaming_with_trace.response.headers.apim-trace-id}}
+
+###
+
+# @name openai_chat_request_streaming_with_trace_get_trace
+POST https://management.azure.com/subscriptions/{{subscriptionId}}/resourceGroups/{{resourceGroupName}}/providers/Microsoft.ApiManagement/service/{{apiManagementName}}/gateways/managed/listTrace?api-version=2023-05-01-preview
+Content-Type: application/json
+Authorization: Bearer {{traceAccessToken}}
+
+{
+    "traceId": "{{openai_chat_request_streaming_with_trace_trace_id}}"
+}

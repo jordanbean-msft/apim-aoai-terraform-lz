@@ -1,2 +1,14 @@
-name: template-repository
+name: apim-aoai-terraform-lz
+infra:
+  provider: terraform
 services:
+  write-to-cosmos:
+    project: ./src/python/write-to-cosmos
+    language: py
+    host: function
+state:
+  remote:
+    backend: AzureBlobStorage
+    config:
+      accountName: saterraformeus2rjb
+      containerName: apim-aoai-terraform-lz

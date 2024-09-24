@@ -348,3 +348,16 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+**/.terraform/
+
+**/main.tfvars.json
+
+**/provider.conf.json
+
+test-openai.http
+test-openai.ipynb
+
+.vscode/
+
+tfplan

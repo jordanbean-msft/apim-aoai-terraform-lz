@@ -1,4 +1,4 @@
-# template-repository
+# apim-aoai-terraform-lz
 
 ![architecture](./.img/architecture.png)
 
@@ -10,7 +10,45 @@
 
 - [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
 - Azure subscription & resource group
+- [Terraform](https://developer.hashicorp.com/terraform/install?product_intent=terraform#windows)
+- [Azure Developer CLI](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/install-azd?tabs=winget-windows%2Cbrew-mac%2Cscript-linux&pivots=os-windows)
+- `Owner` level permissions on the resource group you wish to apply the Terraform to (since it uses RBAC to set up access to Cosmos, OpenAI, Key Vault, etc)
+- [REST Client for VS Code](https://marketplace.visualstudio.com/items?itemName=humao.rest-client)
+
+### Azure
+
+A virtual network of at least a `/25` and 3 subnets (each at least `/27` ) to associate with API Management & the private endpoints.
+
+### Entra ID
+
+2 service principals, one to represent OpenAI at the API Management level and one to represent your application.
+
+#### OpenAI Service Principal
+
+- Set the `redirect-uri` in the `Single Page Application` to `https://<name-of-api-management-service>.developer.azure-api.net/signin` (you can do this after setting up API Management). You should also check the box for `Implicit grant and hybrid flows->ID tokens`.
+- Expose a scope called `user_impersonation` and specify an `Application ID URI`. This permission should require admin consent.
+
+#### Application Service Principal
+
+- Needs to have the `Application ID URI/user-impersonation` API permission to the OpenAI Service Principal configured above. You will need to get admin consent for this scope before use.
+- Redirect_Uri
+    - For the `sample-openai.http` file (or a regular web application that wants to authenticate an interactive signed-in user), add a `Web->redirect_uri`.
+    - For the `sample-openai.ipynb` file, add a `Mobile and desktop applications->redirect_uri`.
 
 ## Deployment
+
+1. Update the `infra/provider.conf.json` file with where you intend to store the Terraform state file.
+1. Update the `infra/main.tfvars.json` file with specifics of your environment.
+
+1. Run the following command to deploy the solution
+
+    ```shell
+    azd up
+    ```
+
+## Test
+
+- Use the included `sample-openai.http` file
+- Use the Python notebook `sample-openai.ipynb` file
 
 ## Links
