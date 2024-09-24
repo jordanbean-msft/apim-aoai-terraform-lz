@@ -345,7 +345,7 @@ module "functions" {
   tags                                   = local.tags
   resource_token                         = local.resource_token
   private_endpoint_subnet_id             = module.virtual_network.private_endpoint_subnet_id
-  vnet_integration_subnet_id             = module.virtual_network.function_app_subnet_id
+  vnet_function_subnet_id             = module.virtual_network.function_app_subnet_id
   managed_identity_principal_id          = module.managed_identity.user_assigned_identity_principal_id
   managed_identity_id                    = module.managed_identity.user_assigned_identity_id
   storage_account_name                   = module.storage_account.storage_account_name

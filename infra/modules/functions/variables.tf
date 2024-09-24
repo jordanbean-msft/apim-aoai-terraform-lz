@@ -23,7 +23,7 @@ variable "private_endpoint_subnet_id" {
   type        = string
 }
 
-variable "vnet_integration_subnet_id" {
+variable "vnet_function_subnet_id" {
   description = "The subnet id to deploy the Azure Function into."
   type        = string
 }

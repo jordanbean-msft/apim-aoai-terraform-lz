@@ -49,7 +49,7 @@ resource "azurerm_linux_function_app" "function_app" {
   }
   key_vault_reference_identity_id = var.managed_identity_id
   storage_account_access_key      = var.storage_account_access_key
-  virtual_network_subnet_id       = var.vnet_integration_subnet_id
+  virtual_network_subnet_id       = var.vnet_function_subnet_id
   storage_account_name            = var.storage_account_name
   public_network_access_enabled   = false
   site_config {
