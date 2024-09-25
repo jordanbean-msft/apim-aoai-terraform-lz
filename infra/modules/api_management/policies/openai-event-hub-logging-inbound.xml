@@ -30,9 +30,7 @@
                 returnObject.Add(new JProperty("xCorrelationId", correlationId));
             }
             
-            returnObject.Add(new JProperty("appId", appId));
-            
-            returnObject.Add(new JProperty("body", result));
+            returnObject.Add(new JProperty("appId", appId));            
 
             if(context.Request.OriginalUrl.Path.EndsWith("/completions")) {
                 returnObject.Add(new JProperty("model", result["model"]));
@@ -59,6 +57,8 @@
                     returnObject.Add(new JProperty("name", name));
                 }
             }
+            
+            returnObject.Add(new JProperty("body", result));
 
             return returnObject.ToString();
         }
