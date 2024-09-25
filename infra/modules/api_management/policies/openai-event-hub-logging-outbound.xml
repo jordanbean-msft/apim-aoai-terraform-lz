@@ -46,8 +46,6 @@
                     }
                 }
 
-                returnObject.Add(new JProperty("body", result));
-
                 if(context.Variables.TryGetValue("model", out var model)) {
                     returnObject.Add(new JProperty("model", model));
                 }
@@ -63,6 +61,8 @@
                         }
                     }
                 }
+                
+                returnObject.Add(new JProperty("body", result));
             }
 
             return returnObject.ToString();
