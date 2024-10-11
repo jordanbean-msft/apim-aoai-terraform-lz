@@ -37,7 +37,7 @@ module "virtual_network" {
           protocol                   = "Tcp"
           source_port_range          = "*"
           destination_port_ranges    = [3443]
-          source_address_prefix      = "Internet"
+          source_address_prefix      = "ApiManagement"
           destination_address_prefix = "VirtualNetwork"
         },
         {
@@ -47,8 +47,30 @@ module "virtual_network" {
           access                     = "Allow"
           protocol                   = "Tcp"
           source_port_range          = "*"
-          destination_port_ranges    = [6390]
-          source_address_prefix      = "ApiManagement"
+          destination_port_ranges    = [6390, 6391]
+          source_address_prefix      = "AzureLoadBalancer"
+          destination_address_prefix = "VirtualNetwork"
+        },
+        {
+          name                       = "AllowSyncCountersForRateLimitPoliciesBetweenMachines"
+          priority                   = 140
+          direction                  = "Inbound"
+          access                     = "Allow"
+          protocol                   = "Udp"
+          source_port_range          = "*"
+          destination_port_ranges    = [4290]
+          source_address_prefix      = "VirtualNetwork"
+          destination_address_prefix = "VirtualNetwork"
+        },
+        {
+          name                       = "AllowExternalRedisCache"
+          priority                   = 150
+          direction                  = "Inbound"
+          access                     = "Allow"
+          protocol                   = "Tcp"
+          source_port_range          = "*"
+          destination_port_ranges    = [6380]
+          source_address_prefix      = "VirtualNetwork"
           destination_address_prefix = "VirtualNetwork"
         },
         {
@@ -63,8 +85,19 @@ module "virtual_network" {
           destination_address_prefix = "Storage"
         },
         {
-          name                       = "AllowAccessToAzureSQLEndpointsForCoreServiceFunctionality"
+          name                       = "AllowAccessToEntraIdMicrosoftGraphAndAzureKeyVault"
           priority                   = 130
+          direction                  = "Outbound"
+          access                     = "Allow"
+          protocol                   = "Tcp"
+          source_port_range          = "*"
+          destination_port_ranges    = [443]
+          source_address_prefix      = "VirtualNetwork"
+          destination_address_prefix = "AzureActiveDirectory"
+        },
+        {
+          name                       = "AllowAccessToAzureSQLEndpointsForCoreServiceFunctionality"
+          priority                   = 140
           direction                  = "Outbound"
           access                     = "Allow"
           protocol                   = "Tcp"
@@ -75,7 +108,7 @@ module "virtual_network" {
         },
         {
           name                       = "AllowAccessToAzureKeyVaultForCoreServiceFunctionality"
-          priority                   = 140
+          priority                   = 150
           direction                  = "Outbound"
           access                     = "Allow"
           protocol                   = "Tcp"
@@ -85,8 +118,19 @@ module "virtual_network" {
           destination_address_prefix = "AzureKeyVault"
         },
         {
+          name                       = "AllowLogToEventHub"
+          priority                   = 160
+          direction                  = "Outbound"
+          access                     = "Allow"
+          protocol                   = "Tcp"
+          source_port_range          = "*"
+          destination_port_ranges    = [5671, 5672, 443]
+          source_address_prefix      = "VirtualNetwork"
+          destination_address_prefix = "EventHub"
+        },
+        {
           name                       = "AllowPublishDiagnosticLogsAndMetricsResourceHealthAndApplicationInsights"
-          priority                   = 150
+          priority                   = 160
           direction                  = "Outbound"
           access                     = "Allow"
           protocol                   = "Tcp"
@@ -94,6 +138,17 @@ module "virtual_network" {
           destination_port_ranges    = [1886, 443]
           source_address_prefix      = "VirtualNetwork"
           destination_address_prefix = "AzureMonitor"
+        },
+        {
+          name                       = "AllowExternalRedisCache"
+          priority                   = 150
+          direction                  = "Inbound"
+          access                     = "Allow"
+          protocol                   = "Tcp"
+          source_port_range          = "*"
+          destination_port_ranges    = [6380]
+          source_address_prefix      = "VirtualNetwork"
+          destination_address_prefix = "VirtualNetwork"
         }
       ]
     },
@@ -345,7 +400,7 @@ module "functions" {
   tags                                   = local.tags
   resource_token                         = local.resource_token
   private_endpoint_subnet_id             = module.virtual_network.private_endpoint_subnet_id
-  vnet_function_subnet_id             = module.virtual_network.function_app_subnet_id
+  vnet_function_subnet_id                = module.virtual_network.function_app_subnet_id
   managed_identity_principal_id          = module.managed_identity.user_assigned_identity_principal_id
   managed_identity_id                    = module.managed_identity.user_assigned_identity_id
   storage_account_name                   = module.storage_account.storage_account_name

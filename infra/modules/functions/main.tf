@@ -43,7 +43,7 @@ resource "azurerm_linux_function_app" "function_app" {
   resource_group_name = var.resource_group_name
   tags                = merge(var.tags, { "azd-service-name" = "write-to-cosmos" })
   service_plan_id     = azurerm_service_plan.service_plan.id
-  https_only = true
+  https_only          = true
   identity {
     type         = "UserAssigned"
     identity_ids = [var.managed_identity_id]
@@ -61,7 +61,7 @@ resource "azurerm_linux_function_app" "function_app" {
     }
     ip_restriction_default_action    = "Deny"
     runtime_scale_monitoring_enabled = true
-    ftps_state = "FtpsOnly"
+    ftps_state                       = "FtpsOnly"
   }
   app_settings = var.app_settings
 }

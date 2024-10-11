@@ -28,7 +28,7 @@ resource "azurerm_container_registry" "container_registry" {
   sku                           = "Premium"
   admin_enabled                 = true
   public_network_access_enabled = false
-  anonymous_pull_enabled = false
+  anonymous_pull_enabled        = false
   network_rule_bypass_option    = "AzureServices"
 }
 

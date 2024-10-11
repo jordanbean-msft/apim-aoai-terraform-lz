@@ -24,7 +24,6 @@ def replicate_siem_event(azeventhub: func.EventHubEvent, event: func.Out[str]):
     if body is not None:
         jsonBody = json.loads(body.decode('utf-8'))
         # remove keys the LLM needs but not the SIEM logging
-        #deque(map(jsonBody.pop, siem_keys_to_remove, repeat(None)), 0)
         remove_keys(jsonBody, siem_keys_to_remove)
         event.set(json.dumps(jsonBody))
 
@@ -38,7 +37,6 @@ def replicate_llm_event(azeventhub: func.EventHubEvent, event: func.Out[str]):
     if body is not None:
         jsonBody = json.loads(body.decode('utf-8'))
         # remove keys the SIEM needs but not the LLM logging
-        #deque(map(jsonBody.pop, llm_keys_to_remove, repeat(None)), 0)
         remove_keys(jsonBody, llm_keys_to_remove)
         event.set(json.dumps(jsonBody))
 
