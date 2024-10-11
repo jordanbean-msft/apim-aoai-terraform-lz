@@ -34,6 +34,8 @@ A virtual network of at least a `/25` and 3 subnets (each at least `/27` ) to as
 - Redirect_Uri
     - For the `sample-openai.http` file (or a regular web application that wants to authenticate an interactive signed-in user), add a `Web->redirect_uri`.
     - For the `sample-openai.ipynb` file, add a `Mobile and desktop applications->redirect_uri`.
+- Expose a scope called `user_impersonation` and specify an `Application ID URI`. This permission should not require admin consent.
+- Add the `client_id` of the front-end client service principal to the `Authorized client applications` section
 
 ## Deployment
 

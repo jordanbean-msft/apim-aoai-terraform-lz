@@ -63,7 +63,7 @@ module "virtual_network" {
           destination_address_prefix = "VirtualNetwork"
         },
         {
-          name                       = "AllowExternalRedisCache"
+          name                       = "AllowExternalRedisCacheInbound"
           priority                   = 150
           direction                  = "Inbound"
           access                     = "Allow"
@@ -130,7 +130,7 @@ module "virtual_network" {
         },
         {
           name                       = "AllowPublishDiagnosticLogsAndMetricsResourceHealthAndApplicationInsights"
-          priority                   = 160
+          priority                   = 170
           direction                  = "Outbound"
           access                     = "Allow"
           protocol                   = "Tcp"
@@ -140,9 +140,9 @@ module "virtual_network" {
           destination_address_prefix = "AzureMonitor"
         },
         {
-          name                       = "AllowExternalRedisCache"
-          priority                   = 150
-          direction                  = "Inbound"
+          name                       = "AllowExternalRedisCacheOutbound"
+          priority                   = 180
+          direction                  = "Outbound"
           access                     = "Allow"
           protocol                   = "Tcp"
           source_port_range          = "*"
