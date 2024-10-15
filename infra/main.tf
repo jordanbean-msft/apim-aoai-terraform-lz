@@ -8,6 +8,7 @@ locals {
   private_endpoint_subnet_nsg_name               = "nsg-${var.network.private_endpoint_subnet_name}-subnet"
   function_app_subnet_nsg_name                   = "nsg-${var.network.function_app_subnet_name}-subnet"
   openai_service_principal_client_secret_name    = "openai-service-principal-client-secret"
+  siem_event_hub_connection_string_secret_name = "siem-event-hub-connection-string"
 }
 
 # ------------------------------------------------------------------------------------------------------
@@ -227,10 +228,11 @@ module "key_vault" {
   access_policy_object_ids = [
     module.managed_identity.user_assigned_identity_object_id
   ]
-  secrets = [
+  secrets = [    
   ]
   subnet_id                                   = module.virtual_network.private_endpoint_subnet_id
   openai_service_principal_client_secret_name = local.openai_service_principal_client_secret_name
+  siem_event_hub_connection_string_secret_name = local.siem_event_hub_connection_string_secret_name
 }
 
 # ------------------------------------------------------------------------------------------------------
@@ -413,6 +415,7 @@ module "functions" {
     "EVENT_HUB_LLM_LOGGING_NAME"         = module.event_hub.event_hub_llm_logging_name
     "EVENT_HUB__credential"              = "managedidentity"
     "EVENT_HUB__clientId"                = module.managed_identity.user_assigned_identity_client_id
+    "SIEM_EVENT_HUB_CONNECTION_STRING" = "@Microsoft.KeyVault(VaultName=${module.key_vault.key_vault_name};SecretName=${local.siem_event_hub_connection_string_secret_name})"
     "COSMOS_DB__credential"              = "managedidentity"
     "COSMOS_DB__clientId"                = module.managed_identity.user_assigned_identity_client_id
     "COSMOS_DB__accountEndpoint"         = module.cosmosdb.cosmosdb_account_endpoint
