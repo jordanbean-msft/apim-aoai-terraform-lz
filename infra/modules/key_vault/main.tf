@@ -61,6 +61,17 @@ resource "azurerm_key_vault_secret" "openai_service_principal_client_secret" {
   }
 }
 
+resource "azurerm_key_vault_secret" "siem_event_hub_connection_string" {
+  key_vault_id = azurerm_key_vault.kv.id
+  name         = var.siem_event_hub_connection_string_secret_name
+  value        = "NOT_THE_REAL_SECRET"
+  lifecycle {
+    ignore_changes = [
+      value
+    ]
+  }
+}
+
 module "private_endpoint" {
   source                         = "../private_endpoint"
   name                           = azurerm_key_vault.kv.name

@@ -49,3 +49,8 @@ variable "openai_service_principal_client_secret_name" {
   description = "The name of the secret in the keyvault that contains the OpenAI service principal client secret"
   type        = string
 }
+
+variable "siem_event_hub_connection_string_secret_name" {
+  description = "The name of the secret in the keyvault that contains the SIEM event hub connection string"
+  type        = string
+}

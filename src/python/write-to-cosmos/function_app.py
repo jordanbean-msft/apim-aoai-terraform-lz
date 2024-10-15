@@ -18,7 +18,7 @@ siem_keys_to_remove = ['pk', 'id', 'max_tokens', 'stream', 'temperature', 'top_p
 
 @app.function_name(name="replication-siem-logging")
 @app.event_hub_message_trigger(arg_name="azeventhub", event_hub_name="central-llm-logging", consumer_group="central-siem-replication", connection="EVENT_HUB")
-@app.event_hub_output(arg_name="event", event_hub_name="siem-logging", connection="EVENT_HUB")
+@app.event_hub_output(arg_name="event", event_hub_name="siem-logging", connection="SIEM_EVENT_HUB_CONNECTION_STRING")
 def replicate_siem_event(azeventhub: func.EventHubEvent, event: func.Out[str]):
     body = azeventhub.get_body()
     if body is not None:
