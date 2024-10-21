@@ -47,6 +47,7 @@ variable "network" {
     ai_studio_subnet_address_prefixes        = optional(list(string))
     function_app_subnet_name                 = string
     function_app_subnet_address_prefixes     = list(string)
+    firewall_ip_address = string
   })
 }
 

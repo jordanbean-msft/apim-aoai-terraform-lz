@@ -48,3 +48,21 @@ module "network_security_group" {
   subnet_id              = "/subscriptions/${var.subscription_id}/resourceGroups/${var.resource_group_name}/providers/Microsoft.Network/virtualNetworks/${var.virtual_network_name}/subnets/${each.key}"
   subnet_name            = each.key
 }
+
+module "route_table" {
+  for_each            = { for subnet in var.subnets : subnet.name => subnet }
+  source              = "../route_table"
+  name                = each.value.name
+  resource_group_name = var.resource_group_name
+  tags                = var.tags
+  resource_token      = var.resource_token
+  location            = var.location
+  routes              = each.value.route_table.routes
+}
+
+resource "azurerm_subnet_route_table_association" "subnet_route_table_association" {
+  for_each = { for subnet in var.subnets : subnet.name => subnet }
+
+  subnet_id         = "/subscriptions/${var.subscription_id}/resourceGroups/${var.resource_group_name}/providers/Microsoft.Network/virtualNetworks/${var.virtual_network_name}/subnets/${each.key}"
+  route_table_id    = module.route_table[each.key].id
+}
