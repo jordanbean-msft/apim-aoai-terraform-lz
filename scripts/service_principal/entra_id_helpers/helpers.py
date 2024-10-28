@@ -12,20 +12,27 @@ def call_azure_cli(cmd):
     result_stdout = result.stdout.decode("utf-8")
     result_stderr = result.stderr.decode("utf-8")
 
-    #logging.info(result_stdout)
-    logging.info(f"Error: {result_stderr}")
+    logging.debug(result_stdout)
+    logging.debug(f"Error: {result_stderr}")
 
     return result_stdout
 
-def create_app_registration(display_name):
+def create_app_registration(display_name, web_direct_uri, public_redirect_uri, required_resource_access):
     logging.info(f'Creating app registration with display name: {display_name}')
-
-    #az login
 
     cmd = ["az", "ad", "app", "create", 
         "--display-name", display_name, 
         "--sign-in-audience", "AzureAdMyOrg"
     ]
+
+    if web_direct_uri:
+        cmd.extend(["--web-redirect-uris", web_direct_uri])
+
+    if public_redirect_uri:
+        cmd.extend(["--public-client-redirect-uris", public_redirect_uri])
+
+    if required_resource_access:
+        cmd.extend(["--required-resource-access", json.dumps(required_resource_access)])
 
     result = call_azure_cli(cmd)
 

@@ -8,8 +8,13 @@ def main():
     display_name = input('Display Name: ')
     tags = input('Tags (comma-separated): ')
     owner_upns = input('Owner User Principal Names (comma-separated): ')
+    web_redirect_uri = input('Web Redirect URI (leave blank for none): ')
+    public_redirect_uri = input('Desktop Redirect URI (leave blank for none): ')
 
-    ad_app_details = create_app_registration(display_name=display_name)
+    ad_app_details = create_app_registration(display_name=display_name, 
+        web_direct_uri=web_redirect_uri, 
+        public_redirect_uri=public_redirect_uri,
+        required_resource_access=Null)
 
     add_other_app_registration_fields(tags=tags, appId=ad_app_details['appId'], id=ad_app_details['id'])
     

@@ -10,8 +10,24 @@ def main():
     owner_upns = input('Owner User Principal Names (comma-separated): ')
     openai_client_id = input('OpenAI Client ID: ')
     openai_scope_id = input('OpenAI Scope ID: ')
+    web_redirect_uri = input('Web Redirect URI (leave blank for none): ')
+    public_redirect_uri = input('Desktop Redirect URI (leave blank for none): ')
 
-    ad_app_details = create_app_registration(display_name=display_name)
+    ad_app_details = create_app_registration(display_name=display_name, 
+        web_direct_uri=web_redirect_uri, 
+        public_redirect_uri=public_redirect_uri,
+        required_resource_access=[
+            {
+                "resourceAppId": openai_client_id, 
+                "resourceAccess": [
+                    {
+                        "id": openai_scope_id, 
+                        "type": "Scope"
+                    }
+                ]
+            }
+        ]
+    )
 
     add_other_app_registration_fields(tags=tags, appId=ad_app_details['appId'], id=ad_app_details['id'])
     
@@ -29,6 +45,8 @@ def main():
     logging.info(f'Client App Client ID: {ad_app_details["appId"]}')
     logging.info(f'Client App Client Secret: {password["secretText"]}')
     logging.info(f'Client App Scope: api://{ad_app_details['appId']}/user_impersonation')
+    logging.info(f'Client App Web Redirect URI: {web_redirect_uri}')
+    logging.info(f'Client App Desktop Redirect URI: {public_redirect_uri}')
 
 if __name__ == '__main__':
     main()
