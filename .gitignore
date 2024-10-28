@@ -361,3 +361,5 @@ test-openai.ipynb
 .vscode/
 
 tfplan
+
+.venv/

@@ -42,6 +42,15 @@ variable "subnets" {
       source_address_prefix      = string
       destination_address_prefix = string
     }))
+    route_table = optional(object({
+      name = string
+      routes = list(object({
+        name                   = string
+        address_prefix         = string
+        next_hop_type          = string
+        next_hop_in_ip_address = string
+      }))
+    }))
   }))
 }
 

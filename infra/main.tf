@@ -150,7 +150,23 @@ module "virtual_network" {
           source_address_prefix      = "VirtualNetwork"
           destination_address_prefix = "VirtualNetwork"
         }
-      ]
+      ],
+      route_table = {
+        name = "apim"
+        routes = [
+          {
+            name = "ApimControlPlane"
+            address_prefix = "ApiManagement"
+            next_hop_type = "Internet"
+          },
+          {
+            name = "InternetToFirewall"
+            address_prefix = "0.0.0.0/0"
+            next_hop_type = "VirtualAppliance"
+            next_hop_in_ip_address = var.network.firewall_ip_address
+          }
+        ]
+      }
     },
     {
       name                   = var.network.private_endpoint_subnet_name
@@ -408,18 +424,18 @@ module "functions" {
   application_insights_key               = module.application_insights.application_insights_instrumentation_key
   storage_account_access_key             = module.storage_account.storage_account_access_key
   app_settings = {
-    "EVENT_HUB__fullyQualifiedNamespace" = module.event_hub.event_hub_namespace_fqdn
-    "EVENT_HUB_CENTRAL_NAME"             = module.event_hub.event_hub_central_name
-    "EVENT_HUB_LLM_LOGGING_NAME"         = module.event_hub.event_hub_llm_logging_name
-    "EVENT_HUB__credential"              = "managedidentity"
-    "EVENT_HUB__clientId"                = module.managed_identity.user_assigned_identity_client_id
-    "COSMOS_DB__credential"              = "managedidentity"
-    "COSMOS_DB__clientId"                = module.managed_identity.user_assigned_identity_client_id
-    "COSMOS_DB__accountEndpoint"         = module.cosmosdb.cosmosdb_account_endpoint
-    "COSMOS_DB_NAME"                     = module.cosmosdb.cosmosdb_sql_database_name
-    "COSMOS_DB_CONTAINER_NAME"           = module.cosmosdb.cosmosdb_sql_container_name
-    "WEBSITE_CONTENTOVERVNET"            = 1
-    "WEBSITE_CONTENTSHARE"               = module.storage_account.function_app_share_name
+    "EVENT_HUB__fullyQualifiedNamespace"       = module.event_hub.event_hub_namespace_fqdn
+    "EVENT_HUB_CENTRAL_NAME"                   = module.event_hub.event_hub_central_name
+    "EVENT_HUB_LLM_LOGGING_NAME"               = module.event_hub.event_hub_llm_logging_name
+    "EVENT_HUB__credential"                    = "managedidentity"
+    "EVENT_HUB__clientId"                      = module.managed_identity.user_assigned_identity_client_id
+    "COSMOS_DB__credential"                    = "managedidentity"
+    "COSMOS_DB__clientId"                      = module.managed_identity.user_assigned_identity_client_id
+    "COSMOS_DB__accountEndpoint"               = module.cosmosdb.cosmosdb_account_endpoint
+    "COSMOS_DB_NAME"                           = module.cosmosdb.cosmosdb_sql_database_name
+    "COSMOS_DB_CONTAINER_NAME"                 = module.cosmosdb.cosmosdb_sql_container_name
+    "WEBSITE_CONTENTSHARE"                     = module.storage_account.function_app_share_name
+    "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING" = module.storage_account.storage_account_connection_string
   }
   sku_name               = var.function_app.sku_name
   zone_balancing_enabled = var.function_app.zone_balancing_enabled
