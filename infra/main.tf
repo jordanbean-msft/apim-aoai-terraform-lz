@@ -150,23 +150,7 @@ module "virtual_network" {
           source_address_prefix      = "VirtualNetwork"
           destination_address_prefix = "VirtualNetwork"
         }
-      ],
-      route_table = {
-        name = "apim"
-        routes = [
-          {
-            name           = "ApimControlPlane"
-            address_prefix = "ApiManagement"
-            next_hop_type  = "Internet"
-          },
-          {
-            name                   = "InternetToFirewall"
-            address_prefix         = "0.0.0.0/0"
-            next_hop_type          = "VirtualAppliance"
-            next_hop_in_ip_address = var.network.firewall_ip_address
-          }
-        ]
-      }
+      ]
     },
     {
       name                   = var.network.private_endpoint_subnet_name
