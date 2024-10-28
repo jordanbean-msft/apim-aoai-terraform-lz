@@ -190,6 +190,7 @@ module "virtual_network" {
   ai_studio_subnet_name        = var.network.ai_studio_subnet_name
   function_app_subnet_name     = var.network.function_app_subnet_name
   subscription_id              = data.azurerm_client_config.current.subscription_id
+  firewall_ip_address          = var.network.firewall_ip_address
 }
 
 # ------------------------------------------------------------------------------------------------------
@@ -318,6 +319,7 @@ module "api_management" {
   event_hub_namespace_fqdn                                = module.event_hub.event_hub_namespace_fqdn
   event_hub_name                                          = module.event_hub.event_hub_central_name
   zones                                                   = var.apim.zones
+  log_analytics_workspace_id                              = module.log_analytics.log_analytics_workspace_id
 }
 
 # ------------------------------------------------------------------------------------------------------

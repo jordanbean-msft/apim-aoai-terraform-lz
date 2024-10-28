@@ -8,6 +8,10 @@ terraform {
       source  = "aztfmod/azurecaf"
       version = "1.2.28"
     }
+    azapi = {
+      source  = "Azure/azapi"
+      version = "1.15.0"
+    }
   }
 }
 # ------------------------------------------------------------------------------------------------------
@@ -62,8 +66,24 @@ resource "azurerm_linux_function_app" "function_app" {
     ip_restriction_default_action    = "Deny"
     runtime_scale_monitoring_enabled = true
     ftps_state                       = "FtpsOnly"
+
   }
   app_settings = var.app_settings
+}
+
+resource "azapi_update_resource" "vnet_content_share_enabled" {
+  type        = "Microsoft.Web/sites@2022-09-01"
+  resource_id = azurerm_linux_function_app.function_app.id
+
+  body = {
+    properties = {
+      vnetContentShareEnabled = true
+    }
+  }
+
+  depends_on = [
+    azurerm_linux_function_app.function_app
+  ]
 }
 
 module "private_endpoint" {

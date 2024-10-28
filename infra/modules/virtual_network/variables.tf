@@ -79,3 +79,8 @@ variable "subscription_id" {
   description = "The subscription id of the vNet"
   type        = string
 }
+
+variable "firewall_ip_address" {
+  description = "The IP address of the firewall"
+  type        = string
+}
