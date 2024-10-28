@@ -155,14 +155,14 @@ module "virtual_network" {
         name = "apim"
         routes = [
           {
-            name = "ApimControlPlane"
+            name           = "ApimControlPlane"
             address_prefix = "ApiManagement"
-            next_hop_type = "Internet"
+            next_hop_type  = "Internet"
           },
           {
-            name = "InternetToFirewall"
-            address_prefix = "0.0.0.0/0"
-            next_hop_type = "VirtualAppliance"
+            name                   = "InternetToFirewall"
+            address_prefix         = "0.0.0.0/0"
+            next_hop_type          = "VirtualAppliance"
             next_hop_in_ip_address = var.network.firewall_ip_address
           }
         ]
@@ -201,6 +201,17 @@ module "application_insights" {
   location            = var.location
   resource_group_name = var.resource_group_name
   workspace_id        = module.log_analytics.log_analytics_workspace_id
+  tags                = local.tags
+  resource_token      = local.resource_token
+}
+
+# ------------------------------------------------------------------------------------------------------
+# Deploy Azure Monitor workbook
+# ------------------------------------------------------------------------------------------------------
+module "workbook" {
+  source              = "./modules/workbook"
+  location            = var.location
+  resource_group_name = var.resource_group_name
   tags                = local.tags
   resource_token      = local.resource_token
 }

@@ -55,8 +55,8 @@ resource "azapi_update_resource" "service_endpoint_delegation" {
     properties = {
       delegations = [
         {
-        name = "Microsoft.Web/serverFarms"
-      }
+          name = "Microsoft.Web/serverFarms"
+        }
       ]
     }
   })
