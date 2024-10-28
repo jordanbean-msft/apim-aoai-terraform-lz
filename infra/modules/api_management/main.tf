@@ -48,3 +48,17 @@ resource "azurerm_role_assignment" "api_management_system_assigned_managed_ident
   role_definition_name = "Cognitive Services OpenAI User"
   principal_id         = azurerm_api_management.api_management.identity.*.principal_id[0]
 }
+
+resource "azurerm_monitor_diagnostic_setting" "apim_logging" {
+  name               = "apim-logging"
+  target_resource_id = azurerm_api_management.api_management.id
+  log_analytics_workspace_id = var.log_analytics_workspace_id
+
+  enabled_log {
+    category = "GatewayLogs"
+  }
+
+  metric {
+    category = "AllMetrics"
+  }
+}

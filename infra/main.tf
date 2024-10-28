@@ -150,23 +150,7 @@ module "virtual_network" {
           source_address_prefix      = "VirtualNetwork"
           destination_address_prefix = "VirtualNetwork"
         }
-      ],
-      route_table = {
-        name = "apim"
-        routes = [
-          {
-            name = "ApimControlPlane"
-            address_prefix = "ApiManagement"
-            next_hop_type = "Internet"
-          },
-          {
-            name = "InternetToFirewall"
-            address_prefix = "0.0.0.0/0"
-            next_hop_type = "VirtualAppliance"
-            next_hop_in_ip_address = var.network.firewall_ip_address
-          }
-        ]
-      }
+      ]
     },
     {
       name                   = var.network.private_endpoint_subnet_name
@@ -190,6 +174,7 @@ module "virtual_network" {
   ai_studio_subnet_name        = var.network.ai_studio_subnet_name
   function_app_subnet_name     = var.network.function_app_subnet_name
   subscription_id              = data.azurerm_client_config.current.subscription_id
+  firewall_ip_address          = var.network.firewall_ip_address
 }
 
 # ------------------------------------------------------------------------------------------------------
@@ -318,6 +303,7 @@ module "api_management" {
   event_hub_namespace_fqdn                                = module.event_hub.event_hub_namespace_fqdn
   event_hub_name                                          = module.event_hub.event_hub_central_name
   zones                                                   = var.apim.zones
+  log_analytics_workspace_id                              = module.log_analytics.log_analytics_workspace_id
 }
 
 # ------------------------------------------------------------------------------------------------------

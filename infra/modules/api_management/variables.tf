@@ -163,3 +163,8 @@ variable "zones" {
   description = "The availability zones to use for the API Management service"
   type        = list(string)
 }
+
+variable "log_analytics_workspace_id" {
+  description = "The Log Analytics workspace ID to use for the API Management service"
+  type        = string
+}

@@ -52,7 +52,7 @@ def create_user_impersonation_scope(appId, id):
         "value": "user_impersonation",
         "userConsentDisplayName": "Allow the application to access the user_impersonation scope",
         "userConsentDescription": "Allow the application to access the user_impersonation scope",
-        "adminConsentDisplayName": "Allow the application to access the user_impersonation",
+        "adminConsentDisplayName": "Allow the application to access the user_impersonation scope",
         "adminConsentDescription": "Allow the application to access the user_impersonation scope"
     }
 

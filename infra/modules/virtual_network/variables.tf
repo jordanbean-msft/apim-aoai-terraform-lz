@@ -42,15 +42,6 @@ variable "subnets" {
       source_address_prefix      = string
       destination_address_prefix = string
     }))
-    route_table = optional(object({
-      name = string
-      routes = list(object({
-        name                   = string
-        address_prefix         = string
-        next_hop_type          = string
-        next_hop_in_ip_address = string
-      }))
-    }))
   }))
 }
 
@@ -77,5 +68,10 @@ variable "function_app_subnet_name" {
 
 variable "subscription_id" {
   description = "The subscription id of the vNet"
+  type        = string
+}
+
+variable "firewall_ip_address" {
+  description = "The IP address of the firewall"
   type        = string
 }

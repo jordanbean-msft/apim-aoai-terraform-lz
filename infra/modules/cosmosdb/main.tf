@@ -27,7 +27,7 @@ resource "azurerm_cosmosdb_account" "cosmosdb_account" {
   resource_group_name                   = var.resource_group_name
   public_network_access_enabled         = false
   network_acl_bypass_for_azure_services = true
-  local_authentication_disabled         = true
+  local_authentication_disabled         = false
   kind                                  = "GlobalDocumentDB"
   consistency_policy {
     consistency_level       = "Session"
