@@ -86,3 +86,18 @@ resource "azurerm_role_assignment" "cognitive_services_openai_contributor_role_a
   role_definition_name = "Cognitive Services OpenAI Contributor"
   principal_id         = var.user_assigned_identity_object_id
 }
+
+resource "azurerm_monitor_diagnostic_setting" "openai_logging" {
+  for_each                   = { for deployment in var.openai_model_deployments : deployment.name_suffix => deployment }
+  name                       = "${each.key}-openai-logging"
+  target_resource_id         = azurerm_cognitive_account.cognitive_account[each.key].id
+  log_analytics_workspace_id = var.log_analytics_workspace_id
+
+  enabled_log {
+    category = "RequestResponse"
+  }
+
+  metric {
+    category = "AllMetrics"
+  }
+}
