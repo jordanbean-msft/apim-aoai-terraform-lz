@@ -73,3 +73,8 @@ variable "zone_balancing_enabled" {
   description = "Enable zone balancing for the service plan"
   type        = bool
 }
+
+variable "log_analytics_workspace_id" {
+  description = "The id of the Log Analytics workspace to send logs to"
+  type        = string
+}

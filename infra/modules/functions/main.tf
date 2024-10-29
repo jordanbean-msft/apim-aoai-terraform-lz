@@ -98,3 +98,17 @@ module "private_endpoint" {
   subresource_names              = ["sites"]
   is_manual_connection           = false
 }
+
+resource "azurerm_monitor_diagnostic_setting" "function_logging" {
+  name                       = "function-logging"
+  target_resource_id         = azurerm_linux_function_app.function_app.id
+  log_analytics_workspace_id = var.log_analytics_workspace_id
+
+  enabled_log {
+    category = "FunctionAppLogs"
+  }
+
+  metric {
+    category = "AllMetrics"
+  }
+}

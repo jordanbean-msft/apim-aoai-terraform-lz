@@ -50,3 +50,8 @@ variable "openai_model_deployments" {
     })
   )
 }
+
+variable "log_analytics_workspace_id" {
+  description = "The id of the Log Analytics workspace to send logs to"
+  type        = string
+}

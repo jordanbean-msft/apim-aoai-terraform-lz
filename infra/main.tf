@@ -257,6 +257,7 @@ module "openai" {
   subnet_id                        = module.virtual_network.private_endpoint_subnet_id
   user_assigned_identity_object_id = module.managed_identity.user_assigned_identity_object_id
   openai_model_deployments         = var.openai.model_deployments
+  log_analytics_workspace_id       = module.log_analytics.log_analytics_workspace_id
 }
 
 # ------------------------------------------------------------------------------------------------------
@@ -434,6 +435,7 @@ module "functions" {
     "WEBSITE_CONTENTSHARE"                     = module.storage_account.function_app_share_name
     "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING" = module.storage_account.storage_account_connection_string
   }
-  sku_name               = var.function_app.sku_name
-  zone_balancing_enabled = var.function_app.zone_balancing_enabled
+  sku_name                   = var.function_app.sku_name
+  zone_balancing_enabled     = var.function_app.zone_balancing_enabled
+  log_analytics_workspace_id = module.log_analytics.log_analytics_workspace_id
 }
