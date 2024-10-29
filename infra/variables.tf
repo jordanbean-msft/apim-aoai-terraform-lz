@@ -76,7 +76,8 @@ variable "openai" {
         sku = object({
           name     = string
           capacity = optional(number)
-        })
+        }),
+        rai_policy_name = string
       }))
     }))
   })

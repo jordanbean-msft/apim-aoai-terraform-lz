@@ -45,7 +45,8 @@ variable "openai_model_deployments" {
       sku = object({
         name     = string,
         capacity = optional(number)
-      })
+      }),
+      rai_policy_name = string
     }))
     })
   )
