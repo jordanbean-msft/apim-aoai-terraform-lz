@@ -48,6 +48,7 @@ resource "azurerm_cognitive_deployment" "cognitive_deployment" {
           model_version = model.model.version
           sku_name      = model.sku.name
           sku_capacity  = model.sku.capacity
+          rai_policy_name = model.rai_policy_name
         }
       ]
     ]) : "${combination.model_name}-${combination.name_suffix}" => combination
@@ -59,11 +60,11 @@ resource "azurerm_cognitive_deployment" "cognitive_deployment" {
     name    = each.value.model_name
     version = each.value.model_version
   }
-
   sku {
     name     = each.value.sku_name
     capacity = each.value.sku_capacity
   }
+  rai_policy_name = each.value.rai_policy_name
 }
 
 module "private_endpoint" {
