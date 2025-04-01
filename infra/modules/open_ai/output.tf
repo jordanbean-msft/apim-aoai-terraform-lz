@@ -1,6 +1,5 @@
 output "azure_cognitive_services_endpoints" {
   value = [
-    #for deployment in var.openai_model_deployments : {
     for deployment in flatten([
       for pool in var.openai_model_deployments.pools : [
         for openai_instance in pool.instances : {

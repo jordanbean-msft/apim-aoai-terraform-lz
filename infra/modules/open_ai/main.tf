@@ -14,7 +14,6 @@ terraform {
 # Deploy cognitive services
 # ------------------------------------------------------------------------------------------------------
 resource "azurecaf_name" "cognitiveservices_name" {
-  #for_each      = { for deployment in var.openai_model_deployments : deployment.name_suffix => deployment }
   for_each = {
     for instance in flatten([
       for pool in var.openai_model_deployments.pools : [
@@ -31,7 +30,6 @@ resource "azurecaf_name" "cognitiveservices_name" {
 }
 
 resource "azurerm_cognitive_account" "cognitive_account" {
-  #for_each                      = { for deployment in var.openai_model_deployments : deployment.name_suffix => deployment }
   for_each = {
     for instance in flatten([
       for pool in var.openai_model_deployments.pools : [
@@ -89,7 +87,6 @@ resource "azurerm_cognitive_deployment" "cognitive_deployment" {
 }
 
 module "private_endpoint" {
-  #for_each                       = { for deployment in var.openai_model_deployments : deployment.name_suffix => deployment }
   for_each = {
     for instance in flatten([
       for pool in var.openai_model_deployments.pools : [
@@ -113,7 +110,6 @@ module "private_endpoint" {
 }
 
 resource "azurerm_role_assignment" "cognitive_services_openai_contributor_role_assignment" {
-  #for_each             = { for deployment in var.openai_model_deployments : deployment.name_suffix => deployment }
   for_each = {
     for instance in flatten([
       for pool in var.openai_model_deployments.pools : [
@@ -129,7 +125,6 @@ resource "azurerm_role_assignment" "cognitive_services_openai_contributor_role_a
 }
 
 resource "azurerm_monitor_diagnostic_setting" "openai_logging" {
-  #for_each                   = { for deployment in var.openai_model_deployments : deployment.name_suffix => deployment }
   for_each = {
     for instance in flatten([
       for pool in var.openai_model_deployments.pools : [
