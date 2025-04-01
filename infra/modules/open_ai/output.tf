@@ -1,11 +1,15 @@
 output "azure_cognitive_services_endpoints" {
   value = [
-    for deployment in var.openai_model_deployments : {
-      key      = deployment.name_suffix
-      name     = azurecaf_name.cognitiveservices_name[deployment.name_suffix].result
-      endpoint = azurerm_cognitive_account.cognitive_account[deployment.name_suffix].endpoint,
-      priority = deployment.priority
-    }
+    #for deployment in var.openai_model_deployments : {
+    for deployment in flatten([
+      for pool in var.openai_model_deployments.pools : [
+        for openai_instance in pool.instances : {
+          key       = openai_instance.name_suffix
+          pool_name = pool.name
+          name      = azurecaf_name.cognitiveservices_name[openai_instance.name_suffix].result
+          endpoint  = azurerm_cognitive_account.cognitive_account[openai_instance.name_suffix].endpoint
+          priority  = openai_instance.priority
+    }]]) : deployment
   ]
 }
 

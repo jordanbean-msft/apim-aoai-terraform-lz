@@ -27,8 +27,8 @@ resource "azurerm_log_analytics_workspace" "workspace" {
   sku                        = "PerGB2018"
   retention_in_days          = 30
   tags                       = var.tags
-  internet_ingestion_enabled = false
-  internet_query_enabled     = false
+  internet_ingestion_enabled = true
+  internet_query_enabled     = true
 }
 
 module "private_endpoint" {

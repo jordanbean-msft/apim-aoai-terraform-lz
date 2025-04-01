@@ -14,7 +14,16 @@ terraform {
 # Deploy cognitive services
 # ------------------------------------------------------------------------------------------------------
 resource "azurecaf_name" "cognitiveservices_name" {
-  for_each      = { for deployment in var.openai_model_deployments : deployment.name_suffix => deployment }
+  #for_each      = { for deployment in var.openai_model_deployments : deployment.name_suffix => deployment }
+  for_each = {
+    for instance in flatten([
+      for pool in var.openai_model_deployments.pools : [
+        for openai_instance in pool.instances : {
+          name_suffix = openai_instance.name_suffix
+        }
+      ]
+    ]) : instance.name_suffix => instance
+  }
   name          = "openai-${var.resource_token}-${each.key}"
   resource_type = "azurerm_cognitive_account"
   random_length = 0
@@ -22,7 +31,19 @@ resource "azurecaf_name" "cognitiveservices_name" {
 }
 
 resource "azurerm_cognitive_account" "cognitive_account" {
-  for_each                      = { for deployment in var.openai_model_deployments : deployment.name_suffix => deployment }
+  #for_each                      = { for deployment in var.openai_model_deployments : deployment.name_suffix => deployment }
+  for_each = {
+    for instance in flatten([
+      for pool in var.openai_model_deployments.pools : [
+        for openai_instance in pool.instances : {
+          name_suffix = openai_instance.name_suffix
+          kind        = openai_instance.kind
+          sku_name    = openai_instance.sku_name
+          location    = openai_instance.location
+        }
+      ]
+    ]) : instance.name_suffix => instance
+  }
   name                          = azurecaf_name.cognitiveservices_name[each.key].result
   location                      = each.value.location
   resource_group_name           = var.resource_group_name
@@ -39,19 +60,19 @@ resource "azurerm_cognitive_account" "cognitive_account" {
 
 resource "azurerm_cognitive_deployment" "cognitive_deployment" {
   for_each = {
-    for combination in flatten([
-      for deployment in var.openai_model_deployments : [
-        for model in deployment.deployments : {
-          name_suffix   = deployment.name_suffix
-          model_format  = model.model.format
-          model_name    = model.model.name
-          model_version = model.model.version
-          sku_name      = model.sku.name
-          sku_capacity  = model.sku.capacity
-          rai_policy_name = model.rai_policy_name
-        }
-      ]
-    ]) : "${combination.model_name}-${combination.name_suffix}" => combination
+    for instance in flatten([
+      for pool in var.openai_model_deployments.pools : [
+        for openai_instance in pool.instances : [
+          for deployment in openai_instance.deployments : {
+            name_suffix     = openai_instance.name_suffix
+            model_format    = deployment.model.format
+            model_name      = deployment.model.name
+            model_version   = deployment.model.version
+            sku_name        = deployment.sku.name
+            sku_capacity    = deployment.sku.capacity
+            rai_policy_name = deployment.rai_policy_name
+          }
+    ]]]) : "${instance.model_name}-${instance.name_suffix}" => instance
   }
   name                 = "${each.value.model_name}-${each.value.model_version}"
   cognitive_account_id = azurerm_cognitive_account.cognitive_account[each.value.name_suffix].id
@@ -68,7 +89,17 @@ resource "azurerm_cognitive_deployment" "cognitive_deployment" {
 }
 
 module "private_endpoint" {
-  for_each                       = { for deployment in var.openai_model_deployments : deployment.name_suffix => deployment }
+  #for_each                       = { for deployment in var.openai_model_deployments : deployment.name_suffix => deployment }
+  for_each = {
+    for instance in flatten([
+      for pool in var.openai_model_deployments.pools : [
+        for openai_instance in pool.instances : {
+          name_suffix = openai_instance.name_suffix
+          location    = openai_instance.location
+        }
+      ]
+    ]) : instance.name_suffix => instance
+  }
   source                         = "../private_endpoint"
   name                           = azurerm_cognitive_account.cognitive_account[each.key].name
   resource_group_name            = var.resource_group_name
@@ -82,14 +113,32 @@ module "private_endpoint" {
 }
 
 resource "azurerm_role_assignment" "cognitive_services_openai_contributor_role_assignment" {
-  for_each             = { for deployment in var.openai_model_deployments : deployment.name_suffix => deployment }
+  #for_each             = { for deployment in var.openai_model_deployments : deployment.name_suffix => deployment }
+  for_each = {
+    for instance in flatten([
+      for pool in var.openai_model_deployments.pools : [
+        for openai_instance in pool.instances : {
+          name_suffix = openai_instance.name_suffix
+        }
+      ]
+    ]) : instance.name_suffix => instance
+  }
   scope                = azurerm_cognitive_account.cognitive_account[each.key].id
   role_definition_name = "Cognitive Services OpenAI Contributor"
   principal_id         = var.user_assigned_identity_object_id
 }
 
 resource "azurerm_monitor_diagnostic_setting" "openai_logging" {
-  for_each                   = { for deployment in var.openai_model_deployments : deployment.name_suffix => deployment }
+  #for_each                   = { for deployment in var.openai_model_deployments : deployment.name_suffix => deployment }
+  for_each = {
+    for instance in flatten([
+      for pool in var.openai_model_deployments.pools : [
+        for openai_instance in pool.instances : {
+          name_suffix = openai_instance.name_suffix
+        }
+      ]
+    ]) : instance.name_suffix => instance
+  }
   name                       = "${each.key}-openai-logging"
   target_resource_id         = azurerm_cognitive_account.cognitive_account[each.key].id
   log_analytics_workspace_id = var.log_analytics_workspace_id

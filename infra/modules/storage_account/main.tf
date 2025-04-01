@@ -27,10 +27,10 @@ resource "azurerm_storage_account" "storage_account" {
   account_tier                    = var.account_tier
   account_replication_type        = var.account_replication_type
   tags                            = var.tags
-  public_network_access_enabled   = false
+  public_network_access_enabled   = true
   allow_nested_items_to_be_public = false
   network_rules {
-    default_action = "Deny"
+    default_action = "Allow"
     bypass         = ["AzureServices"]
   }
 }

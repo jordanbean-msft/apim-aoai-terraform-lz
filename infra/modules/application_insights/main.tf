@@ -27,8 +27,8 @@ resource "azurerm_application_insights" "applicationinsights" {
   application_type           = "other"
   workspace_id               = var.workspace_id
   tags                       = var.tags
-  internet_ingestion_enabled = false
-  internet_query_enabled     = false
+  internet_ingestion_enabled = true
+  internet_query_enabled     = true
 }
 
 data "azurerm_subscription" "current" {}
