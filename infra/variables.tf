@@ -129,6 +129,17 @@ variable "function_app" {
   })
 }
 
+variable "gemini_api_key" {
+  description = "The Google Gemini API key to use for authentication"
+  type        = string
+  sensitive   = true
+}
+
+variable "gemini_openapi_specification_url" {
+  description = "The Google Gemini Swagger URL to use for the API Management service"
+  type        = string
+}
+
 # variable "virtual_network_resource_group_name" {
 #   description = "The resource group name of the virtual network"
 #   type        = string

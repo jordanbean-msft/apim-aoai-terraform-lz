@@ -316,6 +316,8 @@ module "api_management" {
   event_hub_name                                          = module.event_hub.event_hub_central_name
   zones                                                   = var.apim.zones
   log_analytics_workspace_id                              = module.log_analytics.log_analytics_workspace_id
+  gemini_api_key                                          = var.gemini_api_key
+  gemini_openapi_specification_url                        = var.gemini_openapi_specification_url
 }
 
 # ------------------------------------------------------------------------------------------------------

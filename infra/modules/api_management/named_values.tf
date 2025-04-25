@@ -92,3 +92,12 @@ resource "azurerm_api_management_named_value" "openai_semantic_cache_store_durat
   value               = var.openai_semantic_cache_store_duration
   secret              = false
 }
+
+resource "azurerm_api_management_named_value" "gemini_api_key" {
+  api_management_name = azurerm_api_management.api_management.name
+  name                = "gemini-api-key"
+  resource_group_name = var.resource_group_name
+  display_name        = "gemini-api-key"
+  value               = var.gemini_api_key
+  secret              = true
+}
