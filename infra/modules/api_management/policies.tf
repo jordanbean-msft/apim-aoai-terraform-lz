@@ -17,6 +17,16 @@ resource "azurerm_api_management_api_policy" "openai_api_policy" {
   ]
 }
 
+resource "azurerm_api_management_api_policy" "gemini_api_policy" {
+  api_management_name = azurerm_api_management.api_management.name
+  resource_group_name = var.resource_group_name
+  api_name            = azurerm_api_management_api.gemini_api.name
+  xml_content         = file("${path.module}/policies/gemini.xml")
+  depends_on = [
+    azurerm_api_management_named_value.gemini_api_key
+  ]
+}
+
 resource "azurerm_api_management_policy_fragment" "generate_partition_key_policy" {
   api_management_id = azurerm_api_management.api_management.id
   name              = "generate-partition-key"
