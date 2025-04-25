@@ -1,7 +1,14 @@
 <policies>
     <inbound>
         <base />
-        <include-fragment fragment-id="load-balancing-define-backends" />
+        <choose>
+            <when condition="@(context.Request.MatchedParameters.GetValueOrDefault("deployment-id", "") == "o3-mini")">
+                <set-backend-service backend-id="o3-mini-load-balanced-pool" />
+            </when>
+            <otherwise>
+                <set-backend-service backend-id="aoai-default-load-balanced-pool" />
+            </otherwise>
+        </choose>
         <include-fragment fragment-id="setup-correlation-id" />
         <validate-jwt header-name="Authorization" failed-validation-httpcode="401" failed-validation-error-message="Unauthorized. Access token is missing or invalid.">
             <openid-config url="https://login.microsoftonline.com/{{tenant-id}}/.well-known/openid-configuration" />
@@ -25,11 +32,11 @@
         <azure-openai-semantic-cache-lookup score-threshold="{{openai-semantic-cache-lookup-score-threshold}}" embeddings-backend-id="{{openai-semantic-cache-embedding-backend-id}}" embeddings-backend-auth="system-assigned">
             <vary-by>@(context.Subscription.Id)</vary-by>
         </azure-openai-semantic-cache-lookup>
-        <set-variable name="backendIndex" value="-1" />
-        <set-variable name="remainingBackends" value="1" />
     </inbound>
     <backend>
-        <include-fragment fragment-id="load-balancing-select-backend" />
+        <retry count="1" interval="0" first-fast-retry="true" condition="@(context.Response.StatusCode == 429 || (context.Response.StatusCode == 503 && !context.Response.StatusReason.Contains("Backend pool") && !context.Response.StatusReason.Contains("is temporarily unavailable")))">
+            <forward-request buffer-request-body="true" />
+        </retry>
     </backend>
     <outbound>
         <azure-openai-semantic-cache-store duration="{{openai-semantic-cache-store-duration}}" />

@@ -256,7 +256,7 @@ module "openai" {
   tags                             = local.tags
   subnet_id                        = module.virtual_network.private_endpoint_subnet_id
   user_assigned_identity_object_id = module.managed_identity.user_assigned_identity_object_id
-  openai_model_deployments         = var.openai.model_deployments
+  openai_model_deployments         = var.openai
   log_analytics_workspace_id       = module.log_analytics.log_analytics_workspace_id
 }
 
@@ -316,6 +316,8 @@ module "api_management" {
   event_hub_name                                          = module.event_hub.event_hub_central_name
   zones                                                   = var.apim.zones
   log_analytics_workspace_id                              = module.log_analytics.log_analytics_workspace_id
+  subscription_id                                         = data.azurerm_client_config.current.subscription_id
+  openai                                                  = var.openai
 }
 
 # ------------------------------------------------------------------------------------------------------

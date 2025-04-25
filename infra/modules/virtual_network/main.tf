@@ -10,7 +10,7 @@ terraform {
     }
     azapi = {
       source  = "Azure/azapi"
-      version = "1.15.0"
+      version = "2.3.0"
     }
   }
 }
@@ -51,7 +51,7 @@ resource "azapi_update_resource" "service_endpoint_delegation" {
   type        = "Microsoft.Network/virtualNetworks/subnets@2024-03-01"
   resource_id = data.azurerm_subnet.integration_subnet.id
 
-  body = jsonencode({
+  body = {
     properties = {
       delegations = [
         {
@@ -59,7 +59,7 @@ resource "azapi_update_resource" "service_endpoint_delegation" {
         }
       ]
     }
-  })
+  }
 }
 
 module "network_security_group" {

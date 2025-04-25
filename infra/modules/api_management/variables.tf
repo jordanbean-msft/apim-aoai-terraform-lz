@@ -51,10 +51,11 @@ variable "api_management_subnet_id" {
 variable "openai_endpoints" {
   description = "The OpenAI endpoints to use for the API Management service"
   type = list(object({
-    key      = string
-    name     = string
-    endpoint = string
-    priority = number
+    key       = string
+    pool_name = string
+    name      = string
+    endpoint  = string
+    priority  = number
   }))
 }
 
@@ -167,4 +168,38 @@ variable "zones" {
 variable "log_analytics_workspace_id" {
   description = "The Log Analytics workspace ID to use for the API Management service"
   type        = string
+}
+
+variable "subscription_id" {
+  description = "The subscription ID to use for the API Management service"
+  type        = string
+}
+
+variable "openai" {
+  type = object({
+    pools = list(object({
+      name    = string
+      default = bool
+      instances = list(
+        object({
+          name_suffix = string
+          kind        = string
+          sku_name    = string
+          location    = string
+          priority    = number
+          deployments = list(object({
+            model = object({
+              format  = string
+              name    = string
+              version = string
+            }),
+            sku = object({
+              name     = string
+              capacity = optional(number)
+            }),
+            rai_policy_name = string
+          }))
+      }))
+    }))
+  })
 }

@@ -29,27 +29,32 @@ variable "user_assigned_identity_object_id" {
 }
 
 variable "openai_model_deployments" {
-  description = "The OpenAI model deployments"
-  type = list(object({
-    name_suffix = string,
-    kind        = string,
-    sku_name    = string,
-    location    = string,
-    priority    = number,
-    deployments = list(object({
-      model = object({
-        format  = string
-        name    = string
-        version = string
-      }),
-      sku = object({
-        name     = string,
-        capacity = optional(number)
-      }),
-      rai_policy_name = string
+  type = object({
+    pools = list(object({
+      name    = string
+      default = bool
+      instances = list(
+        object({
+          name_suffix = string
+          kind        = string
+          sku_name    = string
+          location    = string
+          priority    = number
+          deployments = list(object({
+            model = object({
+              format  = string
+              name    = string
+              version = string
+            }),
+            sku = object({
+              name     = string
+              capacity = optional(number)
+            }),
+            rai_policy_name = string
+          }))
+      }))
     }))
-    })
-  )
+  })
 }
 
 variable "log_analytics_workspace_id" {

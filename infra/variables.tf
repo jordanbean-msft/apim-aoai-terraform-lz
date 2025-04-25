@@ -61,23 +61,28 @@ variable "cosmos_db" {
 
 variable "openai" {
   type = object({
-    model_deployments = list(object({
-      name_suffix = string
-      kind        = string
-      sku_name    = string
-      location    = string
-      priority    = number
-      deployments = list(object({
-        model = object({
-          format  = string
-          name    = string
-          version = string
-        }),
-        sku = object({
-          name     = string
-          capacity = optional(number)
-        }),
-        rai_policy_name = string
+    pools = list(object({
+      name    = string
+      default = bool
+      instances = list(
+        object({
+          name_suffix = string
+          kind        = string
+          sku_name    = string
+          location    = string
+          priority    = number
+          deployments = list(object({
+            model = object({
+              format  = string
+              name    = string
+              version = string
+            }),
+            sku = object({
+              name     = string
+              capacity = optional(number)
+            }),
+            rai_policy_name = string
+          }))
       }))
     }))
   })
