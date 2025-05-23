@@ -98,6 +98,6 @@ resource "azurerm_api_management_named_value" "gemini_api_key" {
   name                = "gemini-api-key"
   resource_group_name = var.resource_group_name
   display_name        = "gemini-api-key"
-  value               = var.gemini_api_key
   secret              = true
+  key_vault_secret_id = "${var.key_vault_id}/secrets/${var.gemini_api_key_kv_secret_name}"
 }

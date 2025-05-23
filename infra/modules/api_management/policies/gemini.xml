@@ -1,9 +1,6 @@
 <policies>
     <inbound>
         <base />
-        <set-header name="x-goog-api-key" exists-action="override">
-            <value>{{gemini-api-key}}</value>
-        </set-header>
         <cors allow-credentials="true">
             <allowed-origins>
                 <origin>*</origin>

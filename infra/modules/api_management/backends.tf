@@ -26,3 +26,25 @@ resource "azurerm_api_management_backend" "openai_semantic_cache_embedding_backe
     validate_certificate_name  = true
   }
 }
+
+resource "azurerm_api_management_backend" "gemini_backend" {
+  api_management_name = azurerm_api_management.api_management.name
+  resource_group_name = var.resource_group_name
+  name                = "gemini-backend" # You can choose a suitable name
+  url                 = var.gemini_backend_url
+  protocol            = "https" # Assuming HTTPS, which is standard
+
+  title               = "Gemini Backend"
+  description         = "Backend for Google Gemini Service"
+
+  tls {
+    validate_certificate_chain = true
+    validate_certificate_name  = true
+  }
+
+  credentials {
+    header = {
+      "x-goog-api-key" = "{{gemini-api-key}}"
+    }
+  }
+}
