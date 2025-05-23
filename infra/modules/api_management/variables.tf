@@ -168,3 +168,19 @@ variable "log_analytics_workspace_id" {
   description = "The Log Analytics workspace ID to use for the API Management service"
   type        = string
 }
+
+variable "gemini_openapi_specification_url" {
+  description = "The Google Gemini Swagger URL to use for the API Management service"
+  type        = string
+}
+
+variable "gemini_api_key_kv_secret_name" {
+  description = "The name of the secret in Azure Key Vault that stores the Gemini API key."
+  type        = string
+}
+
+variable "gemini_backend_url" {
+  description = "The backend URL for the Gemini service."
+  type        = string
+  default     = "" # Or a more sensible default if available
+}
