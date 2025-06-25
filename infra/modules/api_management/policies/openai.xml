@@ -1,13 +1,7 @@
 <policies>
     <inbound>
         <base />
-        <choose>
-            <when condition="@(context.Request.MatchedParameters.GetValueOrDefault("deployment-id", "") == "o3-mini")">
-                <set-backend-service backend-id="o3-mini-load-balanced-pool" />
-            </when>
-            <otherwise>
-                <set-backend-service backend-id="aoai-default-load-balanced-pool" />
-            </otherwise>
+        <set-backend-service backend-id="aoai-default-load-balanced-pool" />
         </choose>
         <include-fragment fragment-id="setup-correlation-id" />
         <validate-jwt header-name="Authorization" failed-validation-httpcode="401" failed-validation-error-message="Unauthorized. Access token is missing or invalid.">
@@ -29,9 +23,9 @@
         <include-fragment fragment-id="generate-partition-key" />
         <include-fragment fragment-id="openai-event-hub-logging-inbound" />
         <include-fragment fragment-id="get-access-token-to-openai" />
-        <azure-openai-semantic-cache-lookup score-threshold="{{openai-semantic-cache-lookup-score-threshold}}" embeddings-backend-id="{{openai-semantic-cache-embedding-backend-id}}" embeddings-backend-auth="system-assigned">
+        <!-- <azure-openai-semantic-cache-lookup score-threshold="{{openai-semantic-cache-lookup-score-threshold}}" embeddings-backend-id="{{openai-semantic-cache-embedding-backend-id}}" embeddings-backend-auth="system-assigned">
             <vary-by>@(context.Subscription.Id)</vary-by>
-        </azure-openai-semantic-cache-lookup>
+        </azure-openai-semantic-cache-lookup> -->
     </inbound>
     <backend>
         <retry count="1" interval="0" first-fast-retry="true" condition="@(context.Response.StatusCode == 429 || (context.Response.StatusCode == 503 && !context.Response.StatusReason.Contains("Backend pool") && !context.Response.StatusReason.Contains("is temporarily unavailable")))">

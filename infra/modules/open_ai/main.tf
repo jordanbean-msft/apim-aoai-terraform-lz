@@ -1,60 +1,101 @@
-terraform {
-  required_providers {
-    azurerm = {
-      version = "~>4.0.1"
-      source  = "hashicorp/azurerm"
-    }
-    azurecaf = {
-      source  = "aztfmod/azurecaf"
-      version = "1.2.28"
-    }
-  }
-}
 # ------------------------------------------------------------------------------------------------------
 # Deploy cognitive services
 # ------------------------------------------------------------------------------------------------------
-resource "azurecaf_name" "cognitiveservices_name" {
-  for_each = {
-    for instance in flatten([
-      for pool in var.openai_model_deployments.pools : [
-        for openai_instance in pool.instances : {
-          name_suffix = openai_instance.name_suffix
-        }
-      ]
-    ]) : instance.name_suffix => instance
-  }
-  name          = "openai-${var.resource_token}-${each.key}"
+resource "azurecaf_name" "ai_foundry_account_name" {
+  name          = "afa-${var.resource_token}"
   resource_type = "azurerm_cognitive_account"
   random_length = 0
   clean_input   = true
 }
 
-resource "azurerm_cognitive_account" "cognitive_account" {
-  for_each = {
-    for instance in flatten([
-      for pool in var.openai_model_deployments.pools : [
-        for openai_instance in pool.instances : {
-          name_suffix = openai_instance.name_suffix
-          kind        = openai_instance.kind
-          sku_name    = openai_instance.sku_name
-          location    = openai_instance.location
+data "azapi_resource" "resource_group" {
+  type = "Microsoft.Resources/resourceGroups@2021-04-01"
+  name = var.resource_group_name
+}
+
+resource "azapi_resource" "ai_foundry_account" {
+  type                      = "Microsoft.CognitiveServices/accounts@2025-04-01-preview"
+  name                      = azurecaf_name.ai_foundry_account_name.result
+  location                  = var.location
+  parent_id                 = data.azapi_resource.resource_group.id
+  schema_validation_enabled = false
+  body = {
+    kind = "AIServices"
+    sku = {
+      name = var.ai_foundry_sku
+    }
+    identity = {
+      type = "UserAssigned"
+      userAssignedIdentities = {
+        "${var.user_assigned_identity_id}" = {}
+      }
+    }
+    # identity = {
+    #   type = "SystemAssigned"
+    # }
+    properties = {
+      disableLocalAuth       = false
+      allowProjectManagement = true
+      customSubDomainName    = azurecaf_name.ai_foundry_account_name.result
+      publicNetworkAccess    = "Disabled"
+      networkAcls = {
+        defaultAction = "Allow"
+      }
+      networkInjections = [
+        {
+          scenario                   = "agent"
+          subnetArmId                = var.ai_foundry_agent_subnet_resource_id
+          useMicrosoftManagedNetwork = false
         }
       ]
-    ]) : instance.name_suffix => instance
+    }
   }
-  name                          = azurecaf_name.cognitiveservices_name[each.key].result
-  location                      = each.value.location
-  resource_group_name           = var.resource_group_name
-  kind                          = each.value.kind
-  sku_name                      = each.value.sku_name
-  custom_subdomain_name         = azurecaf_name.cognitiveservices_name[each.key].result
-  public_network_access_enabled = false
-  network_acls {
-    default_action = "Deny"
-    ip_rules       = []
-  }
-  tags = var.tags
 }
+
+resource "azurerm_monitor_diagnostic_setting" "ai_foundry_account_diagnostic_setting" {
+  name                       = "${azapi_resource.ai_foundry_account.name}-diagnostic-setting"
+  target_resource_id         = azapi_resource.ai_foundry_account.id
+  log_analytics_workspace_id = var.log_analytics_workspace_id
+
+  enabled_log {
+    category_group = "allLogs"
+  }
+
+  enabled_log {
+    category_group = "Audit"
+  }
+
+  metric {
+    category = "AllMetrics"
+  }
+}
+
+# resource "azurerm_cognitive_account" "cognitive_account" {
+#   for_each = {
+#     for instance in flatten([
+#       for pool in var.openai_model_deployments.pools : [
+#         for openai_instance in pool.instances : {
+#           name_suffix = openai_instance.name_suffix
+#           kind        = openai_instance.kind
+#           sku_name    = openai_instance.sku_name
+#           location    = openai_instance.location
+#         }
+#       ]
+#     ]) : instance.name_suffix => instance
+#   }
+#   name                          = azurecaf_name.cognitiveservices_name[each.key].result
+#   location                      = each.value.location
+#   resource_group_name           = var.resource_group_name
+#   kind                          = each.value.kind
+#   sku_name                      = each.value.sku_name
+#   custom_subdomain_name         = azurecaf_name.cognitiveservices_name[each.key].result
+#   public_network_access_enabled = false
+#   network_acls {
+#     default_action = "Deny"
+#     ip_rules       = []
+#   }
+#   tags = var.tags
+# }
 
 resource "azurerm_cognitive_deployment" "cognitive_deployment" {
   for_each = {
@@ -72,8 +113,9 @@ resource "azurerm_cognitive_deployment" "cognitive_deployment" {
           }
     ]]]) : "${instance.model_name}-${instance.name_suffix}" => instance
   }
-  name                 = "${each.value.model_name}-${each.value.model_version}"
-  cognitive_account_id = azurerm_cognitive_account.cognitive_account[each.value.name_suffix].id
+  name = "${each.value.model_name}-${each.value.model_version}"
+  #  cognitive_account_id = azurerm_cognitive_account.cognitive_account[each.value.name_suffix].id
+  cognitive_account_id = azapi_resource.ai_foundry_account.id
   model {
     format  = each.value.model_format
     name    = each.value.model_name
@@ -87,62 +129,45 @@ resource "azurerm_cognitive_deployment" "cognitive_deployment" {
 }
 
 module "private_endpoint" {
-  for_each = {
-    for instance in flatten([
-      for pool in var.openai_model_deployments.pools : [
-        for openai_instance in pool.instances : {
-          name_suffix = openai_instance.name_suffix
-          location    = openai_instance.location
-        }
-      ]
-    ]) : instance.name_suffix => instance
-  }
-  source                         = "../private_endpoint"
-  name                           = azurerm_cognitive_account.cognitive_account[each.key].name
-  resource_group_name            = var.resource_group_name
-  tags                           = var.tags
-  resource_token                 = var.resource_token
-  private_connection_resource_id = azurerm_cognitive_account.cognitive_account[each.key].id
-  location                       = each.value.location
+  source = "../private_endpoint"
+  #name                           = azurerm_cognitive_account.cognitive_account[each.key].name
+  name                = azapi_resource.ai_foundry_account.name
+  resource_group_name = var.resource_group_name
+  tags                = var.tags
+  resource_token      = var.resource_token
+  #private_connection_resource_id = azurerm_cognitive_account.cognitive_account[each.key].id
+  private_connection_resource_id = azapi_resource.ai_foundry_account.id
+  location                       = var.location
   subnet_id                      = var.subnet_id
   subresource_names              = ["account"]
   is_manual_connection           = false
 }
 
 resource "azurerm_role_assignment" "cognitive_services_openai_contributor_role_assignment" {
-  for_each = {
-    for instance in flatten([
-      for pool in var.openai_model_deployments.pools : [
-        for openai_instance in pool.instances : {
-          name_suffix = openai_instance.name_suffix
-        }
-      ]
-    ]) : instance.name_suffix => instance
-  }
-  scope                = azurerm_cognitive_account.cognitive_account[each.key].id
+  scope                = azapi_resource.ai_foundry_account.id
   role_definition_name = "Cognitive Services OpenAI Contributor"
   principal_id         = var.user_assigned_identity_object_id
 }
 
-resource "azurerm_monitor_diagnostic_setting" "openai_logging" {
-  for_each = {
-    for instance in flatten([
-      for pool in var.openai_model_deployments.pools : [
-        for openai_instance in pool.instances : {
-          name_suffix = openai_instance.name_suffix
-        }
-      ]
-    ]) : instance.name_suffix => instance
-  }
-  name                       = "${each.key}-openai-logging"
-  target_resource_id         = azurerm_cognitive_account.cognitive_account[each.key].id
-  log_analytics_workspace_id = var.log_analytics_workspace_id
+# resource "azurerm_monitor_diagnostic_setting" "openai_logging" {
+#   for_each = {
+#     for instance in flatten([
+#       for pool in var.openai_model_deployments.pools : [
+#         for openai_instance in pool.instances : {
+#           name_suffix = openai_instance.name_suffix
+#         }
+#       ]
+#     ]) : instance.name_suffix => instance
+#   }
+#   name                       = "${each.key}-openai-logging"
+#   target_resource_id         = azurerm_cognitive_account.cognitive_account[each.key].id
+#   log_analytics_workspace_id = var.log_analytics_workspace_id
 
-  enabled_log {
-    category = "RequestResponse"
-  }
+#   enabled_log {
+#     category = "RequestResponse"
+#   }
 
-  metric {
-    category = "AllMetrics"
-  }
-}
+#   metric {
+#     category = "AllMetrics"
+#   }
+# }

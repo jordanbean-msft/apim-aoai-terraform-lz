@@ -24,6 +24,7 @@ variable "apim" {
     publisher_name                                          = string
     publisher_email                                         = string
     sku_name                                                = string
+    sku_capacity                                            = number
     zones                                                   = list(string)
     openai_semantic_cache_lookup_score_threshold            = number
     openai_semantic_cache_store_duration                    = number
@@ -37,17 +38,17 @@ variable "apim" {
 
 variable "network" {
   type = object({
-    virtual_network_resource_group_name      = string
-    virtual_network_name                     = string
-    private_endpoint_subnet_name             = string
-    private_endpoint_subnet_address_prefixes = list(string)
-    apim_subnet_name                         = string
-    apim_subnet_address_prefixes             = list(string)
-    ai_studio_subnet_name                    = optional(string)
-    ai_studio_subnet_address_prefixes        = optional(list(string))
-    function_app_subnet_name                 = string
-    function_app_subnet_address_prefixes     = list(string)
-    firewall_ip_address                      = optional(string)
+    virtual_network_resource_group_name       = string
+    virtual_network_name                      = string
+    private_endpoint_subnet_name              = string
+    private_endpoint_subnet_address_prefixes  = list(string)
+    apim_subnet_name                          = string
+    apim_subnet_address_prefixes              = list(string)
+    ai_foundry_agents_subnet_name             = optional(string)
+    ai_foundry_agents_subnet_address_prefixes = optional(list(string))
+    function_app_subnet_name                  = string
+    function_app_subnet_address_prefixes      = list(string)
+    firewall_ip_address                       = optional(string)
   })
 }
 
@@ -90,17 +91,10 @@ variable "openai" {
 
 variable "redis" {
   type = object({
-    capacity = number
-    sku_name = string
-    zones    = list(string)
-  })
-}
-
-variable "azure_monitor" {
-  type = object({
-    azure_monitor_private_link_scope_name                = string
-    azure_monitor_private_link_scope_resource_group_name = string
-    azure_monitor_private_link_scope_subscription_id     = string
+    shouldDeployRedis = bool
+    capacity          = number
+    sku_name          = string
+    zones             = list(string)
   })
 }
 
@@ -111,7 +105,7 @@ variable "storage_account" {
   })
 }
 
-variable "ai_studio" {
+variable "ai_foundry" {
   type = object({
     sku_name = string
   })

@@ -1,5 +1,5 @@
 resource "azurerm_api_management_named_value" "openai_semantic_cache_embedding_backend_id" {
-  api_management_name = azurerm_api_management.api_management.name
+  api_management_name = azapi_resource.api_management.name
   name                = "openai-semantic-cache-embedding-backend-id"
   resource_group_name = var.resource_group_name
   display_name        = "openai-semantic-cache-embedding-backend-id"
@@ -8,7 +8,7 @@ resource "azurerm_api_management_named_value" "openai_semantic_cache_embedding_b
 }
 
 resource "azurerm_api_management_named_value" "openai_token_limit_per_minute" {
-  api_management_name = azurerm_api_management.api_management.name
+  api_management_name = azapi_resource.api_management.name
   name                = "openai-token-limit-per-minute"
   resource_group_name = var.resource_group_name
   display_name        = "openai-token-limit-per-minute"
@@ -17,7 +17,7 @@ resource "azurerm_api_management_named_value" "openai_token_limit_per_minute" {
 }
 
 resource "azurerm_api_management_named_value" "cosmosdb_scope" {
-  api_management_name = azurerm_api_management.api_management.name
+  api_management_name = azapi_resource.api_management.name
   name                = "cosmosdb-scope"
   resource_group_name = var.resource_group_name
   display_name        = "cosmosdb-scope"
@@ -26,7 +26,7 @@ resource "azurerm_api_management_named_value" "cosmosdb_scope" {
 }
 
 resource "azurerm_api_management_named_value" "cosmosdb_document_endpoint" {
-  api_management_name = azurerm_api_management.api_management.name
+  api_management_name = azapi_resource.api_management.name
   name                = "cosmosdb-document-endpoint"
   resource_group_name = var.resource_group_name
   display_name        = "cosmosdb-document-endpoint"
@@ -35,7 +35,7 @@ resource "azurerm_api_management_named_value" "cosmosdb_document_endpoint" {
 }
 
 resource "azurerm_api_management_named_value" "user_assigned_identity_client_id" {
-  api_management_name = azurerm_api_management.api_management.name
+  api_management_name = azapi_resource.api_management.name
   name                = "user-assigned-identity-client-id"
   resource_group_name = var.resource_group_name
   display_name        = "user-assigned-identity-client-id"
@@ -44,7 +44,7 @@ resource "azurerm_api_management_named_value" "user_assigned_identity_client_id"
 }
 
 resource "azurerm_api_management_named_value" "tenant_id" {
-  api_management_name = azurerm_api_management.api_management.name
+  api_management_name = azapi_resource.api_management.name
   name                = "tenant-id"
   resource_group_name = var.resource_group_name
   display_name        = "tenant-id"
@@ -53,7 +53,7 @@ resource "azurerm_api_management_named_value" "tenant_id" {
 }
 
 resource "azurerm_api_management_named_value" "openai_service_principal_audience" {
-  api_management_name = azurerm_api_management.api_management.name
+  api_management_name = azapi_resource.api_management.name
   name                = "openai-service-principal-audience"
   resource_group_name = var.resource_group_name
   display_name        = "openai-service-principal-audience"
@@ -62,7 +62,7 @@ resource "azurerm_api_management_named_value" "openai_service_principal_audience
 }
 
 resource "azurerm_api_management_named_value" "openai_load_balancing_backends" {
-  api_management_name = azurerm_api_management.api_management.name
+  api_management_name = azapi_resource.api_management.name
   name                = "openai-load-balancing-backends"
   resource_group_name = var.resource_group_name
   display_name        = "openai-load-balancing-backends"
@@ -76,7 +76,7 @@ resource "azurerm_api_management_named_value" "openai_load_balancing_backends" {
 }
 
 resource "azurerm_api_management_named_value" "openai_semantic_cache_lookup_score_threshold" {
-  api_management_name = azurerm_api_management.api_management.name
+  api_management_name = azapi_resource.api_management.name
   name                = "openai-semantic-cache-lookup-score-threshold"
   resource_group_name = var.resource_group_name
   display_name        = "openai-semantic-cache-lookup-score-threshold"
@@ -85,7 +85,7 @@ resource "azurerm_api_management_named_value" "openai_semantic_cache_lookup_scor
 }
 
 resource "azurerm_api_management_named_value" "openai_semantic_cache_store_duration" {
-  api_management_name = azurerm_api_management.api_management.name
+  api_management_name = azapi_resource.api_management.name
   name                = "openai-semantic-cache-store-duration"
   resource_group_name = var.resource_group_name
   display_name        = "openai-semantic-cache-store-duration"

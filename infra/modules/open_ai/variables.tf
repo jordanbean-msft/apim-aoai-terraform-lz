@@ -23,6 +23,11 @@ variable "subnet_id" {
   type        = string
 }
 
+variable "user_assigned_identity_id" {
+  description = "The User Assigned Managed Identity to assign to the OpenAI resources"
+  type        = string
+}
+
 variable "user_assigned_identity_object_id" {
   description = "The object id of the user assigned identity"
   type        = string
@@ -59,5 +64,15 @@ variable "openai_model_deployments" {
 
 variable "log_analytics_workspace_id" {
   description = "The id of the Log Analytics workspace to send logs to"
+  type        = string
+}
+
+variable "ai_foundry_agent_subnet_resource_id" {
+  description = "The resource id of the subnet to deploy the AI Foundry Agent private endpoint into"
+  type        = string
+}
+
+variable "ai_foundry_sku" {
+  description = "The SKU to use for the AI Foundry resource"
   type        = string
 }

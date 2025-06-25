@@ -33,6 +33,11 @@ variable "sku_name" {
   type        = string
 }
 
+variable "sku_capacity" {
+  description = "The API Management SKU capacity"
+  type        = number
+}
+
 variable "user_assigned_identity_id" {
   description = "The User Assigned Managed Identity to assign to the API Management portal"
   type        = string
@@ -202,4 +207,9 @@ variable "openai" {
       }))
     }))
   })
+}
+
+variable "should_deploy_redis" {
+  description = "Flag to determine if Redis should be deployed"
+  type        = bool
 }

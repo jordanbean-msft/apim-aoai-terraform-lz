@@ -7,6 +7,7 @@ locals {
   api_management_subnet_nsg_name                 = "nsg-${var.network.apim_subnet_name}-subnet"
   private_endpoint_subnet_nsg_name               = "nsg-${var.network.private_endpoint_subnet_name}-subnet"
   function_app_subnet_nsg_name                   = "nsg-${var.network.function_app_subnet_name}-subnet"
+  ai_foundry_agents_subnet_nsg_name              = "nsg-${var.network.ai_foundry_agents_subnet_name}-subnet"
   openai_service_principal_client_secret_name    = "openai-service-principal-client-secret"
 }
 
@@ -23,134 +24,12 @@ module "virtual_network" {
   virtual_network_name = var.network.virtual_network_name
   subnets = [
     {
-      name               = var.network.apim_subnet_name
-      address_prefixes   = var.network.apim_subnet_address_prefixes
-      service_delegation = false
-      delegation_name    = ""
-      actions            = [""]
-      network_security_rules = [
-        {
-          name                       = "AllowManagementEndpointForAzurePortalAndPowerShell"
-          priority                   = 120
-          direction                  = "Inbound"
-          access                     = "Allow"
-          protocol                   = "Tcp"
-          source_port_range          = "*"
-          destination_port_ranges    = [3443]
-          source_address_prefix      = "ApiManagement"
-          destination_address_prefix = "VirtualNetwork"
-        },
-        {
-          name                       = "AllowAzureInfrastructureLoadBalancer"
-          priority                   = 130
-          direction                  = "Inbound"
-          access                     = "Allow"
-          protocol                   = "Tcp"
-          source_port_range          = "*"
-          destination_port_ranges    = [6390, 6391]
-          source_address_prefix      = "AzureLoadBalancer"
-          destination_address_prefix = "VirtualNetwork"
-        },
-        {
-          name                       = "AllowSyncCountersForRateLimitPoliciesBetweenMachines"
-          priority                   = 140
-          direction                  = "Inbound"
-          access                     = "Allow"
-          protocol                   = "Udp"
-          source_port_range          = "*"
-          destination_port_ranges    = [4290]
-          source_address_prefix      = "VirtualNetwork"
-          destination_address_prefix = "VirtualNetwork"
-        },
-        {
-          name                       = "AllowExternalRedisCacheInbound"
-          priority                   = 150
-          direction                  = "Inbound"
-          access                     = "Allow"
-          protocol                   = "Tcp"
-          source_port_range          = "*"
-          destination_port_ranges    = [6380]
-          source_address_prefix      = "VirtualNetwork"
-          destination_address_prefix = "VirtualNetwork"
-        },
-        {
-          name                       = "AllowDependencyOnAzureStorageForCoreServiceFunctionality"
-          priority                   = 120
-          direction                  = "Outbound"
-          access                     = "Allow"
-          protocol                   = "Tcp"
-          source_port_range          = "*"
-          destination_port_ranges    = [443]
-          source_address_prefix      = "VirtualNetwork"
-          destination_address_prefix = "Storage"
-        },
-        {
-          name                       = "AllowAccessToEntraIdMicrosoftGraphAndAzureKeyVault"
-          priority                   = 130
-          direction                  = "Outbound"
-          access                     = "Allow"
-          protocol                   = "Tcp"
-          source_port_range          = "*"
-          destination_port_ranges    = [443]
-          source_address_prefix      = "VirtualNetwork"
-          destination_address_prefix = "AzureActiveDirectory"
-        },
-        {
-          name                       = "AllowAccessToAzureSQLEndpointsForCoreServiceFunctionality"
-          priority                   = 140
-          direction                  = "Outbound"
-          access                     = "Allow"
-          protocol                   = "Tcp"
-          source_port_range          = "*"
-          destination_port_ranges    = [1433]
-          source_address_prefix      = "VirtualNetwork"
-          destination_address_prefix = "SQL"
-        },
-        {
-          name                       = "AllowAccessToAzureKeyVaultForCoreServiceFunctionality"
-          priority                   = 150
-          direction                  = "Outbound"
-          access                     = "Allow"
-          protocol                   = "Tcp"
-          source_port_range          = "*"
-          destination_port_ranges    = [443]
-          source_address_prefix      = "VirtualNetwork"
-          destination_address_prefix = "AzureKeyVault"
-        },
-        {
-          name                       = "AllowLogToEventHub"
-          priority                   = 160
-          direction                  = "Outbound"
-          access                     = "Allow"
-          protocol                   = "Tcp"
-          source_port_range          = "*"
-          destination_port_ranges    = [5671, 5672, 443]
-          source_address_prefix      = "VirtualNetwork"
-          destination_address_prefix = "EventHub"
-        },
-        {
-          name                       = "AllowPublishDiagnosticLogsAndMetricsResourceHealthAndApplicationInsights"
-          priority                   = 170
-          direction                  = "Outbound"
-          access                     = "Allow"
-          protocol                   = "Tcp"
-          source_port_range          = "*"
-          destination_port_ranges    = [1886, 443]
-          source_address_prefix      = "VirtualNetwork"
-          destination_address_prefix = "AzureMonitor"
-        },
-        {
-          name                       = "AllowExternalRedisCacheOutbound"
-          priority                   = 180
-          direction                  = "Outbound"
-          access                     = "Allow"
-          protocol                   = "Tcp"
-          source_port_range          = "*"
-          destination_port_ranges    = [6380]
-          source_address_prefix      = "VirtualNetwork"
-          destination_address_prefix = "VirtualNetwork"
-        }
-      ]
+      name                   = var.network.apim_subnet_name
+      address_prefixes       = var.network.apim_subnet_address_prefixes
+      service_delegation     = false
+      delegation_name        = "Microsoft.Web/serverFarms"
+      actions                = []
+      network_security_rules = []
     },
     {
       name                   = var.network.private_endpoint_subnet_name
@@ -164,17 +43,25 @@ module "virtual_network" {
       name                   = var.network.function_app_subnet_name
       address_prefixes       = var.network.function_app_subnet_address_prefixes
       service_delegation     = false
-      delegation_name        = ""
+      delegation_name        = "Microsoft.Web/serverFarms"
+      actions                = []
+      network_security_rules = []
+    },
+    {
+      name                   = var.network.ai_foundry_agents_subnet_name
+      address_prefixes       = var.network.ai_foundry_agents_subnet_address_prefixes
+      service_delegation     = true
+      delegation_name        = "Microsoft.App/environments"
       actions                = []
       network_security_rules = []
     }
   ]
-  api_management_subnet_name   = var.network.apim_subnet_name
-  private_endpoint_subnet_name = var.network.private_endpoint_subnet_name
-  ai_studio_subnet_name        = var.network.ai_studio_subnet_name
-  function_app_subnet_name     = var.network.function_app_subnet_name
-  subscription_id              = data.azurerm_client_config.current.subscription_id
-  firewall_ip_address          = var.network.firewall_ip_address
+  api_management_subnet_name    = var.network.apim_subnet_name
+  private_endpoint_subnet_name  = var.network.private_endpoint_subnet_name
+  function_app_subnet_name      = var.network.function_app_subnet_name
+  subscription_id               = data.azurerm_client_config.current.subscription_id
+  firewall_ip_address           = var.network.firewall_ip_address
+  ai_foundry_agents_subnet_name = var.network.ai_foundry_agents_subnet_name
 }
 
 # ------------------------------------------------------------------------------------------------------
@@ -204,15 +91,11 @@ module "workbook" {
 # Deploy log analytics
 # ------------------------------------------------------------------------------------------------------
 module "log_analytics" {
-  source                                               = "./modules/log_analytics"
-  location                                             = var.location
-  resource_group_name                                  = var.resource_group_name
-  tags                                                 = local.tags
-  resource_token                                       = local.resource_token
-  azure_monitor_private_link_scope_name                = var.azure_monitor.azure_monitor_private_link_scope_name
-  azure_monitor_private_link_scope_resource_group_name = var.azure_monitor.azure_monitor_private_link_scope_resource_group_name
-  subnet_id                                            = module.virtual_network.ai_studio_subnet_id
-  azure_monitor_private_link_scope_subscription_id     = var.azure_monitor.azure_monitor_private_link_scope_subscription_id
+  source              = "./modules/log_analytics"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  tags                = local.tags
+  resource_token      = local.resource_token
 }
 
 # ------------------------------------------------------------------------------------------------------
@@ -249,15 +132,18 @@ module "key_vault" {
 # Deploy OpenAI
 # ------------------------------------------------------------------------------------------------------
 module "openai" {
-  source                           = "./modules/open_ai"
-  location                         = var.location
-  resource_group_name              = var.resource_group_name
-  resource_token                   = local.resource_token
-  tags                             = local.tags
-  subnet_id                        = module.virtual_network.private_endpoint_subnet_id
-  user_assigned_identity_object_id = module.managed_identity.user_assigned_identity_object_id
-  openai_model_deployments         = var.openai
-  log_analytics_workspace_id       = module.log_analytics.log_analytics_workspace_id
+  source                              = "./modules/open_ai"
+  location                            = var.location
+  resource_group_name                 = var.resource_group_name
+  resource_token                      = local.resource_token
+  tags                                = local.tags
+  subnet_id                           = module.virtual_network.private_endpoint_subnet_id
+  user_assigned_identity_object_id    = module.managed_identity.user_assigned_identity_object_id
+  openai_model_deployments            = var.openai
+  log_analytics_workspace_id          = module.log_analytics.log_analytics_workspace_id
+  ai_foundry_agent_subnet_resource_id = module.virtual_network.ai_foundry_agents_subnet_id
+  user_assigned_identity_id           = module.managed_identity.user_assigned_identity_id
+  ai_foundry_sku                      = var.ai_foundry.sku_name
 }
 
 # ------------------------------------------------------------------------------------------------------
@@ -293,6 +179,7 @@ module "api_management" {
   publisher_name                                          = var.apim.publisher_name
   publisher_email                                         = var.apim.publisher_email
   sku_name                                                = var.apim.sku_name
+  sku_capacity                                            = var.apim.sku_capacity
   application_insights_id                                 = module.application_insights.application_insights_id
   openai_endpoints                                        = module.openai.azure_cognitive_services_endpoints
   key_vault_id                                            = module.key_vault.key_vault_id
@@ -303,9 +190,9 @@ module "api_management" {
   openai_token_limit_per_minute                           = var.apim.openai_token_limit_per_minute
   tenant_id                                               = data.azurerm_client_config.current.tenant_id
   openai_service_principal_audience                       = var.apim.openai_service_principal_audience
-  redis_cache_connection_string                           = module.redis.redis_cache_primary_connection_string
-  redis_cache_name                                        = module.redis.redis_cache_name
-  redis_cache_id                                          = module.redis.redis_cache_id
+  redis_cache_connection_string                           = null
+  redis_cache_name                                        = null
+  redis_cache_id                                          = null
   openai_semantic_cache_lookup_score_threshold            = var.apim.openai_semantic_cache_lookup_score_threshold
   openai_semantic_cache_store_duration                    = var.apim.openai_semantic_cache_store_duration
   openai_service_principal_client_id                      = var.apim.openai_service_principal_client_id
@@ -318,12 +205,14 @@ module "api_management" {
   log_analytics_workspace_id                              = module.log_analytics.log_analytics_workspace_id
   subscription_id                                         = data.azurerm_client_config.current.subscription_id
   openai                                                  = var.openai
+  should_deploy_redis                                     = var.redis.shouldDeployRedis
 }
 
 # ------------------------------------------------------------------------------------------------------
 # Deploy Redis Cache
 # ------------------------------------------------------------------------------------------------------
 module "redis" {
+  count                            = var.redis.shouldDeployRedis ? 1 : 0
   source                           = "./modules/redis"
   location                         = var.location
   resource_group_name              = var.resource_group_name
@@ -366,25 +255,6 @@ module "container_registry" {
   subnet_id                     = module.virtual_network.private_endpoint_subnet_id
   managed_identity_principal_id = module.managed_identity.user_assigned_identity_principal_id
 }
-
-# ------------------------------------------------------------------------------------------------------
-# Deploy AI Studio
-# ------------------------------------------------------------------------------------------------------
-
-# module "ai_studio" {
-#   source                  = "./modules/ai_studio"
-#   location                = var.location
-#   resource_group_name     = var.resource_group_name
-#   tags                    = local.tags
-#   resource_token          = local.resource_token
-#   subnet_id               = module.virtual_network.ai_studio_subnet_id
-#   sku                     = var.ai_studio_sku_name
-#   application_insights_id = module.application_insights.application_insights_id
-#   key_vault_id            = module.key_vault.key_vault_id
-#   storage_account_id      = module.storage_account.storage_account_id
-#   container_registry_id   = module.container_registry.container_registry_id
-#   resource_group_id       = "/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourceGroups/${var.resource_group_name}"
-# }
 
 # ------------------------------------------------------------------------------------------------------
 # Deploy Event Hub
