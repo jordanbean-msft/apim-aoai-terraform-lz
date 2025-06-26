@@ -2,7 +2,6 @@
     <inbound>
         <base />
         <set-backend-service backend-id="aoai-default-load-balanced-pool" />
-        </choose>
         <include-fragment fragment-id="setup-correlation-id" />
         <validate-jwt header-name="Authorization" failed-validation-httpcode="401" failed-validation-error-message="Unauthorized. Access token is missing or invalid.">
             <openid-config url="https://login.microsoftonline.com/{{tenant-id}}/.well-known/openid-configuration" />

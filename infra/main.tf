@@ -206,6 +206,7 @@ module "api_management" {
   subscription_id                                         = data.azurerm_client_config.current.subscription_id
   openai                                                  = var.openai
   should_deploy_redis                                     = var.redis.shouldDeployRedis
+  private_endpoint_subnet_id                              = module.virtual_network.private_endpoint_subnet_id
 }
 
 # ------------------------------------------------------------------------------------------------------
@@ -273,6 +274,8 @@ module "event_hub" {
   maximum_throughput_units      = var.event_hub.maximum_throughput_units
   partition_count               = var.event_hub.partition_count
   message_retention             = var.event_hub.message_retention
+  log_analytics_workspace_id    = module.log_analytics.log_analytics_workspace_id
+  apim_subnet_id                = module.virtual_network.api_management_subnet_id
 }
 
 # ------------------------------------------------------------------------------------------------------
@@ -290,22 +293,21 @@ module "functions" {
   managed_identity_principal_id          = module.managed_identity.user_assigned_identity_principal_id
   managed_identity_id                    = module.managed_identity.user_assigned_identity_id
   storage_account_name                   = module.storage_account.storage_account_name
+  storage_account_container_name         = module.storage_account.function_app_container_name
   application_insights_connection_string = module.application_insights.application_insights_connection_string
   application_insights_key               = module.application_insights.application_insights_instrumentation_key
   storage_account_access_key             = module.storage_account.storage_account_access_key
   app_settings = {
-    "EVENT_HUB__fullyQualifiedNamespace"       = module.event_hub.event_hub_namespace_fqdn
-    "EVENT_HUB_CENTRAL_NAME"                   = module.event_hub.event_hub_central_name
-    "EVENT_HUB_LLM_LOGGING_NAME"               = module.event_hub.event_hub_llm_logging_name
-    "EVENT_HUB__credential"                    = "managedidentity"
-    "EVENT_HUB__clientId"                      = module.managed_identity.user_assigned_identity_client_id
-    "COSMOS_DB__credential"                    = "managedidentity"
-    "COSMOS_DB__clientId"                      = module.managed_identity.user_assigned_identity_client_id
-    "COSMOS_DB__accountEndpoint"               = module.cosmosdb.cosmosdb_account_endpoint
-    "COSMOS_DB_NAME"                           = module.cosmosdb.cosmosdb_sql_database_name
-    "COSMOS_DB_CONTAINER_NAME"                 = module.cosmosdb.cosmosdb_sql_container_name
-    "WEBSITE_CONTENTSHARE"                     = module.storage_account.function_app_share_name
-    "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING" = module.storage_account.storage_account_connection_string
+    "EVENT_HUB__fullyQualifiedNamespace" = module.event_hub.event_hub_namespace_fqdn
+    "EVENT_HUB_CENTRAL_NAME"             = module.event_hub.event_hub_central_name
+    "EVENT_HUB_LLM_LOGGING_NAME"         = module.event_hub.event_hub_llm_logging_name
+    "EVENT_HUB__credential"              = "managedidentity"
+    "EVENT_HUB__clientId"                = module.managed_identity.user_assigned_identity_client_id
+    "COSMOS_DB__credential"              = "managedidentity"
+    "COSMOS_DB__clientId"                = module.managed_identity.user_assigned_identity_client_id
+    "COSMOS_DB__accountEndpoint"         = module.cosmosdb.cosmosdb_account_endpoint
+    "COSMOS_DB_NAME"                     = module.cosmosdb.cosmosdb_sql_database_name
+    "COSMOS_DB_CONTAINER_NAME"           = module.cosmosdb.cosmosdb_sql_container_name
   }
   sku_name                   = var.function_app.sku_name
   zone_balancing_enabled     = var.function_app.zone_balancing_enabled

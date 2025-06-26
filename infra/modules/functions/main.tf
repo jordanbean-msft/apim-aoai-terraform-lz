@@ -25,7 +25,7 @@ resource "azurecaf_name" "function_name" {
   clean_input   = true
 }
 
-resource "azurerm_linux_function_app" "function_app" {
+resource "azurerm_function_app_flex_consumption" "function_app" {
   name                = azurecaf_name.function_name.result
   location            = var.location
   resource_group_name = var.resource_group_name
@@ -36,47 +36,44 @@ resource "azurerm_linux_function_app" "function_app" {
     type         = "UserAssigned"
     identity_ids = [var.managed_identity_id]
   }
-  key_vault_reference_identity_id = var.managed_identity_id
-  storage_account_access_key      = var.storage_account_access_key
-  virtual_network_subnet_id       = var.vnet_function_subnet_id
-  storage_account_name            = var.storage_account_name
-  public_network_access_enabled   = false
+  virtual_network_subnet_id         = var.vnet_function_subnet_id
+  storage_container_type            = "blobContainer"
+  storage_container_endpoint        = "https://${var.storage_account_name}.blob.core.windows.net/${var.storage_account_container_name}"
+  storage_authentication_type       = "UserAssignedIdentity"
+  storage_user_assigned_identity_id = var.managed_identity_id
+  public_network_access_enabled     = false
+  runtime_name                      = "python"
+  runtime_version                   = "3.11"
   site_config {
     application_insights_connection_string = var.application_insights_connection_string
     application_insights_key               = var.application_insights_key
-    application_stack {
-      python_version = 3.11
-    }
-    ip_restriction_default_action    = "Deny"
-    runtime_scale_monitoring_enabled = true
-    ftps_state                       = "FtpsOnly"
-
+    ip_restriction_default_action          = "Deny"
   }
   app_settings = var.app_settings
 }
 
-resource "azapi_update_resource" "vnet_content_share_enabled" {
-  type        = "Microsoft.Web/sites@2022-09-01"
-  resource_id = azurerm_linux_function_app.function_app.id
+# resource "azapi_update_resource" "vnet_content_share_enabled" {
+#   type        = "Microsoft.Web/sites@2022-09-01"
+#   resource_id = azurerm_linux_function_app.function_app.id
 
-  body = {
-    properties = {
-      vnetContentShareEnabled = true
-    }
-  }
+#   body = {
+#     properties = {
+#       vnetContentShareEnabled = true
+#     }
+#   }
 
-  depends_on = [
-    azurerm_linux_function_app.function_app
-  ]
-}
+#   depends_on = [
+#     azurerm_linux_function_app.function_app
+#   ]
+# }
 
 module "private_endpoint" {
   source                         = "../private_endpoint"
-  name                           = azurerm_linux_function_app.function_app.name
+  name                           = azurerm_function_app_flex_consumption.function_app.name
   resource_group_name            = var.resource_group_name
   tags                           = var.tags
   resource_token                 = var.resource_token
-  private_connection_resource_id = azurerm_linux_function_app.function_app.id
+  private_connection_resource_id = azurerm_function_app_flex_consumption.function_app.id
   location                       = var.location
   subnet_id                      = var.private_endpoint_subnet_id
   subresource_names              = ["sites"]
@@ -85,7 +82,7 @@ module "private_endpoint" {
 
 resource "azurerm_monitor_diagnostic_setting" "function_logging" {
   name                       = "function-logging"
-  target_resource_id         = azurerm_linux_function_app.function_app.id
+  target_resource_id         = azurerm_function_app_flex_consumption.function_app.id
   log_analytics_workspace_id = var.log_analytics_workspace_id
 
   enabled_log {

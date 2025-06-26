@@ -5,8 +5,8 @@ output "azure_cognitive_services_endpoints" {
         for openai_instance in pool.instances : {
           key       = openai_instance.name_suffix
           pool_name = pool.name
-          name      = azurecaf_name.ai_foundry_account_name.result
-          endpoint  = "https://${azapi_resource.ai_foundry_account.name}.openai.azure.com/"
+          name      = azurecaf_name.cognitiveservices_name[openai_instance.name_suffix].result
+          endpoint  = azurerm_cognitive_account.cognitive_account[openai_instance.name_suffix].endpoint
           priority  = openai_instance.priority
     }]]) : deployment
   ]
@@ -20,6 +20,18 @@ output "azure_cognitive_services_deployment_names" {
 
 output "azure_cognitive_services_ids" {
   value = tolist([
-    azapi_resource.ai_foundry_account.id
+    for cognitive_account in azurerm_cognitive_account.cognitive_account : cognitive_account.id
   ])
 }
+
+output "azure_ai_foundry_id" {
+  value = azapi_resource.ai_foundry_account.id
+}
+
+output "azure_ai_foundry_name" {
+  value = azapi_resource.ai_foundry_account.name
+}
+
+# output "azure_ai_foundry_endpoint" {
+#   value = azapi_resource.ai_foundry_account.endpoints["AI Foundry API"]
+# }

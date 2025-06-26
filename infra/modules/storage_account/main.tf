@@ -15,19 +15,25 @@ resource "azurerm_storage_account" "storage_account" {
   account_tier                    = var.account_tier
   account_replication_type        = var.account_replication_type
   tags                            = var.tags
-  public_network_access_enabled   = true
+  public_network_access_enabled   = false
   allow_nested_items_to_be_public = false
+  shared_access_key_enabled       = false
   network_rules {
-    default_action = "Allow"
+    default_action = "Deny"
     bypass         = ["AzureServices"]
   }
 }
 
-resource "azurerm_storage_share" "function_app_share" {
-  name                 = "func-write-to-cosmos"
-  storage_account_name = azurerm_storage_account.storage_account.name
-  quota                = 50
+resource "azurerm_storage_container" "function_app_container" {
+  name               = "func-write-to-cosmos"
+  storage_account_id = azurerm_storage_account.storage_account.id
 }
+
+# resource "azurerm_storage_share" "function_app_share" {
+#   name                 = "func-write-to-cosmos"
+#   storage_account_name = azurerm_storage_account.storage_account.name
+#   quota                = 50
+# }
 
 resource "azurerm_role_assignment" "managed_identity_storage_blob_data_owner_role" {
   scope                = azurerm_storage_account.storage_account.id

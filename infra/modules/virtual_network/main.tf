@@ -23,6 +23,11 @@ resource "azapi_update_resource" "apim_service_endpoint_delegation" {
           }
         }
       ]
+      serviceEndpoints = [
+        {
+          service = "Microsoft.EventHub"
+        }
+      ]
     }
   }
 }
@@ -35,7 +40,7 @@ data "azurerm_subnet" "ai_foundry_agents_subnet" {
 
 resource "azapi_update_resource" "ai_foundry_agent_service_endpoint_delegation" {
   type        = "Microsoft.Network/virtualNetworks/subnets@2024-03-01"
-  resource_id = data.azurerm_subnet.function_app_subnet.id
+  resource_id = data.azurerm_subnet.ai_foundry_agents_subnet.id
 
   body = {
     properties = {
@@ -65,9 +70,9 @@ resource "azapi_update_resource" "function_app_service_endpoint_delegation" {
     properties = {
       delegations = [
         {
-          name = "Microsoft.Web/serverFarms"
+          name = "Microsoft.App/environments"
           properties = {
-            serviceName = "Microsoft.Web/serverFarms"
+            serviceName = "Microsoft.App/environments"
           }
         }
       ]

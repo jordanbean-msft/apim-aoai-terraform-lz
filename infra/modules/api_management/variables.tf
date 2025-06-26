@@ -213,3 +213,8 @@ variable "should_deploy_redis" {
   description = "Flag to determine if Redis should be deployed"
   type        = bool
 }
+
+variable "private_endpoint_subnet_id" {
+  description = "The subnet ID to use for the private endpoint"
+  type        = string
+}
