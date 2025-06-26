@@ -141,9 +141,8 @@ module "openai" {
   user_assigned_identity_object_id    = module.managed_identity.user_assigned_identity_object_id
   openai_model_deployments            = var.openai
   log_analytics_workspace_id          = module.log_analytics.log_analytics_workspace_id
-  ai_foundry_agent_subnet_resource_id = module.virtual_network.ai_foundry_agents_subnet_id
   user_assigned_identity_id           = module.managed_identity.user_assigned_identity_id
-  ai_foundry_sku                      = var.ai_foundry.sku_name
+  user_assigned_identity_principal_id = module.managed_identity.user_assigned_identity_principal_id
 }
 
 # ------------------------------------------------------------------------------------------------------
@@ -197,6 +196,7 @@ module "api_management" {
   openai_semantic_cache_store_duration                    = var.apim.openai_semantic_cache_store_duration
   openai_service_principal_client_id                      = var.apim.openai_service_principal_client_id
   openai_service_id                                       = module.openai.azure_cognitive_services_ids[0]
+  openai_service_name                                     = module.openai.azure_cognitive_services_names[0]
   openai_semantic_cache_embedding_backend_id              = "openai-semantic-cache-embedding-backend-id"
   openai_semantic_cache_embedding_backend_deployment_name = var.apim.openai_semantic_cache_embedding_backend_deployment_name
   event_hub_namespace_fqdn                                = module.event_hub.event_hub_namespace_fqdn
@@ -312,4 +312,47 @@ module "functions" {
   sku_name                   = var.function_app.sku_name
   zone_balancing_enabled     = var.function_app.zone_balancing_enabled
   log_analytics_workspace_id = module.log_analytics.log_analytics_workspace_id
+}
+
+# ------------------------------------------------------------------------------------------------------
+# Deploy AI Search
+# ------------------------------------------------------------------------------------------------------
+
+module "ai_search" {
+  source                              = "./modules/ai_search"
+  location                            = var.location
+  resource_group_name                 = var.resource_group_name
+  tags                                = local.tags
+  resource_token                      = local.resource_token
+  private_endpoint_subnet_resource_id = module.virtual_network.private_endpoint_subnet_id
+  log_analytics_workspace_resource_id = module.log_analytics.log_analytics_workspace_id
+  user_assigned_identity_principal_id = module.managed_identity.user_assigned_identity_principal_id
+}
+
+# ------------------------------------------------------------------------------------------------------
+# Deploy AI Foundry
+# ------------------------------------------------------------------------------------------------------
+
+module "ai_foundry" {
+  source                              = "./modules/ai_foundry"
+  location                            = var.location
+  resource_group_name                 = var.resource_group_name
+  tags                                = local.tags
+  resource_token                      = local.resource_token
+  ai_foundry_agent_subnet_resource_id = module.virtual_network.ai_foundry_agents_subnet_id
+  ai_foundry_sku                      = var.ai_foundry.sku_name
+  ai_search_id                        = module.ai_search.search_service_id
+  ai_search_name                      = module.ai_search.search_service_name
+  api_management_gateway_url          = module.api_management.api_management_gateway_url
+  api_management_id                   = module.api_management.api_management_id
+  cosmos_db_account_endpoint          = module.cosmosdb.cosmosdb_account_endpoint
+  cosmos_db_account_id                = module.cosmosdb.cosmosdb_account_id
+  cosmos_db_account_name              = module.cosmosdb.cosmosdb_account_name
+  log_analytics_workspace_id          = module.log_analytics.log_analytics_workspace_id
+  storage_account_id                  = module.storage_account.storage_account_id
+  storage_account_name                = module.storage_account.storage_account_name
+  subnet_id                           = module.virtual_network.private_endpoint_subnet_id
+  user_assigned_identity_id           = module.managed_identity.user_assigned_identity_id
+  user_assigned_identity_object_id    = module.managed_identity.user_assigned_identity_object_id
+  user_assigned_identity_principal_id = module.managed_identity.user_assigned_identity_principal_id
 }

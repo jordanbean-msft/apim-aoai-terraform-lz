@@ -1,13 +1,3 @@
-# ------------------------------------------------------------------------------------------------------
-# Deploy cognitive services
-# ------------------------------------------------------------------------------------------------------
-resource "azurecaf_name" "ai_foundry_account_name" {
-  name          = "afa-${var.resource_token}"
-  resource_type = "azurerm_cognitive_account"
-  random_length = 0
-  clean_input   = true
-}
-
 resource "azurecaf_name" "cognitiveservices_name" {
   for_each = {
     for instance in flatten([
@@ -22,68 +12,6 @@ resource "azurecaf_name" "cognitiveservices_name" {
   resource_type = "azurerm_cognitive_account"
   random_length = 0
   clean_input   = true
-}
-
-data "azapi_resource" "resource_group" {
-  type = "Microsoft.Resources/resourceGroups@2021-04-01"
-  name = var.resource_group_name
-}
-
-resource "azapi_resource" "ai_foundry_account" {
-  type                      = "Microsoft.CognitiveServices/accounts@2025-04-01-preview"
-  name                      = azurecaf_name.ai_foundry_account_name.result
-  location                  = var.location
-  parent_id                 = data.azapi_resource.resource_group.id
-  schema_validation_enabled = false
-  body = {
-    kind = "AIServices"
-    sku = {
-      name = var.ai_foundry_sku
-    }
-    identity = {
-      type = "UserAssigned"
-      userAssignedIdentities = {
-        "${var.user_assigned_identity_id}" = {}
-      }
-    }
-    # identity = {
-    #   type = "SystemAssigned"
-    # }
-    properties = {
-      disableLocalAuth       = false
-      allowProjectManagement = true
-      customSubDomainName    = azurecaf_name.ai_foundry_account_name.result
-      publicNetworkAccess    = "Disabled"
-      networkAcls = {
-        defaultAction = "Allow"
-      }
-      networkInjections = [
-        {
-          scenario                   = "agent"
-          subnetArmId                = var.ai_foundry_agent_subnet_resource_id
-          useMicrosoftManagedNetwork = false
-        }
-      ]
-    }
-  }
-}
-
-resource "azurerm_monitor_diagnostic_setting" "ai_foundry_account_diagnostic_setting" {
-  name                       = "${azapi_resource.ai_foundry_account.name}-diagnostic-setting"
-  target_resource_id         = azapi_resource.ai_foundry_account.id
-  log_analytics_workspace_id = var.log_analytics_workspace_id
-
-  enabled_log {
-    category_group = "allLogs"
-  }
-
-  enabled_log {
-    category_group = "Audit"
-  }
-
-  metric {
-    category = "AllMetrics"
-  }
 }
 
 resource "azurerm_cognitive_account" "cognitive_account" {
@@ -143,19 +71,6 @@ resource "azurerm_cognitive_deployment" "cognitive_deployment" {
   rai_policy_name = each.value.rai_policy_name
 }
 
-module "ai_foundry_account_private_endpoint" {
-  source                         = "../private_endpoint"
-  name                           = azapi_resource.ai_foundry_account.name
-  resource_group_name            = var.resource_group_name
-  tags                           = var.tags
-  resource_token                 = var.resource_token
-  private_connection_resource_id = azapi_resource.ai_foundry_account.id
-  location                       = var.location
-  subnet_id                      = var.subnet_id
-  subresource_names              = ["account"]
-  is_manual_connection           = false
-}
-
 module "cognitive_account_private_endpoint" {
   for_each = {
     for instance in flatten([
@@ -177,12 +92,6 @@ module "cognitive_account_private_endpoint" {
   subnet_id                      = var.subnet_id
   subresource_names              = ["account"]
   is_manual_connection           = false
-}
-
-resource "azurerm_role_assignment" "ai_foundry_account_openai_contributor_role_assignment" {
-  scope                = azapi_resource.ai_foundry_account.id
-  role_definition_name = "Cognitive Services OpenAI Contributor"
-  principal_id         = var.user_assigned_identity_object_id
 }
 
 resource "azurerm_role_assignment" "cognitive_services_openai_contributor_role_assignment" {

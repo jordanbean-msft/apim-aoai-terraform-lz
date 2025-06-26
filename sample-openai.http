@@ -146,3 +146,8 @@ Authorization: Bearer {{traceAccessToken}}
 {
     "traceId": "{{openai_chat_request_streaming_with_trace_trace_id}}"
 }
+
+###
+
+# @name apim_get_deployments
+GET https://{{apiManagementName}}.azure-api.net/openai/deployments?api-version=2024-06-01

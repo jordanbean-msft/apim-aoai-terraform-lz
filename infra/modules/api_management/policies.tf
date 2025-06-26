@@ -9,8 +9,16 @@ resource "azurerm_api_management_api_policy" "openai_api_policy" {
     azurerm_api_management_policy_fragment.openai_event_hub_logging_outbound_policy,
     azurerm_api_management_policy_fragment.setup_correlation_id_policy,
     azurerm_api_management_policy_fragment.generate_partition_key_policy,
-    azurerm_api_management_named_value.openai_semantic_cache_store_duration
+    azurerm_api_management_named_value.openai_semantic_cache_store_duration,
+    azurerm_api_management_policy_fragment.ai_foundry_cors_policy
   ]
+}
+
+resource "azurerm_api_management_policy_fragment" "ai_foundry_cors_policy" {
+  api_management_id = azapi_resource.api_management.id
+  name              = "ai-foundry-cors"
+  value             = file("${path.module}/policies/ai-foundry-cors.xml")
+  format            = "rawxml"
 }
 
 resource "azurerm_api_management_policy_fragment" "generate_partition_key_policy" {

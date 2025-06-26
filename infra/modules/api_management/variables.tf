@@ -145,6 +145,11 @@ variable "openai_service_id" {
   type        = string
 }
 
+variable "openai_service_name" {
+  description = "The OpenAI service name"
+  type        = string
+}
+
 variable "openai_semantic_cache_embedding_backend_id" {
   description = "The OpenAI semantic cache embedding backend ID"
   type        = string

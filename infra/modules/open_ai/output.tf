@@ -13,9 +13,9 @@ output "azure_cognitive_services_endpoints" {
 }
 
 output "azure_cognitive_services_deployment_names" {
-  value = toset([
+  value = tolist(toset([
     for deployment in azurerm_cognitive_deployment.cognitive_deployment : deployment.name
-  ])
+  ]))
 }
 
 output "azure_cognitive_services_ids" {
@@ -24,14 +24,8 @@ output "azure_cognitive_services_ids" {
   ])
 }
 
-output "azure_ai_foundry_id" {
-  value = azapi_resource.ai_foundry_account.id
+output "azure_cognitive_services_names" {
+  value = tolist([
+    for cognitive_account in azurerm_cognitive_account.cognitive_account : cognitive_account.name
+  ])
 }
-
-output "azure_ai_foundry_name" {
-  value = azapi_resource.ai_foundry_account.name
-}
-
-# output "azure_ai_foundry_endpoint" {
-#   value = azapi_resource.ai_foundry_account.endpoints["AI Foundry API"]
-# }

@@ -1,11 +1,12 @@
 resource "azurerm_api_management_product" "openai_product" {
   api_management_name   = azapi_resource.api_management.name
   resource_group_name   = var.resource_group_name
-  approval_required     = true
+  approval_required     = false
   display_name          = "Azure OpenAI Product"
+  description           = "Azure OpenAI Product"
   product_id            = "openai-product"
   published             = true
-  subscription_required = true
+  subscription_required = false
   subscriptions_limit   = 1000
 }
 
