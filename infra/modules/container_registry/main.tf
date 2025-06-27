@@ -38,3 +38,17 @@ module "private_endpoint" {
   subresource_names              = ["registry"]
   is_manual_connection           = false
 }
+
+resource "azurerm_monitor_diagnostic_setting" "container_registry_logging" {
+  name                       = "container-registry-logging"
+  target_resource_id         = azurerm_container_registry.container_registry.id
+  log_analytics_workspace_id = var.log_analytics_workspace_id
+
+  enabled_log {
+    category_group = "allLogs"
+  }
+
+  metric {
+    category = "AllMetrics"
+  }
+}

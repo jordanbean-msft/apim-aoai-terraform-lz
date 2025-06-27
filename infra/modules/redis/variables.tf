@@ -47,3 +47,8 @@ variable "zones" {
   description = "The availability zones to deploy the Redis cache into"
   type        = list(string)
 }
+
+variable "log_analytics_workspace_id" {
+  description = "The ID of the Log Analytics workspace to send logs to"
+  type        = string
+}

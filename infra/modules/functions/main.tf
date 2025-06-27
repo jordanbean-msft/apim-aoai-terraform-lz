@@ -52,21 +52,6 @@ resource "azurerm_function_app_flex_consumption" "function_app" {
   app_settings = var.app_settings
 }
 
-# resource "azapi_update_resource" "vnet_content_share_enabled" {
-#   type        = "Microsoft.Web/sites@2022-09-01"
-#   resource_id = azurerm_linux_function_app.function_app.id
-
-#   body = {
-#     properties = {
-#       vnetContentShareEnabled = true
-#     }
-#   }
-
-#   depends_on = [
-#     azurerm_linux_function_app.function_app
-#   ]
-# }
-
 module "private_endpoint" {
   source                         = "../private_endpoint"
   name                           = azurerm_function_app_flex_consumption.function_app.name
@@ -86,7 +71,7 @@ resource "azurerm_monitor_diagnostic_setting" "function_logging" {
   log_analytics_workspace_id = var.log_analytics_workspace_id
 
   enabled_log {
-    category = "FunctionAppLogs"
+    category_group = "allLogs"
   }
 
   metric {

@@ -49,3 +49,8 @@ variable "openai_service_principal_client_secret_name" {
   description = "The name of the secret in the keyvault that contains the OpenAI service principal client secret"
   type        = string
 }
+
+variable "log_analytics_workspace_id" {
+  description = "The ID of the Log Analytics workspace"
+  type        = string
+}

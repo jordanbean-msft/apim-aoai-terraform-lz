@@ -126,6 +126,7 @@ module "key_vault" {
   ]
   subnet_id                                   = module.virtual_network.private_endpoint_subnet_id
   openai_service_principal_client_secret_name = local.openai_service_principal_client_secret_name
+  log_analytics_workspace_id                  = module.log_analytics.log_analytics_workspace_id
 }
 
 # ------------------------------------------------------------------------------------------------------
@@ -161,6 +162,7 @@ module "cosmosdb" {
   document_time_to_live               = var.cosmos_db.document_time_to_live
   max_throughput                      = var.cosmos_db.max_throughput
   zone_redundant                      = var.cosmos_db.zone_redundant
+  log_analytics_workspace_id          = module.log_analytics.log_analytics_workspace_id
 }
 
 # ------------------------------------------------------------------------------------------------------
@@ -226,6 +228,7 @@ module "redis" {
   capacity                         = var.redis.capacity
   sku_name                         = var.redis.sku_name
   zones                            = var.redis.zones
+  log_analytics_workspace_id       = module.log_analytics.log_analytics_workspace_id
 }
 
 # ------------------------------------------------------------------------------------------------------
@@ -242,6 +245,7 @@ module "storage_account" {
   account_tier                  = var.storage_account.tier
   account_replication_type      = var.storage_account.replication_type
   managed_identity_principal_id = module.managed_identity.user_assigned_identity_principal_id
+  log_analytics_workspace_id    = module.log_analytics.log_analytics_workspace_id
 }
 
 # ------------------------------------------------------------------------------------------------------
@@ -256,6 +260,7 @@ module "container_registry" {
   resource_token                = local.resource_token
   subnet_id                     = module.virtual_network.private_endpoint_subnet_id
   managed_identity_principal_id = module.managed_identity.user_assigned_identity_principal_id
+  log_analytics_workspace_id    = module.log_analytics.log_analytics_workspace_id
 }
 
 # ------------------------------------------------------------------------------------------------------
@@ -309,6 +314,8 @@ module "functions" {
     "COSMOS_DB__accountEndpoint"         = module.cosmosdb.cosmosdb_account_endpoint
     "COSMOS_DB_NAME"                     = module.cosmosdb.cosmosdb_sql_database_name
     "COSMOS_DB_CONTAINER_NAME"           = module.cosmosdb.cosmosdb_sql_container_name
+    "AzureWebJobsStorage__accountName"   = module.storage_account.storage_account_name
+    "AZURE_CLIENT_ID"                    = module.managed_identity.user_assigned_identity_client_id
   }
   sku_name                   = var.function_app.sku_name
   zone_balancing_enabled     = var.function_app.zone_balancing_enabled

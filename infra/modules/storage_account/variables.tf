@@ -37,3 +37,8 @@ variable "managed_identity_principal_id" {
   description = "The principal id of the managed identity"
   type        = string
 }
+
+variable "log_analytics_workspace_id" {
+  description = "The ID of the Log Analytics workspace"
+  type        = string
+}

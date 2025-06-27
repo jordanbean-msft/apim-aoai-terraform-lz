@@ -27,3 +27,8 @@ variable "subnet_id" {
   description = "The subnet ID to associate to the container registry"
   type        = string
 }
+
+variable "log_analytics_workspace_id" {
+  description = "The ID of the Log Analytics workspace"
+  type        = string
+}
