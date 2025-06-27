@@ -1,0 +1,15 @@
+<fragment>
+        <choose>
+            <when condition="{{require-entra-id-authentication}}">
+                <validate-jwt header-name="Authorization" failed-validation-httpcode="401" failed-validation-error-message="Unauthorized. Access token is missing or invalid.">
+                    <openid-config url="https://login.microsoftonline.com/{{tenant-id}}/.well-known/openid-configuration" />
+                    <audiences>
+                        <audience>{{openai-service-principal-audience}}</audience>
+                    </audiences>
+                    <issuers>
+                        <issuer>https://sts.windows.net/{{tenant-id}}/</issuer>
+                    </issuers>
+                </validate-jwt>
+            </when>
+        </choose>
+</fragment>

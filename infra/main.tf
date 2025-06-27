@@ -205,8 +205,9 @@ module "api_management" {
   log_analytics_workspace_id                              = module.log_analytics.log_analytics_workspace_id
   subscription_id                                         = data.azurerm_client_config.current.subscription_id
   openai                                                  = var.openai
-  should_deploy_redis                                     = var.redis.shouldDeployRedis
+  use_semantic_caching                                    = var.redis.shouldDeployRedis
   private_endpoint_subnet_id                              = module.virtual_network.private_endpoint_subnet_id
+  require_entra_id_authentication                         = var.apim.require_entra_id_authentication
 }
 
 # ------------------------------------------------------------------------------------------------------

@@ -7,5 +7,9 @@
         <message>@(String.Format("API: {0}, Operation: {1}", context.Api.Name, context.Operation.Name))</message>
         <metadata name="correlation-id" value="@((string)context.Variables["correlation-id"])" />
     </trace>
-    <!-- <set-variable name="app-id" value="@(context.Request.Headers.GetValueOrDefault("Authorization","")?.Split(' ')[1].AsJwt()?.Claims.GetValueOrDefault("appid", ""))" /> -->
+    <choose>
+        <when condition="{{require-entra-id-authentication}}">
+            <set-variable name="app-id" value="@(context.Request.Headers.GetValueOrDefault("Authorization","")?.Split(' ')[1].AsJwt()?.Claims.GetValueOrDefault("appid", ""))" />
+        </when>
+    </choose>
 </fragment>

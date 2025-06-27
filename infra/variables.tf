@@ -33,6 +33,7 @@ variable "apim" {
     openai_token_limit_per_minute                           = number
     openai_service_principal_client_id                      = string
     openai_service_principal_audience                       = string
+    require_entra_id_authentication                         = bool
   })
 }
 

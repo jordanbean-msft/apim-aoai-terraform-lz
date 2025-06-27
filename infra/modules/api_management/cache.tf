@@ -1,5 +1,5 @@
 resource "azurerm_api_management_redis_cache" "redis_cache" {
-  count             = var.should_deploy_redis ? 1 : 0
+  count             = var.use_semantic_caching ? 1 : 0
   name              = var.redis_cache_name
   api_management_id = azapi_resource.api_management.id
   connection_string = var.redis_cache_connection_string

@@ -9,7 +9,10 @@ resource "azurerm_api_management_api_policy" "openai_api_policy" {
     azurerm_api_management_policy_fragment.setup_correlation_id_policy,
     azurerm_api_management_policy_fragment.generate_partition_key_policy,
     azurerm_api_management_named_value.openai_semantic_cache_store_duration,
-    azurerm_api_management_policy_fragment.ai_foundry_cors_policy
+    azurerm_api_management_policy_fragment.ai_foundry_cors_policy,
+    azurerm_api_management_policy_fragment.entra_id_authentication_policy,
+    azurerm_api_management_policy_fragment.semantic_cache_lookup_policy,
+    azurerm_api_management_policy_fragment.semantic_cache_store_policy
   ]
 }
 
@@ -54,4 +57,25 @@ resource "azurerm_api_management_policy_fragment" "openai_event_hub_logging_outb
     azurerm_api_management_named_value.user_assigned_identity_client_id,
     azurerm_api_management_logger.event_hub_logger
   ]
+}
+
+resource "azurerm_api_management_policy_fragment" "entra_id_authentication_policy" {
+  api_management_id = azapi_resource.api_management.id
+  name              = "entra-id-authentication"
+  value             = file("${path.module}/policies/entra-id-authentication.xml")
+  format            = "rawxml"
+}
+
+resource "azurerm_api_management_policy_fragment" "semantic_cache_lookup_policy" {
+  api_management_id = azapi_resource.api_management.id
+  name              = "semantic-cache-lookup"
+  value             = file("${path.module}/policies/semantic-cache-loookup.xml")
+  format            = "rawxml"
+}
+
+resource "azurerm_api_management_policy_fragment" "semantic_cache_store_policy" {
+  api_management_id = azapi_resource.api_management.id
+  name              = "semantic-cache-store"
+  value             = file("${path.module}/policies/semantic-cache-store.xml")
+  format            = "rawxml"
 }

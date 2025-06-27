@@ -214,12 +214,17 @@ variable "openai" {
   })
 }
 
-variable "should_deploy_redis" {
-  description = "Flag to determine if Redis should be deployed"
-  type        = bool
-}
-
 variable "private_endpoint_subnet_id" {
   description = "The subnet ID to use for the private endpoint"
   type        = string
+}
+
+variable "require_entra_id_authentication" {
+  description = "Flag to determine if Entra ID authentication is required"
+  type        = bool
+}
+
+variable "use_semantic_caching" {
+  description = "Flag to determine if semantic caching should be used"
+  type        = bool
 }
