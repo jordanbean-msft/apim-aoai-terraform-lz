@@ -108,7 +108,7 @@ resource "azurerm_monitor_diagnostic_setting" "cosmos_db_logging" {
     category_group = "allLogs"
   }
 
-  metric {
+  enabled_metric {
     category = "AllMetrics"
   }
 }

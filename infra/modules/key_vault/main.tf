@@ -83,7 +83,7 @@ resource "azurerm_monitor_diagnostic_setting" "key_vault_logging" {
     category_group = "allLogs"
   }
 
-  metric {
+  enabled_metric {
     category = "AllMetrics"
   }
 }

@@ -32,30 +32,6 @@ resource "azapi_update_resource" "apim_service_endpoint_delegation" {
   }
 }
 
-data "azurerm_subnet" "ai_foundry_agents_subnet" {
-  name                 = var.ai_foundry_agents_subnet_name
-  virtual_network_name = var.virtual_network_name
-  resource_group_name  = var.resource_group_name
-}
-
-resource "azapi_update_resource" "ai_foundry_agent_service_endpoint_delegation" {
-  type        = "Microsoft.Network/virtualNetworks/subnets@2024-03-01"
-  resource_id = data.azurerm_subnet.ai_foundry_agents_subnet.id
-
-  body = {
-    properties = {
-      delegations = [
-        {
-          name = "Microsoft.App/environments"
-          properties = {
-            serviceName = "Microsoft.App/environments"
-          }
-        }
-      ]
-    }
-  }
-}
-
 data "azurerm_subnet" "function_app_subnet" {
   name                 = var.function_app_subnet_name
   virtual_network_name = var.virtual_network_name

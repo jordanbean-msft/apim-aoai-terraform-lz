@@ -79,7 +79,7 @@ resource "azurerm_monitor_diagnostic_setting" "function_logging" {
     category_group = "audit"
   }
 
-  metric {
+  enabled_metric {
     category = "AllMetrics"
   }
 }

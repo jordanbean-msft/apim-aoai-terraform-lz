@@ -57,7 +57,7 @@ resource "azurerm_monitor_diagnostic_setting" "redis_cache_logging" {
     category_group = "allLogs"
   }
 
-  metric {
+  enabled_metric {
     category = "AllMetrics"
   }
 }

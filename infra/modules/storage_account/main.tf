@@ -119,7 +119,7 @@ resource "azurerm_monitor_diagnostic_setting" "storage_account_logging" {
   target_resource_id         = azurerm_storage_account.storage_account.id
   log_analytics_workspace_id = var.log_analytics_workspace_id
 
-  metric {
+  enabled_metric {
     category = "Transaction"
   }
 }
@@ -133,7 +133,7 @@ resource "azurerm_monitor_diagnostic_setting" "storage_account_blob_logging" {
     category_group = "allLogs"
   }
 
-  metric {
+  enabled_metric {
     category = "AllMetrics"
   }
 }
@@ -147,7 +147,7 @@ resource "azurerm_monitor_diagnostic_setting" "storage_account_file_logging" {
     category_group = "allLogs"
   }
 
-  metric {
+  enabled_metric {
     category = "AllMetrics"
   }
 }
@@ -161,7 +161,7 @@ resource "azurerm_monitor_diagnostic_setting" "storage_account_queue_logging" {
     category_group = "allLogs"
   }
 
-  metric {
+  enabled_metric {
     category = "AllMetrics"
   }
 }
@@ -175,7 +175,7 @@ resource "azurerm_monitor_diagnostic_setting" "storage_account_table_logging" {
     category_group = "allLogs"
   }
 
-  metric {
+  enabled_metric {
     category = "AllMetrics"
   }
 }

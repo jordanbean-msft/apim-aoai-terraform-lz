@@ -7,7 +7,6 @@ locals {
   api_management_subnet_nsg_name                 = "nsg-${var.network.apim_subnet_name}-subnet"
   private_endpoint_subnet_nsg_name               = "nsg-${var.network.private_endpoint_subnet_name}-subnet"
   function_app_subnet_nsg_name                   = "nsg-${var.network.function_app_subnet_name}-subnet"
-  ai_foundry_agents_subnet_nsg_name              = "nsg-${var.network.ai_foundry_agents_subnet_name}-subnet"
   openai_service_principal_client_secret_name    = "openai-service-principal-client-secret"
 }
 
@@ -46,22 +45,13 @@ module "virtual_network" {
       delegation_name        = "Microsoft.Web/serverFarms"
       actions                = []
       network_security_rules = []
-    },
-    {
-      name                   = var.network.ai_foundry_agents_subnet_name
-      address_prefixes       = var.network.ai_foundry_agents_subnet_address_prefixes
-      service_delegation     = true
-      delegation_name        = "Microsoft.App/environments"
-      actions                = []
-      network_security_rules = []
     }
   ]
-  api_management_subnet_name    = var.network.apim_subnet_name
-  private_endpoint_subnet_name  = var.network.private_endpoint_subnet_name
-  function_app_subnet_name      = var.network.function_app_subnet_name
-  subscription_id               = data.azurerm_client_config.current.subscription_id
-  firewall_ip_address           = var.network.firewall_ip_address
-  ai_foundry_agents_subnet_name = var.network.ai_foundry_agents_subnet_name
+  api_management_subnet_name   = var.network.apim_subnet_name
+  private_endpoint_subnet_name = var.network.private_endpoint_subnet_name
+  function_app_subnet_name     = var.network.function_app_subnet_name
+  subscription_id              = data.azurerm_client_config.current.subscription_id
+  firewall_ip_address          = var.network.firewall_ip_address
 }
 
 # ------------------------------------------------------------------------------------------------------
@@ -250,21 +240,6 @@ module "storage_account" {
 }
 
 # ------------------------------------------------------------------------------------------------------
-# Deploy Container Registry
-# ------------------------------------------------------------------------------------------------------
-
-module "container_registry" {
-  source                        = "./modules/container_registry"
-  location                      = var.location
-  resource_group_name           = var.resource_group_name
-  tags                          = local.tags
-  resource_token                = local.resource_token
-  subnet_id                     = module.virtual_network.private_endpoint_subnet_id
-  managed_identity_principal_id = module.managed_identity.user_assigned_identity_principal_id
-  log_analytics_workspace_id    = module.log_analytics.log_analytics_workspace_id
-}
-
-# ------------------------------------------------------------------------------------------------------
 # Deploy Event Hub
 # ------------------------------------------------------------------------------------------------------
 
@@ -322,46 +297,3 @@ module "functions" {
   zone_balancing_enabled     = var.function_app.zone_balancing_enabled
   log_analytics_workspace_id = module.log_analytics.log_analytics_workspace_id
 }
-
-# ------------------------------------------------------------------------------------------------------
-# Deploy AI Search
-# ------------------------------------------------------------------------------------------------------
-
-# module "ai_search" {
-#   source                              = "./modules/ai_search"
-#   location                            = var.location
-#   resource_group_name                 = var.resource_group_name
-#   tags                                = local.tags
-#   resource_token                      = local.resource_token
-#   private_endpoint_subnet_resource_id = module.virtual_network.private_endpoint_subnet_id
-#   log_analytics_workspace_resource_id = module.log_analytics.log_analytics_workspace_id
-#   user_assigned_identity_principal_id = module.managed_identity.user_assigned_identity_principal_id
-# }
-
-# ------------------------------------------------------------------------------------------------------
-# Deploy AI Foundry
-# ------------------------------------------------------------------------------------------------------
-
-# module "ai_foundry" {
-#   source                              = "./modules/ai_foundry"
-#   location                            = var.location
-#   resource_group_name                 = var.resource_group_name
-#   tags                                = local.tags
-#   resource_token                      = local.resource_token
-#   ai_foundry_agent_subnet_resource_id = module.virtual_network.ai_foundry_agents_subnet_id
-#   ai_foundry_sku                      = var.ai_foundry.sku_name
-#   ai_search_id                        = module.ai_search.search_service_id
-#   ai_search_name                      = module.ai_search.search_service_name
-#   api_management_gateway_url          = module.api_management.api_management_gateway_url
-#   api_management_id                   = module.api_management.api_management_id
-#   cosmos_db_account_endpoint          = module.cosmosdb.cosmosdb_account_endpoint
-#   cosmos_db_account_id                = module.cosmosdb.cosmosdb_account_id
-#   cosmos_db_account_name              = module.cosmosdb.cosmosdb_account_name
-#   log_analytics_workspace_id          = module.log_analytics.log_analytics_workspace_id
-#   storage_account_id                  = module.storage_account.storage_account_id
-#   storage_account_name                = module.storage_account.storage_account_name
-#   subnet_id                           = module.virtual_network.private_endpoint_subnet_id
-#   user_assigned_identity_id           = module.managed_identity.user_assigned_identity_id
-#   user_assigned_identity_object_id    = module.managed_identity.user_assigned_identity_object_id
-#   user_assigned_identity_principal_id = module.managed_identity.user_assigned_identity_principal_id
-# }

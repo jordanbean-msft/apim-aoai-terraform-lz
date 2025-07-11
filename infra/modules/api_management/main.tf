@@ -30,7 +30,13 @@ resource "azurerm_api_management" "api_management" {
     subnet_id = var.api_management_subnet_id
   }
   zones                         = var.zones
-  public_network_access_enabled = true
+  public_network_access_enabled = true // temporary because you cannot disable public network access on a new APIM instance, it will be updated later to be disabled
+
+  lifecycle {
+    ignore_changes = [
+      public_network_access_enabled
+    ]
+  }
 }
 
 data "azurerm_resource_group" "resource_group" {
@@ -52,7 +58,7 @@ resource "azurerm_monitor_diagnostic_setting" "apim_logging" {
     category_group = "allLogs"
   }
 
-  metric {
+  enabled_metric {
     category = "AllMetrics"
   }
 }
@@ -73,6 +79,7 @@ module "private_endpoint" {
 resource "azapi_update_resource" "update_api_management" {
   type        = "Microsoft.ApiManagement/service@2024-06-01-preview"
   resource_id = azurerm_api_management.api_management.id
+  depends_on  = [module.private_endpoint]
   body = {
     properties = {
       publicNetworkAccess = "Disabled"
