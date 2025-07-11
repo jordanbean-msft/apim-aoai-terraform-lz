@@ -16,21 +16,24 @@
             if(context.Variables.TryGetValue("app-id", out var appId)) {
                 returnObject.Add(new JProperty("id", appId + "|" + context.RequestId + "|inbound"));
             }
-            
+            else {
+                returnObject.Add(new JProperty("id", context.Subscription.Key + "|" + context.RequestId + "|inbound"));
+            }
+
             if(context.Variables.TryGetValue("partition-key", out var pk)) {
                 returnObject.Add(new JProperty("pk", pk));
             }
-            
+
             returnObject.Add(new JProperty("requestId", context.RequestId));
             returnObject.Add(new JProperty("timestamp", context.Timestamp));
             returnObject.Add(new JProperty("ocpApimSubscriptionKey", context.Subscription.Key));
             returnObject.Add(new JProperty("direction", "inbound"));
-            
+
             if(context.Variables.TryGetValue("correlation-id", out var correlationId)) {
                 returnObject.Add(new JProperty("xCorrelationId", correlationId));
             }
-            
-            returnObject.Add(new JProperty("appId", appId));            
+
+            returnObject.Add(new JProperty("appId", appId));
 
             if(context.Request.OriginalUrl.Path.EndsWith("/completions")) {
                 returnObject.Add(new JProperty("model", result["model"]));
@@ -57,7 +60,7 @@
                     returnObject.Add(new JProperty("name", name));
                 }
             }
-            
+
             returnObject.Add(new JProperty("body", result));
 
             return returnObject.ToString();
