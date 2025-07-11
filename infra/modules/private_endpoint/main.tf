@@ -26,9 +26,7 @@ resource "azurerm_private_endpoint" "private_endpoint" {
   lifecycle {
     ignore_changes = [
       tags,
-      private_dns_zone_group,
-      network_interface,
-      private_dns_zone_configs
+      private_dns_zone_group
     ]
   }
 }

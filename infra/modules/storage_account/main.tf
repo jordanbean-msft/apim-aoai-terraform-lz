@@ -18,6 +18,7 @@ resource "azurerm_storage_account" "storage_account" {
   public_network_access_enabled   = false
   allow_nested_items_to_be_public = false
   shared_access_key_enabled       = false
+
   network_rules {
     default_action = "Deny"
     bypass         = ["AzureServices"]
@@ -27,6 +28,18 @@ resource "azurerm_storage_account" "storage_account" {
 resource "azurerm_storage_container" "function_app_container" {
   name               = "func-write-to-cosmos"
   storage_account_id = azurerm_storage_account.storage_account.id
+}
+
+resource "azurerm_role_assignment" "managed_identity_storage_account_contributor_role" {
+  scope                = azurerm_storage_account.storage_account.id
+  role_definition_name = "Storage Account Contributor"
+  principal_id         = var.managed_identity_principal_id
+}
+
+resource "azurerm_role_assignment" "managed_identity_storage_blob_data_contributor_role" {
+  scope                = azurerm_storage_account.storage_account.id
+  role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = var.managed_identity_principal_id
 }
 
 resource "azurerm_role_assignment" "managed_identity_storage_blob_data_owner_role" {
@@ -40,7 +53,6 @@ resource "azurerm_role_assignment" "managed_identity_storage_table_data_owner_ro
   role_definition_name = "Storage Table Data Contributor"
   principal_id         = var.managed_identity_principal_id
 }
-
 
 resource "azurerm_role_assignment" "managed_identity_storage_queue_data_owner_role" {
   scope                = azurerm_storage_account.storage_account.id
@@ -134,7 +146,10 @@ resource "azurerm_monitor_diagnostic_setting" "storage_account_blob_logging" {
   }
 
   enabled_metric {
-    category = "AllMetrics"
+    category = "Capacity"
+  }
+  enabled_metric {
+    category = "Transaction"
   }
 }
 
@@ -148,7 +163,10 @@ resource "azurerm_monitor_diagnostic_setting" "storage_account_file_logging" {
   }
 
   enabled_metric {
-    category = "AllMetrics"
+    category = "Capacity"
+  }
+  enabled_metric {
+    category = "Transaction"
   }
 }
 
@@ -162,7 +180,10 @@ resource "azurerm_monitor_diagnostic_setting" "storage_account_queue_logging" {
   }
 
   enabled_metric {
-    category = "AllMetrics"
+    category = "Capacity"
+  }
+  enabled_metric {
+    category = "Transaction"
   }
 }
 
@@ -176,6 +197,9 @@ resource "azurerm_monitor_diagnostic_setting" "storage_account_table_logging" {
   }
 
   enabled_metric {
-    category = "AllMetrics"
+    category = "Capacity"
+  }
+  enabled_metric {
+    category = "Transaction"
   }
 }

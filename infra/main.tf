@@ -291,6 +291,8 @@ module "functions" {
     "COSMOS_DB_NAME"                     = module.cosmosdb.cosmosdb_sql_database_name
     "COSMOS_DB_CONTAINER_NAME"           = module.cosmosdb.cosmosdb_sql_container_name
     "AzureWebJobsStorage__accountName"   = module.storage_account.storage_account_name
+    "AzureWebJobsStorage__credential"    = "managedidentity"
+    "AzureWebJobsStorage__clientId"      = module.managed_identity.user_assigned_identity_client_id
     "AZURE_CLIENT_ID"                    = module.managed_identity.user_assigned_identity_client_id
   }
   sku_name                   = var.function_app.sku_name

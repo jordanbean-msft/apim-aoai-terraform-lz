@@ -57,9 +57,6 @@ resource "azurerm_cosmosdb_sql_container" "cosmosdb_sql_container" {
     included_path {
       path = "/*"
     }
-    excluded_path {
-      path = "/\"_etag\"/?"
-    }
   }
   default_ttl = var.document_time_to_live
 }
@@ -109,6 +106,9 @@ resource "azurerm_monitor_diagnostic_setting" "cosmos_db_logging" {
   }
 
   enabled_metric {
-    category = "AllMetrics"
+    category = "Requests"
+  }
+  enabled_metric {
+    category = "SLI"
   }
 }
