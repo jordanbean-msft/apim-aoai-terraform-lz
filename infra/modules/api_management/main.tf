@@ -13,35 +13,24 @@ data "azapi_resource" "resource_group" {
   name = var.resource_group_name
 }
 
-resource "azapi_resource" "api_management" {
-  type      = "Microsoft.ApiManagement/service@2024-06-01-preview"
-  name      = azurecaf_name.api_management_name.result
-  location  = var.location
-  tags      = var.tags
-  parent_id = data.azapi_resource.resource_group.id
-  body = {
-    identity = {
-      type = "SystemAssigned,UserAssigned"
-      userAssignedIdentities = {
-        "${var.user_assigned_identity_id}" = {}
-      }
-    }
-    sku = {
-      name     = var.sku_name
-      capacity = var.sku_capacity
-    }
-    zones = var.zones
-    properties = {
-      publisherEmail = var.publisher_email
-      publisherName  = var.publisher_name
-
-      virtualNetworkConfiguration = {
-        subnetResourceId = var.api_management_subnet_id
-      }
-      virtualNetworkType  = "External"
-      publicNetworkAccess = "Disabled"
-    }
+resource "azurerm_api_management" "api_management" {
+  name                = azurecaf_name.api_management_name.result
+  location            = var.location
+  tags                = var.tags
+  resource_group_name = var.resource_group_name
+  publisher_email     = var.publisher_email
+  publisher_name      = var.publisher_name
+  sku_name            = "${var.sku_name}_${var.sku_capacity}"
+  identity {
+    type         = "SystemAssigned, UserAssigned"
+    identity_ids = [var.user_assigned_identity_id]
   }
+  virtual_network_type = "External"
+  virtual_network_configuration {
+    subnet_id = var.api_management_subnet_id
+  }
+  zones                         = var.zones
+  public_network_access_enabled = true
 }
 
 data "azurerm_resource_group" "resource_group" {
@@ -51,12 +40,12 @@ data "azurerm_resource_group" "resource_group" {
 # resource "azurerm_role_assignment" "api_management_system_assigned_managed_identity_cognitive_services_openai_user" {
 #   scope                = data.azurerm_resource_group.resource_group.id
 #   role_definition_name = "Cognitive Services OpenAI User"
-#   principal_id         = azapi_resource.api_management.identity.*.principal_id[0]
+#   principal_id         = azurerm_api_management.api_management.identity.*.principal_id[0]
 # }
 
 resource "azurerm_monitor_diagnostic_setting" "apim_logging" {
   name                       = "apim-logging"
-  target_resource_id         = azapi_resource.api_management.id
+  target_resource_id         = azurerm_api_management.api_management.id
   log_analytics_workspace_id = var.log_analytics_workspace_id
 
   enabled_log {
@@ -70,13 +59,23 @@ resource "azurerm_monitor_diagnostic_setting" "apim_logging" {
 
 module "private_endpoint" {
   source                         = "../private_endpoint"
-  name                           = azapi_resource.api_management.name
+  name                           = azurerm_api_management.api_management.name
   resource_group_name            = var.resource_group_name
   tags                           = var.tags
   resource_token                 = var.resource_token
-  private_connection_resource_id = azapi_resource.api_management.id
+  private_connection_resource_id = azurerm_api_management.api_management.id
   location                       = var.location
   subnet_id                      = var.private_endpoint_subnet_id
   subresource_names              = ["Gateway"]
   is_manual_connection           = false
+}
+
+resource "azapi_update_resource" "update_api_management" {
+  type        = "Microsoft.ApiManagement/service@2024-06-01-preview"
+  resource_id = azurerm_api_management.api_management.id
+  body = {
+    properties = {
+      publicNetworkAccess = "Disabled"
+    }
+  }
 }

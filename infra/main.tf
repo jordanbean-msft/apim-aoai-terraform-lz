@@ -177,6 +177,7 @@ module "api_management" {
   api_management_subnet_id                                = module.virtual_network.api_management_subnet_id
   user_assigned_identity_id                               = module.managed_identity.user_assigned_identity_id
   user_assigned_identity_client_id                        = module.managed_identity.user_assigned_identity_client_id
+  user_assigned_identity_principal_id                     = module.managed_identity.user_assigned_identity_principal_id
   publisher_name                                          = var.apim.publisher_name
   publisher_email                                         = var.apim.publisher_email
   sku_name                                                = var.apim.sku_name
@@ -326,41 +327,41 @@ module "functions" {
 # Deploy AI Search
 # ------------------------------------------------------------------------------------------------------
 
-module "ai_search" {
-  source                              = "./modules/ai_search"
-  location                            = var.location
-  resource_group_name                 = var.resource_group_name
-  tags                                = local.tags
-  resource_token                      = local.resource_token
-  private_endpoint_subnet_resource_id = module.virtual_network.private_endpoint_subnet_id
-  log_analytics_workspace_resource_id = module.log_analytics.log_analytics_workspace_id
-  user_assigned_identity_principal_id = module.managed_identity.user_assigned_identity_principal_id
-}
+# module "ai_search" {
+#   source                              = "./modules/ai_search"
+#   location                            = var.location
+#   resource_group_name                 = var.resource_group_name
+#   tags                                = local.tags
+#   resource_token                      = local.resource_token
+#   private_endpoint_subnet_resource_id = module.virtual_network.private_endpoint_subnet_id
+#   log_analytics_workspace_resource_id = module.log_analytics.log_analytics_workspace_id
+#   user_assigned_identity_principal_id = module.managed_identity.user_assigned_identity_principal_id
+# }
 
 # ------------------------------------------------------------------------------------------------------
 # Deploy AI Foundry
 # ------------------------------------------------------------------------------------------------------
 
-module "ai_foundry" {
-  source                              = "./modules/ai_foundry"
-  location                            = var.location
-  resource_group_name                 = var.resource_group_name
-  tags                                = local.tags
-  resource_token                      = local.resource_token
-  ai_foundry_agent_subnet_resource_id = module.virtual_network.ai_foundry_agents_subnet_id
-  ai_foundry_sku                      = var.ai_foundry.sku_name
-  ai_search_id                        = module.ai_search.search_service_id
-  ai_search_name                      = module.ai_search.search_service_name
-  api_management_gateway_url          = module.api_management.api_management_gateway_url
-  api_management_id                   = module.api_management.api_management_id
-  cosmos_db_account_endpoint          = module.cosmosdb.cosmosdb_account_endpoint
-  cosmos_db_account_id                = module.cosmosdb.cosmosdb_account_id
-  cosmos_db_account_name              = module.cosmosdb.cosmosdb_account_name
-  log_analytics_workspace_id          = module.log_analytics.log_analytics_workspace_id
-  storage_account_id                  = module.storage_account.storage_account_id
-  storage_account_name                = module.storage_account.storage_account_name
-  subnet_id                           = module.virtual_network.private_endpoint_subnet_id
-  user_assigned_identity_id           = module.managed_identity.user_assigned_identity_id
-  user_assigned_identity_object_id    = module.managed_identity.user_assigned_identity_object_id
-  user_assigned_identity_principal_id = module.managed_identity.user_assigned_identity_principal_id
-}
+# module "ai_foundry" {
+#   source                              = "./modules/ai_foundry"
+#   location                            = var.location
+#   resource_group_name                 = var.resource_group_name
+#   tags                                = local.tags
+#   resource_token                      = local.resource_token
+#   ai_foundry_agent_subnet_resource_id = module.virtual_network.ai_foundry_agents_subnet_id
+#   ai_foundry_sku                      = var.ai_foundry.sku_name
+#   ai_search_id                        = module.ai_search.search_service_id
+#   ai_search_name                      = module.ai_search.search_service_name
+#   api_management_gateway_url          = module.api_management.api_management_gateway_url
+#   api_management_id                   = module.api_management.api_management_id
+#   cosmos_db_account_endpoint          = module.cosmosdb.cosmosdb_account_endpoint
+#   cosmos_db_account_id                = module.cosmosdb.cosmosdb_account_id
+#   cosmos_db_account_name              = module.cosmosdb.cosmosdb_account_name
+#   log_analytics_workspace_id          = module.log_analytics.log_analytics_workspace_id
+#   storage_account_id                  = module.storage_account.storage_account_id
+#   storage_account_name                = module.storage_account.storage_account_name
+#   subnet_id                           = module.virtual_network.private_endpoint_subnet_id
+#   user_assigned_identity_id           = module.managed_identity.user_assigned_identity_id
+#   user_assigned_identity_object_id    = module.managed_identity.user_assigned_identity_object_id
+#   user_assigned_identity_principal_id = module.managed_identity.user_assigned_identity_principal_id
+# }

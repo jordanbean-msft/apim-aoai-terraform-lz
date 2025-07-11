@@ -48,6 +48,11 @@ variable "user_assigned_identity_client_id" {
   type        = string
 }
 
+variable "user_assigned_identity_principal_id" {
+  description = "The User Assigned Managed Identity principal ID to assign to the API Management portal"
+  type        = string
+}
+
 variable "api_management_subnet_id" {
   description = "The subnet ID to associate to the API Management portal"
   type        = string

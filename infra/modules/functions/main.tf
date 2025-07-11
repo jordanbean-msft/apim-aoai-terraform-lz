@@ -49,7 +49,8 @@ resource "azurerm_function_app_flex_consumption" "function_app" {
     application_insights_key               = var.application_insights_key
     ip_restriction_default_action          = "Deny"
   }
-  app_settings = var.app_settings
+  app_settings                                   = var.app_settings
+  webdeploy_publish_basic_authentication_enabled = false
 }
 
 module "private_endpoint" {
@@ -72,6 +73,10 @@ resource "azurerm_monitor_diagnostic_setting" "function_logging" {
 
   enabled_log {
     category_group = "allLogs"
+  }
+
+  enabled_log {
+    category_group = "audit"
   }
 
   metric {
