@@ -11,7 +11,7 @@ app = func.FunctionApp()
 
 @app.function_name(name="write-to-cosmos")
 @app.event_hub_message_trigger(arg_name="azeventhub", event_hub_name="llm-logging", consumer_group="write-to-cosmos", connection="EVENT_HUB")
-@app.cosmos_db_output(arg_name="outputDocument", database_name="chat-log-db", container_name="chat-log-container", connection="COSMOS_DB")
+@app.cosmos_db_output(arg_name="output_document", database_name="chat-log-db", container_name="chat-log-container", connection="COSMOS_DB")
 def write_to_cosmos(azeventhub: func.EventHubEvent, output_document: func.Out[func.Document]):
     req_body = azeventhub.get_body().decode('utf-8')
     output_document.set(func.Document.from_json(req_body))

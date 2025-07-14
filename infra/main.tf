@@ -290,6 +290,7 @@ module "functions" {
     "COSMOS_DB__accountEndpoint"         = module.cosmosdb.cosmosdb_account_endpoint
     "COSMOS_DB_NAME"                     = module.cosmosdb.cosmosdb_sql_database_name
     "COSMOS_DB_CONTAINER_NAME"           = module.cosmosdb.cosmosdb_sql_container_name
+    "AzureWebJobsStorage"                = "" //have to set this to empty string to enabled managed identity authentication to the storage account that stores the function app code
     "AzureWebJobsStorage__accountName"   = module.storage_account.storage_account_name
     "AzureWebJobsStorage__credential"    = "managedidentity"
     "AzureWebJobsStorage__clientId"      = module.managed_identity.user_assigned_identity_client_id

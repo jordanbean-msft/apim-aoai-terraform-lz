@@ -35,6 +35,11 @@ resource "azurerm_api_management_policy_fragment" "setup_correlation_id_policy" 
   name              = "setup-correlation-id"
   value             = file("${path.module}/policies/setup-correlation-id.xml")
   format            = "rawxml"
+  depends_on = [
+    azurerm_api_management_named_value.require_entra_id_authentication,
+    azurerm_api_management_named_value.openai_service_principal_audience,
+    azurerm_api_management_named_value.tenant_id
+  ]
 }
 
 resource "azurerm_api_management_policy_fragment" "openai_event_hub_logging_inbound_policy" {
