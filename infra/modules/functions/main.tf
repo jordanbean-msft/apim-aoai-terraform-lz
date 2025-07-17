@@ -83,3 +83,21 @@ resource "azurerm_monitor_diagnostic_setting" "function_logging" {
     category = "AllMetrics"
   }
 }
+
+resource "null_resource" "remove_flex_function_app_settings" {
+  depends_on = [azurerm_function_app_flex_consumption.function_app]
+  triggers = {
+    always_run = timestamp()
+  }
+  provisioner "local-exec" {
+    command     = <<EOT
+az functionapp config appsettings delete --name "${azurerm_function_app_flex_consumption.function_app.name}" --resource-group "${var.resource_group_name}" --setting-names AzureWebJobsStorage DEPLOYMENT_STORAGE_CONNECTION_STRING || true
+EOT
+    interpreter = ["/bin/bash", "-c"]
+  }
+}
+
+resource "time_sleep" "wait_for_function_app" {
+  depends_on      = [null_resource.remove_flex_function_app_settings]
+  create_duration = "30s"
+}

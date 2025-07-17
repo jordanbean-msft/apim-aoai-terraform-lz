@@ -1,6 +1,6 @@
 # apim-aoai-terraform-lz
 
-![architecture](./.img/architecture.png)
+![architecture](./.img/architecture.drawio.png)
 
 ## Disclaimer
 
@@ -17,7 +17,7 @@
 
 ### Azure
 
-A virtual network of at least a `/25` and 3 subnets (each at least `/27` ) to associate with API Management & the private endpoints.
+A virtual network of at least a `/22` and 3 subnets to associate with API Management & the private endpoints.
 
 ### Entra ID
 
