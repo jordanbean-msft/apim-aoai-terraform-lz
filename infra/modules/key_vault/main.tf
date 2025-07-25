@@ -1,16 +1,3 @@
-terraform {
-  required_providers {
-    azurerm = {
-      version = "~>4.0.1"
-      source  = "hashicorp/azurerm"
-    }
-    azurecaf = {
-      source  = "aztfmod/azurecaf"
-      version = "1.2.28"
-    }
-  }
-}
-
 data "azurerm_client_config" "current" {}
 # ------------------------------------------------------------------------------------------------------
 # DEPLOY AZURE KEYVAULT
@@ -85,4 +72,18 @@ resource "azurerm_role_assignment" "key_vault_secrets_officer_role_assignment" {
   scope                = azurerm_key_vault.kv.id
   role_definition_name = "Key Vault Secrets Officer"
   principal_id         = var.principal_id
+}
+
+resource "azurerm_monitor_diagnostic_setting" "key_vault_logging" {
+  name                       = "key-vault-logging"
+  target_resource_id         = azurerm_key_vault.kv.id
+  log_analytics_workspace_id = var.log_analytics_workspace_id
+
+  enabled_log {
+    category_group = "allLogs"
+  }
+
+  enabled_metric {
+    category = "AllMetrics"
+  }
 }

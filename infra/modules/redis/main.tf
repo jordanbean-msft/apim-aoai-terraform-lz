@@ -1,15 +1,3 @@
-terraform {
-  required_providers {
-    azurerm = {
-      version = "~>4.0.1"
-      source  = "hashicorp/azurerm"
-    }
-    azurecaf = {
-      source  = "aztfmod/azurecaf"
-      version = "1.2.28"
-    }
-  }
-}
 # ------------------------------------------------------------------------------------------------------
 # DEPLOY REDIS
 # ------------------------------------------------------------------------------------------------------
@@ -59,3 +47,17 @@ module "private_endpoint" {
 #   object_id          = var.user_assigned_identity_object_id
 #   object_id_alias    = var.user_assigned_identity_name
 # }
+
+resource "azurerm_monitor_diagnostic_setting" "redis_cache_logging" {
+  name                       = "redis-cache-logging"
+  target_resource_id         = azurerm_redis_enterprise_cluster.redis_cache.id
+  log_analytics_workspace_id = var.log_analytics_workspace_id
+
+  enabled_log {
+    category_group = "allLogs"
+  }
+
+  enabled_metric {
+    category = "AllMetrics"
+  }
+}

@@ -1,18 +1,3 @@
-terraform {
-  required_providers {
-    azurerm = {
-      version = "~>4.0.1"
-      source  = "hashicorp/azurerm"
-    }
-    azurecaf = {
-      source  = "aztfmod/azurecaf"
-      version = "1.2.28"
-    }
-  }
-}
-# ------------------------------------------------------------------------------------------------------
-# Deploy cognitive services
-# ------------------------------------------------------------------------------------------------------
 resource "azurecaf_name" "cognitiveservices_name" {
   for_each = {
     for instance in flatten([
@@ -86,7 +71,7 @@ resource "azurerm_cognitive_deployment" "cognitive_deployment" {
   rai_policy_name = each.value.rai_policy_name
 }
 
-module "private_endpoint" {
+module "cognitive_account_private_endpoint" {
   for_each = {
     for instance in flatten([
       for pool in var.openai_model_deployments.pools : [
@@ -139,10 +124,10 @@ resource "azurerm_monitor_diagnostic_setting" "openai_logging" {
   log_analytics_workspace_id = var.log_analytics_workspace_id
 
   enabled_log {
-    category = "RequestResponse"
+    category_group = "allLogs"
   }
 
-  metric {
+  enabled_metric {
     category = "AllMetrics"
   }
 }

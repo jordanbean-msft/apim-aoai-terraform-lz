@@ -43,6 +43,11 @@ variable "storage_account_name" {
   type        = string
 }
 
+variable "storage_account_container_name" {
+  description = "The name of the function app container"
+  type        = string
+}
+
 variable "application_insights_connection_string" {
   description = "The connection string of the application insights"
   type        = string

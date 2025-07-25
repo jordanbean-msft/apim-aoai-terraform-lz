@@ -6,6 +6,9 @@
             if(context.Variables.TryGetValue("app-id", out var appId)) {
                 returnObject.Add(new JProperty("id", appId + "|" + context.RequestId + "|outbound"));
             }
+            else {
+                returnObject.Add(new JProperty("id", context.Subscription.Key + "|" + context.RequestId + "|outbound"));
+            }
 
             if(context.Variables.TryGetValue("partition-key", out var pk)) {
                 returnObject.Add(new JProperty("pk", pk));
@@ -38,7 +41,7 @@
 
             if(!(bool)context.Variables["isStreaming"]) {
                 var result = JObject.Parse(context.Response.Body.As&lt;string&gt;(preserveContent: true));
-                
+
                 //remove the actual embedding from the logged message
                 if(context.Request.OriginalUrl.Path.EndsWith("/embeddings")) {
                     if(result.TryGetValue("data", out var resultData)) {
@@ -63,7 +66,7 @@
                         }
                     }
                 }
-                
+
                 returnObject.Add(new JProperty("body", result));
             }
 

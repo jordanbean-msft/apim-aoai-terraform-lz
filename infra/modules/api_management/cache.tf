@@ -1,4 +1,5 @@
 resource "azurerm_api_management_redis_cache" "redis_cache" {
+  count             = var.use_semantic_caching ? 1 : 0
   name              = var.redis_cache_name
   api_management_id = azurerm_api_management.api_management.id
   connection_string = var.redis_cache_connection_string

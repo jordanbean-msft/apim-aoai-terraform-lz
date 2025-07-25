@@ -1,24 +1,9 @@
 <policies>
     <inbound>
         <base />
-        <choose>
-            <when condition="@(context.Request.MatchedParameters.GetValueOrDefault("deployment-id", "") == "o3-mini")">
-                <set-backend-service backend-id="o3-mini-load-balanced-pool" />
-            </when>
-            <otherwise>
-                <set-backend-service backend-id="aoai-default-load-balanced-pool" />
-            </otherwise>
-        </choose>
+        <set-backend-service backend-id="aoai-default-load-balanced-pool" />
         <include-fragment fragment-id="setup-correlation-id" />
-        <validate-jwt header-name="Authorization" failed-validation-httpcode="401" failed-validation-error-message="Unauthorized. Access token is missing or invalid.">
-            <openid-config url="https://login.microsoftonline.com/{{tenant-id}}/.well-known/openid-configuration" />
-            <audiences>
-                <audience>{{openai-service-principal-audience}}</audience>
-            </audiences>
-            <issuers>
-                <issuer>https://sts.windows.net/{{tenant-id}}/</issuer>
-            </issuers>
-        </validate-jwt>
+        <include-fragment fragment-id="entra-id-authentication" />
         <azure-openai-emit-token-metric namespace="AzureOpenAI">
             <dimension name="User ID" />
             <dimension name="Client IP" value="@(context.Request.IpAddress)" />
@@ -28,18 +13,16 @@
         <azure-openai-token-limit tokens-per-minute="{{openai-token-limit-per-minute}}" counter-key="@(context.Subscription.Id)" estimate-prompt-tokens="true" tokens-consumed-header-name="consumed-tokens" remaining-tokens-header-name="remaining-tokens" />
         <include-fragment fragment-id="generate-partition-key" />
         <include-fragment fragment-id="openai-event-hub-logging-inbound" />
-        <include-fragment fragment-id="get-access-token-to-openai" />
-        <azure-openai-semantic-cache-lookup score-threshold="{{openai-semantic-cache-lookup-score-threshold}}" embeddings-backend-id="{{openai-semantic-cache-embedding-backend-id}}" embeddings-backend-auth="system-assigned">
-            <vary-by>@(context.Subscription.Id)</vary-by>
-        </azure-openai-semantic-cache-lookup>
+        <include-fragment fragment-id="semantic-cache-lookup" />
+        <include-fragment fragment-id="ai-foundry-cors" />
     </inbound>
     <backend>
         <retry count="1" interval="0" first-fast-retry="true" condition="@(context.Response.StatusCode == 429 || (context.Response.StatusCode == 503 && !context.Response.StatusReason.Contains("Backend pool") && !context.Response.StatusReason.Contains("is temporarily unavailable")))">
-            <forward-request buffer-request-body="true" />
+            <forward-request buffer-request-body="true" buffer-response="false" />
         </retry>
     </backend>
     <outbound>
-        <azure-openai-semantic-cache-store duration="{{openai-semantic-cache-store-duration}}" />
+        <include-fragment fragment-id="semantic-cache-store" />
         <base />
         <set-header name="x-correlation-id" exists-action="override">
             <value>@((string)context.Variables["correlation-id"])</value>

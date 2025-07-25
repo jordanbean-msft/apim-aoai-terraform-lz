@@ -1,15 +1,3 @@
-terraform {
-  required_providers {
-    azurerm = {
-      version = "~>4.0.1"
-      source  = "hashicorp/azurerm"
-    }
-    azurecaf = {
-      source  = "aztfmod/azurecaf"
-      version = "1.2.28"
-    }
-  }
-}
 # ------------------------------------------------------------------------------------------------------
 # Deploy Storage Account
 # ------------------------------------------------------------------------------------------------------
@@ -27,18 +15,31 @@ resource "azurerm_storage_account" "storage_account" {
   account_tier                    = var.account_tier
   account_replication_type        = var.account_replication_type
   tags                            = var.tags
-  public_network_access_enabled   = true
+  public_network_access_enabled   = false
   allow_nested_items_to_be_public = false
+  shared_access_key_enabled       = false
+
   network_rules {
-    default_action = "Allow"
+    default_action = "Deny"
     bypass         = ["AzureServices"]
   }
 }
 
-resource "azurerm_storage_share" "function_app_share" {
-  name                 = "func-write-to-cosmos"
-  storage_account_name = azurerm_storage_account.storage_account.name
-  quota                = 50
+resource "azurerm_storage_container" "function_app_container" {
+  name               = "func-write-to-cosmos"
+  storage_account_id = azurerm_storage_account.storage_account.id
+}
+
+resource "azurerm_role_assignment" "managed_identity_storage_account_contributor_role" {
+  scope                = azurerm_storage_account.storage_account.id
+  role_definition_name = "Storage Account Contributor"
+  principal_id         = var.managed_identity_principal_id
+}
+
+resource "azurerm_role_assignment" "managed_identity_storage_blob_data_contributor_role" {
+  scope                = azurerm_storage_account.storage_account.id
+  role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = var.managed_identity_principal_id
 }
 
 resource "azurerm_role_assignment" "managed_identity_storage_blob_data_owner_role" {
@@ -46,6 +47,19 @@ resource "azurerm_role_assignment" "managed_identity_storage_blob_data_owner_rol
   role_definition_name = "Storage Blob Data Owner"
   principal_id         = var.managed_identity_principal_id
 }
+
+resource "azurerm_role_assignment" "managed_identity_storage_table_data_owner_role" {
+  scope                = azurerm_storage_account.storage_account.id
+  role_definition_name = "Storage Table Data Contributor"
+  principal_id         = var.managed_identity_principal_id
+}
+
+resource "azurerm_role_assignment" "managed_identity_storage_queue_data_owner_role" {
+  scope                = azurerm_storage_account.storage_account.id
+  role_definition_name = "Storage Queue Data Contributor"
+  principal_id         = var.managed_identity_principal_id
+}
+
 
 module "private_endpoint_blob" {
   source                         = "../private_endpoint"
@@ -110,4 +124,82 @@ module "private_endpoint_web" {
   subnet_id                      = var.subnet_id
   subresource_names              = ["web"]
   is_manual_connection           = false
+}
+
+resource "azurerm_monitor_diagnostic_setting" "storage_account_logging" {
+  name                       = "storage-account-logging"
+  target_resource_id         = azurerm_storage_account.storage_account.id
+  log_analytics_workspace_id = var.log_analytics_workspace_id
+
+  enabled_metric {
+    category = "Transaction"
+  }
+}
+
+resource "azurerm_monitor_diagnostic_setting" "storage_account_blob_logging" {
+  name                       = "storage-account-blob-logging"
+  target_resource_id         = "${azurerm_storage_account.storage_account.id}/blobServices/default/"
+  log_analytics_workspace_id = var.log_analytics_workspace_id
+
+  enabled_log {
+    category_group = "allLogs"
+  }
+
+  enabled_metric {
+    category = "Capacity"
+  }
+  enabled_metric {
+    category = "Transaction"
+  }
+}
+
+resource "azurerm_monitor_diagnostic_setting" "storage_account_file_logging" {
+  name                       = "storage-account-file-logging"
+  target_resource_id         = "${azurerm_storage_account.storage_account.id}/fileServices/default/"
+  log_analytics_workspace_id = var.log_analytics_workspace_id
+
+  enabled_log {
+    category_group = "allLogs"
+  }
+
+  enabled_metric {
+    category = "Capacity"
+  }
+  enabled_metric {
+    category = "Transaction"
+  }
+}
+
+resource "azurerm_monitor_diagnostic_setting" "storage_account_queue_logging" {
+  name                       = "storage-account-queue-logging"
+  target_resource_id         = "${azurerm_storage_account.storage_account.id}/queueServices/default/"
+  log_analytics_workspace_id = var.log_analytics_workspace_id
+
+  enabled_log {
+    category_group = "allLogs"
+  }
+
+  enabled_metric {
+    category = "Capacity"
+  }
+  enabled_metric {
+    category = "Transaction"
+  }
+}
+
+resource "azurerm_monitor_diagnostic_setting" "storage_account_table_logging" {
+  name                       = "storage-account-table-logging"
+  target_resource_id         = "${azurerm_storage_account.storage_account.id}/tableServices/default/"
+  log_analytics_workspace_id = var.log_analytics_workspace_id
+
+  enabled_log {
+    category_group = "allLogs"
+  }
+
+  enabled_metric {
+    category = "Capacity"
+  }
+  enabled_metric {
+    category = "Transaction"
+  }
 }

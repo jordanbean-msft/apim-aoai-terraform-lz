@@ -1,0 +1,9 @@
+<fragment>
+<choose>
+            <when condition="{{use-semantic-caching}}">
+                <azure-openai-semantic-cache-lookup score-threshold="{{openai-semantic-cache-lookup-score-threshold}}" embeddings-backend-id="{{openai-semantic-cache-embedding-backend-id}}" embeddings-backend-auth="system-assigned">
+                    <vary-by>@(context.Subscription.Id)</vary-by>
+                </azure-openai-semantic-cache-lookup>
+            </when>
+        </choose>
+</fragment>

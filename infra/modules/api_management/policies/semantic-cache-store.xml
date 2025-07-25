@@ -1,0 +1,7 @@
+<fragment>
+<choose>
+            <when condition="{{use-semantic-caching}}">
+                <azure-openai-semantic-cache-store duration="{{openai-semantic-cache-store-duration}}" />
+            </when>
+        </choose>
+</fragment>

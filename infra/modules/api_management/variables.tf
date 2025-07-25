@@ -33,6 +33,11 @@ variable "sku_name" {
   type        = string
 }
 
+variable "sku_capacity" {
+  description = "The API Management SKU capacity"
+  type        = number
+}
+
 variable "user_assigned_identity_id" {
   description = "The User Assigned Managed Identity to assign to the API Management portal"
   type        = string
@@ -40,6 +45,11 @@ variable "user_assigned_identity_id" {
 
 variable "user_assigned_identity_client_id" {
   description = "The User Assigned Managed Identity client ID to assign to the API Management portal"
+  type        = string
+}
+
+variable "user_assigned_identity_principal_id" {
+  description = "The User Assigned Managed Identity principal ID to assign to the API Management portal"
   type        = string
 }
 
@@ -140,6 +150,11 @@ variable "openai_service_id" {
   type        = string
 }
 
+variable "openai_service_name" {
+  description = "The OpenAI service name"
+  type        = string
+}
+
 variable "openai_semantic_cache_embedding_backend_id" {
   description = "The OpenAI semantic cache embedding backend ID"
   type        = string
@@ -202,4 +217,19 @@ variable "openai" {
       }))
     }))
   })
+}
+
+variable "private_endpoint_subnet_id" {
+  description = "The subnet ID to use for the private endpoint"
+  type        = string
+}
+
+variable "require_entra_id_authentication" {
+  description = "Flag to determine if Entra ID authentication is required"
+  type        = bool
+}
+
+variable "use_semantic_caching" {
+  description = "Flag to determine if semantic caching should be used"
+  type        = bool
 }

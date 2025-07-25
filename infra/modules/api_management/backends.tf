@@ -1,8 +1,9 @@
 resource "azapi_resource" "openai_backend" {
-  for_each  = { for endpoint in var.openai_endpoints : endpoint.key => endpoint }
-  type      = "Microsoft.ApiManagement/service/backends@2024-05-01"
-  parent_id = azurerm_api_management.api_management.id
-  name      = each.value.name
+  for_each                  = { for endpoint in var.openai_endpoints : endpoint.key => endpoint }
+  type                      = "Microsoft.ApiManagement/service/backends@2024-06-01-preview"
+  parent_id                 = azurerm_api_management.api_management.id
+  name                      = each.value.name
+  schema_validation_enabled = false
   body = {
     properties = {
       circuitBreaker = {
@@ -36,6 +37,12 @@ resource "azapi_resource" "openai_backend" {
       }
       type = "Single"
       url  = "${each.value.endpoint}openai/"
+      credentials = {
+        managedIdentity = {
+          clientId : var.user_assigned_identity_client_id
+          resource : "https://cognitiveservices.azure.com"
+        }
+      }
     }
   }
 }

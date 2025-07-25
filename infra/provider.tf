@@ -1,20 +1,17 @@
-#Set the terraform required version, and Configure the Azure Provider.Use local storage
-
-# Configure the Azure Provider
 terraform {
   required_version = ">= 1.8.2, < 2.0.0"
   required_providers {
     azurerm = {
-      version = "4.0.1"
+      version = "4.36.0"
       source  = "hashicorp/azurerm"
     }
     azurecaf = {
       source  = "aztfmod/azurecaf"
-      version = "1.2.28"
+      version = "1.2.29"
     }
     azapi = {
       source  = "Azure/azapi"
-      version = "2.3.0"
+      version = "2.5.0"
     }
   }
 
@@ -31,6 +28,7 @@ provider "azurerm" {
       prevent_deletion_if_contains_resources = false
     }
   }
+  storage_use_azuread = true
 }
 
 provider "azapi" {

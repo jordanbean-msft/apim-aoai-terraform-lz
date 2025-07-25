@@ -11,8 +11,12 @@ output "storage_account_access_key" {
   sensitive = true
 }
 
-output "function_app_share_name" {
-  value = azurerm_storage_share.function_app_share.name
+# output "function_app_share_name" {
+#   value = azurerm_storage_share.function_app_share.name
+# }
+
+output "function_app_container_name" {
+  value = azurerm_storage_container.function_app_container.name
 }
 
 output "storage_account_connection_string" {

@@ -1,15 +1,3 @@
-terraform {
-  required_providers {
-    azurerm = {
-      version = "~>4.0.1"
-      source  = "hashicorp/azurerm"
-    }
-    azurecaf = {
-      source  = "aztfmod/azurecaf"
-      version = "1.2.28"
-    }
-  }
-}
 # ------------------------------------------------------------------------------------------------------
 # Deploy log analytics workspace
 # ------------------------------------------------------------------------------------------------------
@@ -69,9 +57,6 @@ resource "azurerm_cosmosdb_sql_container" "cosmosdb_sql_container" {
     included_path {
       path = "/*"
     }
-    excluded_path {
-      path = "/\"_etag\"/?"
-    }
   }
   default_ttl = var.document_time_to_live
 }
@@ -109,4 +94,21 @@ resource "azurerm_cosmosdb_sql_role_assignment" "cosmosdb_built_in_data_contribu
   role_definition_id  = data.azurerm_cosmosdb_sql_role_definition.cosmosdb_built_in_data_contributor.id
   principal_id        = var.principal_id
   scope               = azurerm_cosmosdb_account.cosmosdb_account.id
+}
+
+resource "azurerm_monitor_diagnostic_setting" "cosmos_db_logging" {
+  name                       = "cosmos-db-logging"
+  target_resource_id         = azurerm_cosmosdb_account.cosmosdb_account.id
+  log_analytics_workspace_id = var.log_analytics_workspace_id
+
+  enabled_log {
+    category_group = "allLogs"
+  }
+
+  enabled_metric {
+    category = "Requests"
+  }
+  enabled_metric {
+    category = "SLI"
+  }
 }

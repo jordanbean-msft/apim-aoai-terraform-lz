@@ -92,3 +92,30 @@ resource "azurerm_api_management_named_value" "openai_semantic_cache_store_durat
   value               = var.openai_semantic_cache_store_duration
   secret              = false
 }
+
+resource "azurerm_api_management_named_value" "ai_foundry_deployments_backend_base_url" {
+  api_management_name = azurerm_api_management.api_management.name
+  name                = "ai-foundry-deployments-backend-base-url"
+  resource_group_name = var.resource_group_name
+  display_name        = "ai-foundry-deployments-backend-base-url"
+  value               = "https://management.azure.com/subscriptions/${var.subscription_id}/resourceGroups/${var.resource_group_name}/providers/Microsoft.CognitiveServices/accounts/${var.openai_service_name}"
+  secret              = false
+}
+
+resource "azurerm_api_management_named_value" "require_entra_id_authentication" {
+  api_management_name = azurerm_api_management.api_management.name
+  name                = "require-entra-id-authentication"
+  resource_group_name = var.resource_group_name
+  display_name        = "require-entra-id-authentication"
+  value               = var.require_entra_id_authentication
+  secret              = false
+}
+
+resource "azurerm_api_management_named_value" "use_semantic_caching" {
+  api_management_name = azurerm_api_management.api_management.name
+  name                = "use-semantic-caching"
+  resource_group_name = var.resource_group_name
+  display_name        = "use-semantic-caching"
+  value               = var.use_semantic_caching
+  secret              = false
+}

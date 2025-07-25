@@ -52,3 +52,13 @@ variable "message_retention" {
   description = "The message retention of the event hub"
   type        = number
 }
+
+variable "log_analytics_workspace_id" {
+  description = "The ID of the Log Analytics workspace"
+  type        = string
+}
+
+variable "apim_subnet_id" {
+  description = "The subnet ID for the API Management service"
+  type        = string
+}

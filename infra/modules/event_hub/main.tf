@@ -1,15 +1,3 @@
-terraform {
-  required_providers {
-    azurerm = {
-      version = "~>4.0.1"
-      source  = "hashicorp/azurerm"
-    }
-    azurecaf = {
-      source  = "aztfmod/azurecaf"
-      version = "1.2.28"
-    }
-  }
-}
 # ------------------------------------------------------------------------------------------------------
 # Deploy event hub
 # ------------------------------------------------------------------------------------------------------
@@ -29,38 +17,40 @@ resource "azurerm_eventhub_namespace" "event_hub_namespace" {
   auto_inflate_enabled          = true
   maximum_throughput_units      = var.maximum_throughput_units
   tags                          = var.tags
-  public_network_access_enabled = false
+  public_network_access_enabled = true
   network_rulesets = [{
-    default_action                 = "Deny"
+    default_action                 = "Allow"
     trusted_service_access_enabled = true
-    public_network_access_enabled  = false
+    public_network_access_enabled  = true
     ip_rule                        = []
-    virtual_network_rule           = []
+    virtual_network_rule = [
+      {
+        subnet_id                                       = var.apim_subnet_id
+        ignore_missing_virtual_network_service_endpoint = false
+      }
+    ]
   }]
 }
 
 resource "azurerm_eventhub" "event_hub_central" {
-  name                = "central-llm-logging"
-  resource_group_name = var.resource_group_name
-  namespace_name      = azurerm_eventhub_namespace.event_hub_namespace.name
-  partition_count     = var.partition_count
-  message_retention   = var.message_retention
+  name              = "central-llm-logging"
+  namespace_id      = azurerm_eventhub_namespace.event_hub_namespace.id
+  partition_count   = var.partition_count
+  message_retention = var.message_retention
 }
 
 resource "azurerm_eventhub" "event_hub_siem" {
-  name                = "siem-logging"
-  resource_group_name = var.resource_group_name
-  namespace_name      = azurerm_eventhub_namespace.event_hub_namespace.name
-  partition_count     = var.partition_count
-  message_retention   = var.message_retention
+  name              = "siem-logging"
+  namespace_id      = azurerm_eventhub_namespace.event_hub_namespace.id
+  partition_count   = var.partition_count
+  message_retention = var.message_retention
 }
 
 resource "azurerm_eventhub" "event_hub_llm_logging" {
-  name                = "llm-logging"
-  resource_group_name = var.resource_group_name
-  namespace_name      = azurerm_eventhub_namespace.event_hub_namespace.name
-  partition_count     = var.partition_count
-  message_retention   = var.message_retention
+  name              = "llm-logging"
+  namespace_id      = azurerm_eventhub_namespace.event_hub_namespace.id
+  partition_count   = var.partition_count
+  message_retention = var.message_retention
 }
 
 resource "azurerm_eventhub_consumer_group" "central_llm_replication" {
@@ -114,4 +104,19 @@ module "private_endpoint" {
   subnet_id                      = var.subnet_id
   subresource_names              = ["namespace"]
   is_manual_connection           = false
+}
+
+
+resource "azurerm_monitor_diagnostic_setting" "event_hub_logging" {
+  name                       = "event-hub-logging"
+  target_resource_id         = azurerm_eventhub_namespace.event_hub_namespace.id
+  log_analytics_workspace_id = var.log_analytics_workspace_id
+
+  enabled_log {
+    category_group = "allLogs"
+  }
+
+  enabled_metric {
+    category = "AllMetrics"
+  }
 }
