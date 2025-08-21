@@ -8,7 +8,7 @@ resource "azurerm_api_management_api" "openai_api" {
   protocols           = ["https"]
   import {
     content_format = "openapi+json"
-    content_value  = file("${path.module}/openapi-2025-04-01-preview.json")
+    content_value  = file("${path.module}/${var.openai_openapi_specification_file_name}")
   }
   subscription_required = true
   api_type              = "http"
