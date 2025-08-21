@@ -95,8 +95,8 @@ variable "key_vault_id" {
   type        = string
 }
 
-variable "openai_openapi_specification_url" {
-  description = "The OpenAI Swagger URL to use for the API Management service"
+variable "openai_openapi_specification_file_name" {
+  description = "The OpenAI Swagger file name to use for the API Management service"
   type        = string
 }
 

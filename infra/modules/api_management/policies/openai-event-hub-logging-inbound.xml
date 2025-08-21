@@ -1,6 +1,6 @@
 <fragment>
 	<set-variable name="requestBody" value="@{
-        var result = JObject.Parse(context.Request.Body.As&lt;string&gt;(preserveContent: true));
+        var result = JObject.Parse(context.Request.Body?.As&lt;string&gt;(preserveContent: true) ?? "{}");
         return result;
     }" />
 	<set-variable name="isStreaming" value="@{
