@@ -29,7 +29,7 @@ variable "apim" {
     openai_semantic_cache_lookup_score_threshold            = number
     openai_semantic_cache_store_duration                    = number
     openai_semantic_cache_embedding_backend_deployment_name = string
-    openai_openapi_specification_url                        = string
+    openai_openapi_specification_file_name                  = string
     openai_token_limit_per_minute                           = number
     openai_service_principal_client_id                      = string
     openai_service_principal_audience                       = string

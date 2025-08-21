@@ -178,7 +178,7 @@ module "api_management" {
   cosmosdb_scope                                          = "https://${module.cosmosdb.cosmosdb_account_name}.documents.azure.com"
   cosmosdb_document_endpoint                              = "${module.cosmosdb.cosmosdb_account_endpoint}dbs/${module.cosmosdb.cosmosdb_sql_database_name}/colls/${module.cosmosdb.cosmosdb_sql_container_name}/docs"
   application_insights_instrumentation_key                = module.application_insights.application_insights_instrumentation_key
-  openai_openapi_specification_url                        = var.apim.openai_openapi_specification_url
+  openai_openapi_specification_file_name                  = var.apim.openai_openapi_specification_file_name
   openai_token_limit_per_minute                           = var.apim.openai_token_limit_per_minute
   tenant_id                                               = data.azurerm_client_config.current.tenant_id
   openai_service_principal_audience                       = var.apim.openai_service_principal_audience
