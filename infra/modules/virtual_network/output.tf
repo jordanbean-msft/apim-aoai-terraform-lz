@@ -18,11 +18,6 @@ output "private_endpoint_subnet_id" {
   value       = "${data.azurerm_virtual_network.vnet.id}/subnets/${var.private_endpoint_subnet_name}"
 }
 
-output "ai_studio_subnet_id" {
-  description = "value of the ai_studio_subnet_id"
-  value       = "${data.azurerm_virtual_network.vnet.id}/subnets/${var.ai_studio_subnet_name}"
-}
-
 output "function_app_subnet_id" {
   description = "value of the function_app_subnet_id"
   value       = "${data.azurerm_virtual_network.vnet.id}/subnets/${var.function_app_subnet_name}"

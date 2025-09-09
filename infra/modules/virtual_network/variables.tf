@@ -64,12 +64,6 @@ variable "private_endpoint_subnet_name" {
   type        = string
 }
 
-variable "ai_studio_subnet_name" {
-  description = "Specifies resource name of the subnet hosting the AI Studio."
-  type        = string
-  default     = ""
-}
-
 variable "function_app_subnet_name" {
   description = "Specifies resource name of the subnet hosting the Azure Functions."
   type        = string

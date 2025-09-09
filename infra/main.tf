@@ -171,7 +171,6 @@ module "virtual_network" {
   ]
   api_management_subnet_name   = var.network.apim_subnet_name
   private_endpoint_subnet_name = var.network.private_endpoint_subnet_name
-  ai_studio_subnet_name        = var.network.ai_studio_subnet_name
   function_app_subnet_name     = var.network.function_app_subnet_name
   subscription_id              = data.azurerm_client_config.current.subscription_id
   firewall_ip_address          = var.network.firewall_ip_address
@@ -204,15 +203,11 @@ module "workbook" {
 # Deploy log analytics
 # ------------------------------------------------------------------------------------------------------
 module "log_analytics" {
-  source                                               = "./modules/log_analytics"
-  location                                             = var.location
-  resource_group_name                                  = var.resource_group_name
-  tags                                                 = local.tags
-  resource_token                                       = local.resource_token
-  azure_monitor_private_link_scope_name                = var.azure_monitor.azure_monitor_private_link_scope_name
-  azure_monitor_private_link_scope_resource_group_name = var.azure_monitor.azure_monitor_private_link_scope_resource_group_name
-  subnet_id                                            = module.virtual_network.ai_studio_subnet_id
-  azure_monitor_private_link_scope_subscription_id     = var.azure_monitor.azure_monitor_private_link_scope_subscription_id
+  source              = "./modules/log_analytics"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  tags                = local.tags
+  resource_token      = local.resource_token
 }
 
 # ------------------------------------------------------------------------------------------------------
@@ -299,7 +294,7 @@ module "api_management" {
   cosmosdb_scope                                          = "https://${module.cosmosdb.cosmosdb_account_name}.documents.azure.com"
   cosmosdb_document_endpoint                              = "${module.cosmosdb.cosmosdb_account_endpoint}dbs/${module.cosmosdb.cosmosdb_sql_database_name}/colls/${module.cosmosdb.cosmosdb_sql_container_name}/docs"
   application_insights_instrumentation_key                = module.application_insights.application_insights_instrumentation_key
-  openai_openapi_specification_url                        = var.apim.openai_openapi_specification_url
+  openai_openapi_specification_file_name                  = var.apim.openai_openapi_specification_file_name
   openai_token_limit_per_minute                           = var.apim.openai_token_limit_per_minute
   tenant_id                                               = data.azurerm_client_config.current.tenant_id
   openai_service_principal_audience                       = var.apim.openai_service_principal_audience
@@ -367,24 +362,6 @@ module "container_registry" {
   managed_identity_principal_id = module.managed_identity.user_assigned_identity_principal_id
 }
 
-# ------------------------------------------------------------------------------------------------------
-# Deploy AI Studio
-# ------------------------------------------------------------------------------------------------------
-
-# module "ai_studio" {
-#   source                  = "./modules/ai_studio"
-#   location                = var.location
-#   resource_group_name     = var.resource_group_name
-#   tags                    = local.tags
-#   resource_token          = local.resource_token
-#   subnet_id               = module.virtual_network.ai_studio_subnet_id
-#   sku                     = var.ai_studio_sku_name
-#   application_insights_id = module.application_insights.application_insights_id
-#   key_vault_id            = module.key_vault.key_vault_id
-#   storage_account_id      = module.storage_account.storage_account_id
-#   container_registry_id   = module.container_registry.container_registry_id
-#   resource_group_id       = "/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourceGroups/${var.resource_group_name}"
-# }
 
 # ------------------------------------------------------------------------------------------------------
 # Deploy Event Hub
